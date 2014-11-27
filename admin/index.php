@@ -73,11 +73,11 @@ function DBADMIN_menu($explanation = '')
 
     $token = SEC_createToken();
     $menu_arr = array(
-        array('url' => LGLIB_ADMIN_URL . '/index.php',
+        array('url' => LGLIB_ADMIN_URL,
               'text' => $LANG_LGLIB['list_backups']),
-        array('url' => LGLIB_ADMIN_URL . '/index.php?backup=x&amp;'.CSRF_TOKEN.'='.$token,
+        array('url' => LGLIB_ADMIN_URL . '?backup=x&amp;'.CSRF_TOKEN.'='.$token,
               'text' => $LANG_ADMIN['create_new']),
-        array('url' => LGLIB_ADMIN_URL . '/index.php?config=x',
+        array('url' => LGLIB_ADMIN_URL . '?config=x',
               'text' => 'Configure'),
         array('url' => $_CONF['site_admin_url'],
               'text' => $LANG_ADMIN['admin_home']),
@@ -132,7 +132,7 @@ function DBADMIN_list()
         $icon_img = COM_createImage($diskIconUrl, $alt, $attr);
 
         for ($i = 0; $i < $num_backups; $i++) {
-            $downloadUrl = LGLIB_ADMIN-URL . '?download=x&amp;file='
+            $downloadUrl = LGLIB_ADMIN_URL . '?download=x&amp;file='
                          . urlencode($backups[$i]);
 
             $downloadLink = COM_createLink($icon_img, $downloadUrl, $attr);
@@ -156,7 +156,7 @@ function DBADMIN_list()
         );
 
         $text_arr = array(
-            'form_url' => LGLIB_ADMIN_URL . '/index.php',
+            'form_url' => LGLIB_ADMIN_URL,
         );
         $form_arr = array('bottom' => '', 'top' => '');
         if ($num_backups > 0) {
