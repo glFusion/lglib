@@ -543,7 +543,7 @@ class dbBackup
     *
     *   @return boolean Status from deliver_backup, or false on backup failure.
     */
-    private function cron_backup()
+    public function cron_backup()
     {
         $backup_file = $this->backupDB();
         $this->save_backup_time();

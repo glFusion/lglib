@@ -25,6 +25,16 @@ $_SQL['lglib_messages'] = "CREATE TABLE {$_TABLES['lglib_messages']} (
   `expires` datetime
 )";
 
+$_SQL['lglib_jobqueue'] = "CREATE TABLE `{$_TABLES['lglib_jobqueue']}` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `submitted` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `pi_name` varchar(20) DEFAULT NULL,
+  `jobname` varchar(40) DEFAULT NULL,
+  `status` varchar(20) NOT NULL DEFAULT 'ready',
+  `params` text,
+  PRIMARY KEY (`id`)
+)";
+
 $_UPGRADE_SQL['0.0.2'] = array(
     "CREATE TABLE {$_TABLES['lglib_messages']} (
       `uid` int(11) NOT NULL DEFAULT '1',
@@ -36,6 +46,18 @@ $_UPGRADE_SQL['0.0.2'] = array(
       `dt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
       `expires` datetime
     )",
+);
+
+$_UPGRADE_SQL['0.0.7'] = array(
+  "CREATE TABLE `{$_TABLES['lglib_jobqueue']}` (
+    `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+    `submitted` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `pi_name` varchar(20) DEFAULT NULL,
+    `jobname` varchar(40) DEFAULT NULL,
+    `status` varchar(20) NOT NULL DEFAULT 'ready',
+    `params` text,
+    PRIMARY KEY (`id`)
+  )",
 );
 
 ?>

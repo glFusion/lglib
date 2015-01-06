@@ -132,7 +132,10 @@ class TimThumb
 
         // LgLib sets configurable config values in $_SESSION, and plugins may
         // override them with their own values
-        if (!isset($_SESSION) || empty($_SESSION)) session_start();
+        if (!isset($_SESSION)) {
+            if (isset($_GET['sess'])) session_id($_GET['sess']);
+            session_start();
+        }
         if (is_array($_SESSION['lglib'])) {
             $_IMG_CONF = array_merge($_IMG_CONF, $_SESSION['lglib']);
         }
@@ -381,7 +384,7 @@ class TimThumb
             } else {
                 $this->debug(3, "Failed to serve cachefile $this->cachefile - Deleting it from cache.");
                 //Image serving failed. We can't retry at this point, but lets remove it from cache so the next request recreates it
-                @unlink($cachefile);
+                //@unlink($cachefile);
                 return true;
             }
         }
@@ -607,7 +610,6 @@ class TimThumb
             // rename generally overwrites, but doing this in case of platform
             // specific quirks. File might not exist yet.
             @unlink($this->cachefile . $_IMG_CONF['cache_suffix']);
-            //switch ($_SESSION['image_lib']) {
             switch ($this->image_lib) {
             case 'gdlib':
                 $result = $this->gd_imgResize($this->localImage,
@@ -665,8 +667,8 @@ class TimThumb
     {
         global $_IMG_CONF;
 
-        //$cachefile = $this->cachefile . $_IMG_CONF['cache_suffix'];
-        $cachefile = $this->cachefile;
+        $cachefile = $this->cachefile . $_IMG_CONF['cache_suffix'];
+        //$cachefile = $this->cachefile;
         $this->debug(3, "Serving $cachefile");
 
         if (!is_file($cachefile)) {
@@ -687,7 +689,7 @@ class TimThumb
             return $this->error("The cached image file seems to be corrupt.");
         }
 
-        $imageDataSize = filesize($this->cachefile) - (strlen($this->filePrependSecurityBlock) + 6);
+        $imageDataSize = filesize($cachefile) - (strlen($this->filePrependSecurityBlock) + 6);
         //$imageDataSize = filesize($cachefile);
         $this->sendImageHeaders($imgType, $imageDataSize);
         //$this->sendImageHeaders('image/jpeg', $imageDataSize);

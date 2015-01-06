@@ -68,6 +68,14 @@ function LGLIB_do_upgrade($current_ver)
                 'text', 0, 0, 15, 60, true, $_LGLIB_CONF['pi_name']);
     }
 
+    if ($current_ver < '0.0.7') {
+        // upgrade from 0.0.6 to 0.0.7
+        COM_errorLog("Updating Plugin to 0.0.7");
+        $error = LGLIB_do_upgrade_sql('0.0.7');
+        if ($error)
+            return $error;
+    }
+
      return $error;
 }
 

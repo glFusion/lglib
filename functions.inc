@@ -7,7 +7,7 @@
 *   @author     Lee Garner <lee@leegarner.com>
 *   @copyright  Copyright (c) 2012-2014 Lee Garner <lee@leegarner.com>
 *   @package    lglib
-*   @version    0.0.5
+*   @version    0.0.7
 *   @license    http://opensource.org/licenses/gpl-2.0.php 
 *               GNU Public License v2 or later
 *   @filesource
@@ -57,13 +57,6 @@ SESS_setVar('lglib', array(
     'image_lib'     => $_CONF['image_lib'],
     'path_to_mogrify' => $_CONF['path_to_mogrify'],
 ));
-// deprecated:
-/*$_SESSION['default_origpath'] = $_CONF['path_html'] . 'images';
-$_SESSION['default_cachepath'] = $_CONF['path'] . 'data/' .
-        $_LGLIB_CONF['pi_name'];
-$_SESSION['default_image_lib'] = $_CONF['image_lib'];
-$_SESSION['default_path_to_mogrify'] = $_CONF['path_to_mogrify'];
-*/
 
 /**
 *   Include the plugin-specific language file, and the corresponding
@@ -117,6 +110,10 @@ function USES_lglib_upgrade()
 /** Database backup class */
 function USES_lglib_class_dbbackup()
 {   require_once LGLIB_PI_PATH . '/classes/dbBackup.class.php';    }
+
+/** PDF generation */
+function USES_lglib_class_fpdf()
+{   require_once LGLIB_PI_PATH . '/classes/pdf/fpdf.php';   }
 
 /**
 *   Get the currently installed version.
@@ -724,15 +721,15 @@ function LGLIB_loginform()
 /**
 *   A generic function to store pseudo-global variables
 *
-*   @param  string  $type   Variable name
+*   @param  string  $name   Variable name
 *   @param  mixed   $value  Value to store
 *   @param  boolean $clobber    False to avoid overwriting
 */
-function LGLIB_setGlobal($type, $value, $clobber=true)
+function LGLIB_setGlobal($name, $value, $clobber=true)
 {
     global $_LGLIB_GLOBALS;
-    if ($clobber || !isset($_LGLIB_GLOBALS[$type])) {
-        $_LGLIB_GLOBALS[$type] = $value;
+    if ($clobber || !isset($_LGLIB_GLOBALS[$name])) {
+        $_LGLIB_GLOBALS[$name] = $value;
     }
 }
 
@@ -740,16 +737,16 @@ function LGLIB_setGlobal($type, $value, $clobber=true)
 /**
 *   Retrieve a pseudo-global variable.
 *
-*   @param  string  $type   Type or name of variable
+*   @param  string  $type   Name of variable
 *   @param  boolean $remove True to unset the variable, False to leave it
 *   @return mixec           Session variable contents
 */
-function LGLIB_getGlobal($type, $remove=false)
+function LGLIB_getGlobal($name, $remove=false)
 {
     global $_LGLIB_GLOBALS;
-    if (isset($_LGLIB_GLOBALS[$type])) {
-        $retval = $_LGLIB_GLOBALS[$type];
-        if ($remove) unset($_LGLIB_GLOBALS[$type]);
+    if (isset($_LGLIB_GLOBALS[$name])) {
+        $retval = $_LGLIB_GLOBALS[$name];
+        if ($remove) unset($_LGLIB_GLOBALS[$name]);
     } else {
         $retval = NULL;
     }
@@ -760,14 +757,16 @@ function LGLIB_getGlobal($type, $remove=false)
 /**
 *   A generic function to store session variables
 *
-*   @param  string  $type   Session variable name
+*   @deprecated
+*   @see    SESS_setVar()
+*   @param  string  $name   Session variable name
 *   @param  string  $value  Value to store
 *   @param  boolean $clobber    False to avoid overwriting
 */
-function LGLIB_setSession($type, $value, $clobber=true)
+function LGLIB_setSession($name, $value, $clobber=true)
 {
-    if ($clobber || !isset($_SESSION[$type])) {
-        $_SESSION[$type] = $value;
+    if ($clobber || !isset($_SESSION[$name])) {
+        $_SESSION[$name] = $value;
     }
 }
 
@@ -775,15 +774,17 @@ function LGLIB_setSession($type, $value, $clobber=true)
 /**
 *   Retrieve a session variable.
 *
-*   @param  string  $type   Type or name of variable
+*   @deprecated
+*   @see    SESS_getVar()
+*   @param  string  $name   Type or name of variable
 *   @param  boolean $remove True to unset the variable, False to leave it
 *   @return mixec           Session variable contents
 */
-function LGLIB_getSession($type, $remove=false)
+function LGLIB_getSession($name, $remove=false)
 {
-    if (isset($_SESSION[$type])) {
-        $retval = $_SESSION[$type];
-        if ($remove) unset($_SESSION[$type]);
+    if (isset($_SESSION[$name])) {
+        $retval = $_SESSION[$name];
+        if ($remove) unset($_SESSION[$name]);
     } else {
         $retval = NULL;
     }
@@ -957,5 +958,105 @@ function LGLIB_obfuscate($str)
     }
     return $encode;
 }
+
+
+/**
+*   Push a job onto the job queue
+*   Called by plugins to add a job to the queue.
+*   $pi_name and $job_name are required, $params may be a string or
+*   an array. If it's an array it is converted to JSON before storage.
+*
+*   @param  string  $pi_name    Name of plugin to execute the job
+*   @param  string  $job_name   Name of job to be run
+*   @param  mixed   $params     String or Array of parameters
+*   @return bookean     True on success, False on failure.
+*/
+function LGLIB_pushJob($pi_name, $job_name, $params='')
+{
+    if (is_array($params)) {
+        $json_params = json_encode($params);
+        if ($json_params === false) return false;
+    } else {
+        $json_params = $params;
+    }
+
+    $pi_name = DB_escapeString($pi_name);
+    $job_name = DB_escapeString($job_name);
+    $params = DB_escapeString($json_params);
+    $sql = "INSERT INTO gl_lglib_jobqueue (pi_name, jobname, params)
+            VALUES ('$pi_name', '$job_name', '$params')";
+    DB_query($sql, false);
+    if (DB_error()) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
+
+/**
+*   Run jobs in the job queue table
+*   Uses LGLIB_invokeService() to call the "runjob" service function
+*   for plugins.
+*
+*   @param  string  $pi     Plugin name, empty for all plugins
+*/
+function LGLIB_run_jobqueue($pi = '')
+{
+    global $_TABLES, $_CONF;
+
+    $sql = "SELECT * FROM {$_TABLES['lglib_jobqueue']} WHERE status = 'ready'";
+    if (!empty($pi)) $sql .= " AND pi_name = '" . DB_escapeString($pi) . "'";
+    $res = DB_query($sql);
+    while ($A = DB_fetchArray($res, false)) {
+        $status = LGLIB_invokeService($A['pi_name'], 'runjob',
+                $A, $output, $svc_msg);
+        LGLIB_update_job_status($A['id'], $status);
+
+/*        $pi_name = $A['pi_name'];
+        $job = $A['jobname'];
+        $runner = $_CONF['path'] . 'plugins/' . $pi_name . '/jobrunner.php';
+        if (!file_exists($runner)) {
+            LGLIB_update_job_status($A['id'], 9);
+            continue;
+        }
+        require_once $runner;
+        $class = 'job_' . $pi_name . '_' . $job;
+        if (!class_exists($class)) {
+            LGLIB_update_job_status($A['id'], 9);
+            continue;
+        }
+        $J = new $class;
+        $status = $J->Run($A['params']);
+*/
+    }
+}
+
+
+/**
+*   Update the status of jobs in the queue.
+*
+*   @see    LGLIB_run_jobqueue()
+*   @param  integer $jobid      ID of job to update
+*   @param  integer $status     Job completion status
+*/
+function LGLIB_update_job_status($jobid, $status)
+{
+    global $_TABLES;
+
+    static $statuses = array(
+        PLG_RET_OK => 'completed',
+        PLG_RET_ERROR => 'plugin error',
+    );
+    if (!isset($statuses[$status]))
+        $statuses[$status] = 'undefined';
+
+    $jobid = (int)$jobid;
+    $status = (int)$statuses[$status];
+    DB_query("UPDATE {$_TABLES['lglib_jobqueue']}
+            SET status = '{$status}'
+            WHERE id = $jobid");
+}
+
 
 ?>

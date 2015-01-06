@@ -21,34 +21,44 @@
 
 require_once(dirname(__FILE__) . '/../lib-common.php');
 
+if (php_sapi_name() == 'cli') {
+    $args = getopt('fp:k:');
+} else {
+    $args = $_GET;
+}
+
+// if $force == true, run jobs regardless of last_run time value
+$force = isset($args['f']) ? true : false;
+// if a plugin name is provided, just run its jobs
+$pi = isset($args['p']) ? $args['p'] : NULL;
+
 // Check that the correct key value is supplied with the url or command line.
 if (!empty($_LGLIB_CONF['cron_key'])) {
-    if (php_sapi_name() == 'cli') {
-        if ($argv[1] !== $_LGLIB_CONF['cron_key']) {
-            echo "DENIED\n";
-            exit(1);
-        }
-    } else {
-        if ($_GET['key'] !== $_LGLIB_CONF['cron_key']) {
+    if (!isset($args['k']) || $args['k'] !== $_LGLIB_CONF['cron_key']) {
+        if (php_sapi_name() != 'cli') {
+            // add forbidden header if accessed via web
             header('HTTP 1.0 Forbidden');
-            echo "DENIED\n";
-            exit(1);
         }
+        echo "DENIED\n";
+        exit(1);
     }
 }
 
 if (!isset($_VARS['last_scheduled_run'])) {
     $_VARS['last_scheduled_run'] = 0;
 }
-if ($_LGLIB_CONF['cron_schedule_interval'] > 0) {
-    if (($_VARS['last_scheduled_run'] + $_LGLIB_CONF['cron_schedule_interval']) <= time()) {
-        DB_query( "UPDATE {$_TABLES['vars']} SET value=UNIX_TIMESTAMP() WHERE name='last_scheduled_run'" );
-        if ($_CONF['cron_schedule_interval'] == 0) {
-            // Only call regular tasks if system cron interval is unset,
-            // otherwise leave it to the system cron
-            PLG_runScheduledTask();
+if ($force || $_LGLIB_CONF['cron_schedule_interval'] > 0) {
+    if ($force || ($_VARS['last_scheduled_run'] + $_LGLIB_CONF['cron_schedule_interval']) <= time()) {
+        DB_query("UPDATE {$_TABLES['vars']} SET value=UNIX_TIMESTAMP() WHERE name='last_scheduled_run'" );
+        if ($pi !== NULL) {
+            if ($_CONF['cron_schedule_interval'] == 0) {
+                // Only call regular tasks if system cron interval is unset,
+                // otherwise leave it to the system cron
+                PLG_runScheduledTask();
+            }
+            LGLIB_backup_database();
         }
-        LGLIB_backup_database();
+        LGLIB_run_jobqueue($pi);
     }
 }
 echo "SUCCESS\n";
@@ -70,6 +80,5 @@ function LGLIB_backup_database()
     }
         
 }
-
 
 ?>

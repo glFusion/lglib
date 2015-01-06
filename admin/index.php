@@ -17,6 +17,7 @@ require_once '../../auth.inc.php';
 $display = '';
 $pi_title = $_LGLIB_CONF['pi_display_name'] . ' ' .
             $LANG32[36] . ' ' . $_LGLIB_CONF['pi_version'];
+LGLIB_setGlobal('pi_title', $pi_title);
 
 // If user isn't a root user or if the backup feature is disabled, bail.
 if (!SEC_inGroup('Root') OR $_CONF['allow_mysqldump'] == 0) {
@@ -82,7 +83,8 @@ function DBADMIN_menu($explanation = '')
         array('url' => $_CONF['site_admin_url'],
               'text' => $LANG_ADMIN['admin_home']),
     );
-    $retval .= COM_startBlock($pi_title,
+    //$retval .= COM_startBlock($pi_title,
+    $retval .= COM_startBlock(LGLIB_getGlobal('pi_title'),
                             COM_getBlockTemplate('_admin_block', 'header'));
     $retval .= ADMIN_createMenu(
             $menu_arr, $explanation,
@@ -320,15 +322,17 @@ function DBADMIN_exec($cmd) {
 */
 function DBADMIN_configBackup()
 {
-    global $_TABLES, $_CONF, $_VARS, $LANG_LGLIB, $pi_title;
+    global $_TABLES, $_CONF, $_VARS, $LANG_LGLIB, $pi_title, $_DB_table_prefix;
 
-    $res = DB_query('SHOW TABLES');
+    /*$res = DB_query("SHOW TABLES LIKE '{$_DB_table_prefix}%'");
     $mysql_tables = array();
     while ($A = DB_fetchArray($res)) {
         $mysql_tables[] = $A[0];
     }
     // Select only tables that we actually use
     $tablenames = array_intersect($mysql_tables, $_TABLES);
+    */
+    $tablenames = $_TABLES;
 
     $exclude_tables = @unserialize($_VARS['lglib_dbback_exclude']);
     if (!is_array($exclude_tables))

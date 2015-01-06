@@ -13,3 +13,52 @@
 .lglmessage li
 { }
 
+.lgButton {
+    padding: 3px 6px;
+    display: inline;
+    background: #777777;
+    border: none;
+    color: #FFFFFF !important;
+    cursor: pointer;
+    /*font-weight: bold;*/
+    font-size: small;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    text-shadow: 1px 1px #666666;
+    text-decoration:none;
+}
+
+.lgButton:hover {
+    background-position: 0 center;
+}
+
+.lgButton:active {
+    background-position: 0 top;
+    position: relative;
+    top: 1px;
+    /*padding: 4px 7px 4px;*/
+}
+
+/*.lgButton.red { background-color: #e50000; }*/
+.lgButton.red { background-color: #CC6666; }
+.lgButton.purple { background-color: #9400BF; }
+.lgButton.green { background-color: #58aa00; }
+/*.lgButton.green { background-color: #7AB61D; }*/
+.lgButton.orange { background-color: #FF9C00; }
+.lgButton.blue { background-color: #2C6DA0; }
+.lgButton.black { background-color: #333333; }
+.lgButton.white {
+    background-color: #FFFFFF; color: #000000; text-shadow: 1px 1px #fff;
+}
+.lgButton.small { font-size: 75%; padding: 3px 7px; }
+.lgButton.small:active {
+    padding: 4px 7px 2px;
+    background-position: 0 top;
+}
+.lgButton.large { font-size: 125%; padding: 7px 12px; }
+.lgButton.large:active {
+    padding: 8px 12px 6px;
+    background-position: 0 top;
+}
+
