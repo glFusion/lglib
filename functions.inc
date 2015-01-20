@@ -111,9 +111,24 @@ function USES_lglib_upgrade()
 function USES_lglib_class_dbbackup()
 {   require_once LGLIB_PI_PATH . '/classes/dbBackup.class.php';    }
 
-/** PDF generation */
-function USES_lglib_class_fpdf()
-{   require_once LGLIB_PI_PATH . '/classes/pdf/fpdf.php';   }
+/** PDF generation
+*   If a derived class file is requested, e.g "PDF_HTML", then load that file.
+*   otherwise, load the base FPDF class file.
+*/
+function USES_lglib_class_fpdf($file='')
+{
+    if ($file != '') {
+        // if a file is specified make sure it's got a "php" extension
+        $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+        if ($ext != 'php') {
+            $file .= '.php';
+        }
+        require_once LGLIB_PI_PATH . '/classes/pdf/' . $file;
+    } else {
+        // just load the base FPDF class
+        require_once LGLIB_PI_PATH . '/classes/pdf/fpdf/fpdf.php';
+    }
+}
 
 /**
 *   Get the currently installed version.
@@ -1012,23 +1027,6 @@ function LGLIB_run_jobqueue($pi = '')
         $status = LGLIB_invokeService($A['pi_name'], 'runjob',
                 $A, $output, $svc_msg);
         LGLIB_update_job_status($A['id'], $status);
-
-/*        $pi_name = $A['pi_name'];
-        $job = $A['jobname'];
-        $runner = $_CONF['path'] . 'plugins/' . $pi_name . '/jobrunner.php';
-        if (!file_exists($runner)) {
-            LGLIB_update_job_status($A['id'], 9);
-            continue;
-        }
-        require_once $runner;
-        $class = 'job_' . $pi_name . '_' . $job;
-        if (!class_exists($class)) {
-            LGLIB_update_job_status($A['id'], 9);
-            continue;
-        }
-        $J = new $class;
-        $status = $J->Run($A['params']);
-*/
     }
 }
 
