@@ -9,6 +9,9 @@ plugins:
     slideshow
 - image resizing and url creation
 - an updated database backup
+- PDF libraries
+  * FPDF, by Olivier PLATHEY
+  * HTML2PDF, by Laurent MINGUET
 
 These scripts, especially the calendar, may not work correctly if they are
 loaded more than once, so this plugin becomes the single source for them.

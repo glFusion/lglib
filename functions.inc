@@ -464,10 +464,7 @@ function LGLIB_storeMessage($args, $title='', $persist=false, $expires = '',
     // Convert to a single "args" array argument, but maintain backward
     // compatibility for some time.
     if (is_array($args)) {
-        if (!isset($args['message']) || empty($args['message']))
-            return;
-        else
-            $msg = $args['message'];
+        $msg = $args['message'];
         if (isset($args['title']) && empty($title))
             $title = $args['title'];
         if (isset($args['persist']))
@@ -483,6 +480,7 @@ function LGLIB_storeMessage($args, $title='', $persist=false, $expires = '',
     } else {
         $msg = $args;
     }
+    if (empty($msg)) return;
     if ($title == '') $title = $LANG_LGLIB['system_message'];
     if ($persist != false) $persist = true;
 
@@ -500,7 +498,7 @@ function LGLIB_storeMessage($args, $title='', $persist=false, $expires = '',
                 $expires = "'2037-12-31'";  // non-expiring
             }
         } else {
-            $expires = "'".DB_escapeString($expire)."'";
+            $expires = "'".DB_escapeString($expires)."'";
         }
         $msg = DB_escapeString($msg);
         if ($title != '') $title = DB_escapeString($title);
