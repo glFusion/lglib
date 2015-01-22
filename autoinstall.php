@@ -49,6 +49,10 @@ $INSTALL_plugin[$_LGLIB_CONF['pi_name']] = array(
             'table'     => $_TABLES['lglib_messages'], 
             'sql'       => $_SQL['lglib_messages']),
 
+    array('type' => 'table', 
+            'table'     => $_TABLES['lglib_jobqueue'], 
+            'sql'       => $_SQL['lglib_jobqueue']),
+
 );
     
  
@@ -82,7 +86,7 @@ function plugin_autouninstall_lglib()
     global $_LGLIB_CONF;
 
     $out = array (
-        'tables'    => array('lglib_messages'),
+        'tables'    => array('lglib_messages', 'lglib_jobqueue'),
         'groups'    => array(),
         'features'  => array(),
         'php_blocks' => array(),
