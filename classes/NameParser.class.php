@@ -7,7 +7,6 @@
 *
 *   @author     Lee Garner <lee@leegarner.com>
 *   @author     Josh Fraser <joshfraz@gmail.com>
-*   @copyright  Copyright (c) 2012 Lee Garner <lee@leegarner.com>
 *   @copyright  Copyright (c) 2012 <joshfraz@gmail.com>
 *   @package    lglib
 *   @version    0.0.1

@@ -16,7 +16,6 @@
 if (!defined('GVERSION')) {
     die('This file can not be used on its own.');
 }
-
 /** Import configuration-handling class */
 require_once $_CONF['path_system'] . 'classes/config.class.php';
 $lgu_config = config::get_instance();
@@ -42,8 +41,25 @@ define('HAVE_SLIMBOX_JS', $_LGLIB_CONF['pi_name']);
 define('LGLIB_MSG_STORE', 'db');        // Required for inter-user messages
 define('LGLIB_MSG_VAR', 'lgmessages');  // session variable name
 
+// Define the beginning of week for the Date_Calc class.
+// The default is "1" for "Monday"
+if (!defined('DATE_CALC_BEGIN_WEEKDAY')) {
+    global $_CONF;
+    switch ($_CONF['week_start']) {
+    case 'Mon':
+        // week begins on Monday
+        define('DATE_CALC_BEGIN_WEEKDAY', 1);
+        break;
+    case 'Sun':
+    default:
+        // week begins on Sunday
+        define('DATE_CALC_BEGIN_WEEKDAY', 0);
+        break;
+    }
+}
+
 // Pseudo-global variables accessible through LGLIB_setGlobal()
-//  and LGLIB_getGlobal()
+// and LGLIB_getGlobal()
 $_LGLIB_GLOBALS = array();
 
 // Session variables are used to pass path info to the TimThumb image resizer.
@@ -82,14 +98,10 @@ if (is_file(LGLIB_PI_PATH . '/config.php')) {
     include_once LGLIB_PI_PATH . '/config.php';
 }
 
-function USES_lglib_class_date()
-{
-    require_once LGLIB_PI_PATH . '/classes/date.class.php';
-}
-
+/** Include the system's PEAR Date Calc class */
 function USES_lglib_class_datecalc()
 {
-    require_once LGLIB_PI_PATH . '/classes/DateCalc.class.php';
+    require_once 'Date/Calc.php';
 }
 
 function USES_lglib_class_nameparser()
@@ -129,6 +141,9 @@ function USES_lglib_class_fpdf($file='')
         require_once LGLIB_PI_PATH . '/classes/pdf/fpdf/fpdf.php';
     }
 }
+
+function USES_lglib_class_html2pdf()
+{   require_once LGLIB_PI_PATH . '/classes/pdf/html2pdf/html2pdf.class.php'; }
 
 /**
 *   Get the currently installed version.
@@ -845,9 +860,13 @@ function LGLIB_auditLog($pi_name, $logentry = '')
     $byuser .= '@' . $_SERVER['REMOTE_ADDR'];
 
     // Write the log entry to the file
-    fputs($file, "$timestamp ($byuser) - $logentry\n");
+    // Can't open the log file?  Fall back to COM_errorLog
+    if ($file = fopen($logfile, 'a')) {
+        fputs($file, "$timestamp ($byuser) - $logentry\n");
+    } else {
+        COM_errorLog("$timestamp ($plugin / $byuser) - $logentry\n");
+    }
     fclose($file);
-
 }
 
 

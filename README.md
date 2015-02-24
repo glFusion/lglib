@@ -24,3 +24,7 @@ A new cron.php has been added that can be called either via URL
 plugin configuration and is optional but recommended. This cron executor
 takes over the system cron function to prevent any long-running tasks such
 as database backups from affecting site visitors.
+
+In addition to the FPDF and HTML2PDF libraries mentioned above, this
+plugin also includes NameParser.class.pdf ((c) Josh Fraser).
+
