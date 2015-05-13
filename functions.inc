@@ -57,6 +57,9 @@ if (!defined('DATE_CALC_BEGIN_WEEKDAY')) {
         break;
     }
 }
+if (!defined('DATE_CALC_FORMAT')) {
+    define('DATE_CALC_FORMAT', '%Y-%m-%d');
+}
 
 // Pseudo-global variables accessible through LGLIB_setGlobal()
 // and LGLIB_getGlobal()
