@@ -16,6 +16,12 @@
 if (!defined('GVERSION')) {
     die('This file can not be used on its own.');
 }
+if (GVERSION < '1.5.0') {
+    // Enable Mootools and disable jQuery
+    $_SYSTEM['disable_mootools'] = false;
+    $_SYSTEM['disable_jquery'] = true;
+}
+
 /** Import configuration-handling class */
 require_once $_CONF['path_system'] . 'classes/config.class.php';
 $lgu_config = config::get_instance();
@@ -101,10 +107,10 @@ if (is_file(LGLIB_PI_PATH . '/config.php')) {
     include_once LGLIB_PI_PATH . '/config.php';
 }
 
-/** Include the system's PEAR Date Calc class */
+/** Include the PEAR Date Calc class */
 function USES_lglib_class_datecalc()
 {
-    require_once 'Date/Calc.php';
+    require_once LGLIB_PI_PATH . '/classes/DateCalc.class.php';
 }
 
 function USES_lglib_class_nameparser()
@@ -225,17 +231,23 @@ function plugin_geticon_lglib()
 */
 function plugin_getheadercss_lglib()
 {
-    global $_CONF, $_LGLIB_CONF;
+    global $_CONF, $_LGLIB_CONF, $_SYSTEM;
 
     $styles = array();
 
     $files = array(
+        'style.css',
         // Include the popup calendar CSS.
         'calendar-' . $_LGLIB_CONF['cal_style'] . '.css',
-        // Include the Slimbox CSS.
-        'slimbox.css',
-        'style.css',
     );
+
+    // Either jQuery or Mootools version
+    if (!$_SYSTEM['disable_mootools']) {
+        $files[] = 'slimbox.css';
+    }
+    if (!$_SYSTEM['disable_jquery']) {
+        $files[] = 'slimbox2.css';
+    }
 
     // When looking for CSS files, we'll check in this order:
     //  1. layout/plugin/custom
@@ -266,7 +278,7 @@ function plugin_getheadercss_lglib()
 */
 function plugin_getheaderjs_lglib()
 {
-    global $_CONF;
+    global $_CONF, $_SYSTEM;
 
     $js_dir = LGLIB_PI_PATH . '/js';
 
@@ -278,17 +290,10 @@ function plugin_getheaderjs_lglib()
     }
 
     $files = array(
-        // JQuery library
-        //"$js_dir/jquery-1.4.4.min.js",
-        //"$js_dir/jquery-1.8.2.min.js",
-
         // datepicker
         "$js_dir/calendar/calendar.js",
         "$js_dir/calendar/lang/calendar-{$iso_lang}.js",
         "$js_dir/calendar/calendar-setup.js",
-
-        // slimbox
-        "$js_dir/slimbox.js",
 
         // modal popups
         //"$js_dir/popup.js",
@@ -296,6 +301,15 @@ function plugin_getheaderjs_lglib()
         // ajax library
         //"$js_dir/ajax.js",
     );
+
+    // Either jQuery or Mootools
+    if (!$_SYSTEM['disable_mootools']) {
+        $files[] = "$js_dir/slimbox.js";
+    }
+    if (!$_SYSTEM['disable_jquery']) {
+        $files[] = "$js_dir/slimbox2.js";
+        //$files[] = "$js_dir/autoactivation.js";
+    }
 
     return $files;
 }
