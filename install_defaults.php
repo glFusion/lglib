@@ -37,6 +37,7 @@ $_LGLIB_DEFAULTS = array(
     'cron_key' => md5(time() . rand()),
     'img_cache_maxage' => 90,          // days
     'img_cache_interval' => 120, // minutes
+    'slimbox_autoactivate' => 0,    // default, no autoactiviation .js loaded
 );
 
 /**
@@ -69,6 +70,8 @@ function plugin_initconfig_lglib()
                 'text', 0, 0, 15, 50, true, $_LGLIB_CONF['pi_name']);
         $c->add('img_cache_maxage', $_LGLIB_DEFAULTS['img_cache_maxage'],
                 'text', 0, 0, 15, 60, true, $_LGLIB_CONF['pi_name']);
+        $c->add('slimbox_autoactivate', $_LGLIB_DEFAULTS['slimbox_autoactivate'],
+                'select', 0, 0, 3, 70, true, $_LGLIB_CONF['pi_name']);
      }
 
      return true;
