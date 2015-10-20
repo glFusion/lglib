@@ -72,7 +72,7 @@ function LGLIB_do_upgrade($current_ver)
         // upgrade from 0.0.6 to 0.0.7
         COM_errorLog("Updating Plugin to 0.0.7");
         $c = config::get_instance();
-        $c->add('slimbox_autoactivate', $_LGLIB_DEFAULTS['slimbox_autoactivate'],
+        $c->add('slimbox_autoactivation', $_LGLIB_DEFAULTS['slimbox_autoactivation'],
                 'select', 0, 0, 3, 70, true, $_LGLIB_CONF['pi_name']);
         $error = LGLIB_do_upgrade_sql('0.0.7');
         if ($error)
