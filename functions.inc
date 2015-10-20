@@ -308,7 +308,9 @@ function plugin_getheaderjs_lglib()
     }
     if (!$_SYSTEM['disable_jquery']) {
         $files[] = "$js_dir/slimbox2.js";
-        //$files[] = "$js_dir/autoactivation.js";
+        if ($_LGLIB_CONF['slimbox_autoactivation']) {
+            $files[] = "$js_dir/autoactivation.js";
+        }
     }
 
     return $files;

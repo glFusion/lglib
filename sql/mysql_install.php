@@ -49,7 +49,7 @@ $_UPGRADE_SQL['0.0.2'] = array(
 );
 
 $_UPGRADE_SQL['0.0.7'] = array(
-  "CREATE TABLE `{$_TABLES['lglib_jobqueue']}` (
+  "CREATE TABLE IF NOT EXISTS `{$_TABLES['lglib_jobqueue']}` (
     `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
     `submitted` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     `pi_name` varchar(20) DEFAULT NULL,
