@@ -233,20 +233,24 @@ function plugin_getheadercss_lglib()
 {
     global $_CONF, $_LGLIB_CONF, $_SYSTEM;
 
+    // glFusion 1.4 uses different paths to css cache than 1.5.0, so need
+    // different versions of css files.
+    $prefix = GVERSION < '1.5.0' ? '140/' : '150/';
+
     $styles = array();
 
     $files = array(
         'style.css',
         // Include the popup calendar CSS.
-        'calendar-' . $_LGLIB_CONF['cal_style'] . '.css',
+        "{$prefix}calendar-{$_LGLIB_CONF['cal_style']}.css",
     );
 
     // Either jQuery or Mootools version
     if (!$_SYSTEM['disable_mootools']) {
-        $files[] = 'slimbox.css';
+        $files[] = "{$prefix}slimbox.css";
     }
     if (!$_SYSTEM['disable_jquery']) {
-        $files[] = 'slimbox2.css';
+        $files[] = "{$prefix}slimbox2.css";
     }
 
     // When looking for CSS files, we'll check in this order:
