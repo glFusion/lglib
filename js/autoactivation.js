@@ -9,7 +9,10 @@
 	Replace the default autoload code block with this one.
 */
 
-if (!/android|iphone|ipod|series60|symbian|windows ce|blackberry/i.test(navigator.userAgent)) {
+// Mediagallery has its own lightbox handler, don't get in its way
+if (!/android|iphone|ipod|series60|symbian|windows ce|blackberry/i.test(navigator.userAgent) &&
+    !/mediagallery/.test(this.href)
+) {
 	jQuery(function($) {
 		$("a[href]").filter(function() {
 			return /\.(jpg|png|gif)$/i.test(this.href);
