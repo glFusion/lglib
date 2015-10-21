@@ -282,7 +282,7 @@ function plugin_getheadercss_lglib()
 */
 function plugin_getheaderjs_lglib()
 {
-    global $_CONF, $_SYSTEM;
+    global $_CONF, $_SYSTEM, $_LGLIB_CONF;
 
     $js_dir = LGLIB_PI_PATH . '/js';
 
