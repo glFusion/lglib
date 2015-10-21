@@ -1642,4 +1642,8 @@ class Date_Calc {
 
 } // end class Date_calendar
 
+// For compatibility with plugins that have used the lgDate class
+class lgDate extends Date_Calc
+{}
+
 ?>
