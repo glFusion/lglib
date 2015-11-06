@@ -35,9 +35,9 @@ $_LGLIB_DEFAULTS = array(
     'img_disp_relpath' => 'data/imgcache',
     'cron_schedule_interval' => 0,
     'cron_key' => md5(time() . rand()),
-    'img_cache_maxage' => 90,          // days
-    'img_cache_interval' => 120, // minutes
-    'slimbox_autoactivation' => 0,    // default, no autoactiviation .js loaded
+    'img_cache_maxage' => 90,       // max cache file age, in days
+    'img_cache_interval' => 120,    // cache cleaning interval, in minutes
+    'slimbox_autoactivation' => 0,  // default, no autoactiviation .js loaded
 );
 
 /**

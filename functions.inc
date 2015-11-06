@@ -313,7 +313,11 @@ function plugin_getheaderjs_lglib()
     if (!$_SYSTEM['disable_jquery']) {
         $files[] = "$js_dir/slimbox2.js";
         if ($_LGLIB_CONF['slimbox_autoactivation']) {
+            // no 'rel="slimbox"' tags needed
             $files[] = "$js_dir/autoactivation.js";
+        } else {
+            // require 'rel="slimbox"' tags
+            $files[] = "$js_dir/relactivation.js";
         }
     }
 
@@ -954,7 +958,7 @@ function LGLIB_ImageUrl($orig_path, $width=0, $height=0, $rnd = 0)
     $disp_fullpath = $_CONF['path_html'] . $disp_relurl;
 
     $maxage = (int)$_LGLIB_CONF['img_cache_maxage'];
-    $interval = (int)$_LGLIB_CONF['img_cache_clean_interval'];
+    $interval = (int)$_LGLIB_CONF['img_cache_interval'];
     if ($maxage > 0 && $interval > 0) {
         // Clean up old files
         // Get absolute path for flag file and finding old cache files
@@ -992,7 +996,7 @@ function LGLIB_ImageUrl($orig_path, $width=0, $height=0, $rnd = 0)
     if (is_file($disp_fullpath)) {
         $url = $_CONF['site_url'] . '/' . $disp_relurl;
     }
-    
+
     return $url;
 }
 
