@@ -16,11 +16,10 @@
 .lgButton {
     padding: 3px 6px;
     display: inline;
-    background: #777777;
+    background-color: #777777;
     border: none;
     color: #FFFFFF !important;
     cursor: pointer;
-    /*font-weight: bold;*/
     font-size: small;
     border-radius: 5px;
     -moz-border-radius: 5px;

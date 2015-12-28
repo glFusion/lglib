@@ -101,7 +101,6 @@ if (is_file("$langpath/custom/$langfile")) {
     include_once "$langpath/custom/$langfile";
 }
 
-
 /** Include the user-supplied configuration file, if any */
 if (is_file(LGLIB_PI_PATH . '/config.php')) {
     include_once LGLIB_PI_PATH . '/config.php';
