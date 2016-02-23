@@ -471,11 +471,10 @@ function LGLIB_invokeService($type, $action, $args, &$output, &$svc_msg)
 
     $output  = '';
     $svc_msg = '';
-
     // Check if the plugin type and action are valid
     $function = 'service_' . $action . '_' . $type;
     if (function_exists($function)) {
-        if (!isset($args['gl_svc'])) {
+        if (is_array($args) && !isset($args['gl_svc'])) {
             $args['gl_svc'] = false;
         }
         $retval = $function($args, $output, $svc_msg);
