@@ -10,7 +10,6 @@
 *               GNU Public License v2 or later
 *   @filesource
 */
-
 require_once '../../../lib-common.php';
 require_once '../../auth.inc.php';
 
@@ -158,13 +157,13 @@ function DBADMIN_list()
         );
 
         $text_arr = array(
-            'form_url' => LGLIB_ADMIN_URL,
+            'form_url' => LGLIB_ADMIN_URL . '/index.php',
         );
         $form_arr = array('bottom' => '', 'top' => '');
         if ($num_backups > 0) {
-            $form_arr['bottom'] = '<input type="hidden" name="delete" value="x"' . XHTML . '>'
+            $form_arr['bottom'] = '<input type="hidden" name="delete" value="x" />'
                                 . '<input type="hidden" name="' . CSRF_TOKEN
-                                . '" value="' . $token . '"' . XHTML . '>' . LB;
+                                . '" value="' . $token . '" />' . LB;
         }
         $options = array('chkselect' => true, 'chkminimum' => 0,
                              'chkfield' => 'filename');
