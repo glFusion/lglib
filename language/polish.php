@@ -51,6 +51,10 @@ $LANG_confignames['lglib'] = array(
     'img_disp_relpath' => 'Path to display images',
     'cron_schedule_interval' => 'Scheduled Task Interval',
     'cron_key' => 'Scheduled Task Security Key',
+    'use_lglib_messages' => 'Use lglib_messages template var?',
+    'img_cache_interval' => 'Image Cache Cleaning Interval (minutes)',
+    'img_cache_maxage' => 'Cached Image Max Age (days)',
+    'slimbox_autoactivation' => 'Auto-Activate Slimbox?',
 );
 
 $LANG_configsubgroups['lglib'] = array(

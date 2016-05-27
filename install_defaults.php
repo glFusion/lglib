@@ -38,6 +38,8 @@ $_LGLIB_DEFAULTS = array(
     'img_cache_maxage' => 90,       // max cache file age, in days
     'img_cache_interval' => 120,    // cache cleaning interval, in minutes
     'slimbox_autoactivation' => 0,  // default, no autoactiviation .js loaded
+    // Use the lglib_messages template var? False to append messages to info_block
+    'use_lglib_messages' => 0,
 );
 
 /**
@@ -72,6 +74,8 @@ function plugin_initconfig_lglib()
                 'text', 0, 0, 15, 60, true, $_LGLIB_CONF['pi_name']);
         $c->add('slimbox_autoactivation', $_LGLIB_DEFAULTS['slimbox_autoactivation'],
                 'select', 0, 0, 3, 70, true, $_LGLIB_CONF['pi_name']);
+        $c->add('use_lglib_messages', $_LGLIB_DEFAULTS['use_lglib_messages'],
+                'select', 0, 0, 3, 80, true, $_LGLIB_CONF['pi_name']);
      }
 
      return true;

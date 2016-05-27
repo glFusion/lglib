@@ -79,6 +79,14 @@ function LGLIB_do_upgrade($current_ver)
             return $error;
     }
 
+    if ($current_ver < '1.0.1') {
+        // upgrade to 1.0.1
+        COM_errorLog("Updating Plugin to 1.0.1");
+        $c = config::get_instance();
+        $c->add('use_lglib_messages', $_LGLIB_DEFAULTS['use_lglib_messages'],
+                'select', 0, 0, 3, 80, true, $_LGLIB_CONF['pi_name']);
+    }
+
      return $error;
 }
 

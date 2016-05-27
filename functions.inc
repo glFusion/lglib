@@ -431,13 +431,17 @@ function plugin_upgrade_lglib()
 
 /**
 *   Set template variables.
+*   Puts any messages to be displayed into the lglib_messags
+*   template variable, if used, or appends them to the info_block
+*   variable that should be part of every header.thtml template.
 *
 *   @param  string  $templatename   Name of template, e.g. 'header'
 *   @param  ref     $template       Reference to actual template
 */
 function plugin_templateSetVars_lglib($templatename, &$template)
 {
-    global $topic;
+    global $_CONF_LGLIB;
+
     static $messages = NULL;
 
     // Get messages to display to the user and put them in the template
@@ -446,7 +450,15 @@ function plugin_templateSetVars_lglib($templatename, &$template)
     if ($messages === NULL) {
         $messages = LGLIB_showAllMessages();
     }
-    $template->set_var('lglib_messages', $messages);
+    if ($messages == '') return;
+    if ($_CONF_LGLIB['use_lglib_messages']) {
+        $template->set_var('lglib_messages', $messages);
+    } elseif ($templatename == 'footer') {
+        // Have to do this during the 'footer' template to make sure it's
+        // only done once.
+        $info_block = $template->get_var('info_block') . $messages;
+        $template->set_var('info_block', $info_block);
+    }
 }
 
 

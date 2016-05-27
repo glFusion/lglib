@@ -1,5 +1,4 @@
 <?php
-//  $Id: english.php 42 2012-05-23 15:05:36Z root $
 /**
 *   Default English Language file for the lgLib plugin.
 *
@@ -55,6 +54,8 @@ $LANG_confignames['lglib'] = array(
     'cron_key' => 'Scheduled Task Security Key',
     'img_cache_interval' => 'Image Cache Cleaning Interval (minutes)',
     'img_cache_maxage' => 'Cached Image Max Age (days)',
+    'use_lglib_messages' => 'Use lglib_messages template var?',
+    'slimbox_autoactivation' => 'Auto-Activate Slimbox?',
 );
 
 $LANG_configsubgroups['lglib'] = array(
