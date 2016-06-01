@@ -20,12 +20,7 @@ require_once '../../../lib-common.php';
 if (!SEC_inGroup('Root')) {
     // Someone is trying to illegally access this page
     COM_errorLog("Someone has tried to illegally access the lglib install/uninstall page.  User id: {$_USER['uid']}, Username: {$_USER['username']}, IP: $REMOTE_ADDR",1);
-    $display = COM_siteHeader();
-    $display .= COM_startBlock($LANG_PHOTO['access_denied']);
-    $display .= $LANG_PHOTO['access_denied_msg'];
-    $display .= COM_endBlock();
-    $display .= COM_siteFooter(true);
-    echo $display;
+    COM_404();
     exit;
 }
 
