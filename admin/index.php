@@ -20,14 +20,8 @@ LGLIB_setGlobal('pi_title', $pi_title);
 
 // If user isn't a root user or if the backup feature is disabled, bail.
 if (!SEC_inGroup('Root') OR $_CONF['allow_mysqldump'] == 0) {
-    $display .= COM_siteHeader('menu', $pi_title);
-    $display .= COM_startBlock($MESSAGE[30], '',
-                    COM_getBlockTemplate('_msg_block', 'header'));
-    $display .= $MESSAGE[46];
-    $display .= COM_endBlock(COM_getBlockTemplate('_msg_block', 'footer'));
-    $display .= COM_siteFooter();
-    COM_accessLog("User {$_USER['username']} tried to illegally access the database backup screen.");
-    echo $display;
+    COM_accessLog("User {$_USER['username']} tried to illegally access the lglib admin page.");
+    COM_404();
     exit;
 }
 
