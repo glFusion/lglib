@@ -575,7 +575,10 @@ function LGLIB_storeMessage($args, $title='', $persist=false, $expires = '',
 
 
 /**
-*   Retrieve all messages for display
+*   Retrieve all messages for display.
+*   Gets all messages from the DB where the user ID matches for
+*   non-anonymous users, OR the session ID matches. This allows a message
+*   caused by an anonymous action to be displayed to the user after login.
 *
 *   @return array   Array of messages, title=>message
 */
