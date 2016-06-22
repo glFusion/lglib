@@ -74,7 +74,15 @@ popup calendar.<br /><br />
     <tr class="row0">
       <td class="col0 leftalign" valign="top"><a name="desc_slimbox_autoactivation"></a>Auto-Activate Slimbox?</td>
       <td class="col1 leftalign">
-        Slimbox is included to provide a pop-up image viewer when links to images are encountered. If this option is enabled, all image URLs will use the Slimbox viewer insteade of opening a new tab or window. You may need to clear your cache after changing this option.
+        <p>Slimbox is included to provide a pop-up image viewer when links to images are encountered. If this option is enabled, all image URLs will use the Slimbox viewer insteade of opening a new tab or window. You may need to clear your cache after changing this option.</p>
+        <p>Auto-activation does not examin the &quot;rel=&quot; tag, so grouping images will not work.</p>
+      </td>
+    </tr>
+
+    <tr class="row0">
+      <td class="col0 leftalign" valign="top"><a name="desc_use_lglib_messages"></a>Use lglib_messages Template Var?</td>
+      <td class="col1 leftalign">
+        This plugin can display pop-up messages created by other plugins or events. By default, they are displayed as part of the {info_block} template variable at the top of the content area. Setting this value to &quot;Yes&quot; will use the {lglib_messages} template variable which you must place in a desired location manually.
       </td>
     </tr>
 
