@@ -1,106 +1,86 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<!-- $Id: config.html 534 2012-05-29 01:29:57Z root $ -->
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns="http://www.w3.org/1999/xhtml" class="uk-height-1-1">
 <head>
-  <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
-  <link rel="stylesheet" type="text/css" href="../../../docs/docstyle.css" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="apple-touch-icon-precomposed" href="../../layout/cms/images/apple-touch-icon.png">
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/uikit/2.26.3/css/uikit.almost-flat.min.css">
   <meta name="robots" content="noindex,nofollow" />
-  <title>lgLib Plugin - glFusion CMS</title>
+  <title>glFusion Paypal Plugin Configuration</title>
+  <style>
+    html{background:#f9f9f9}.tm-dropdown,.tm-navbar{background:#325482!important}.uk-form label{font-weight:700}.tm-navbar{border-radius:0!important;padding:1px 0 6px!important;border:none!important}.tm-navbar-brand{color:#eee!important}.tm-navbar-brand a{text-shadow:none;color:#fff}.tm-navbar-brand a:hover{color:#ababab;text-decoration:none}.tm-navbar-brand-oc a{text-shadow:none;color:#fff}.tm-navbar-brand-oc a:hover{color:#ababab;text-decoration:none}.tm-navbar-nav>li>a{border:none;border-radius:3px!important;font-size:15px!important;height:40px!important;margin:0!important}.tm-dropdown{color:#000;border-radius:0!important;border:0!important}.tm-nav-navbar>li>a{color:#fff!important}.tm-navbar::after,.tm-navbar::before{margin-top:7px!important}.tm-navbar-nav>li.uk-open>a,.tm-navbar-nav>li:hover>a,.tm-navbar-nav>li>a:focus{color:#fff;outline:0;background:#35B3EE!important}.tm-navbar-nav>li>a{color:#fff!important;text-shadow:none!important}.tm-navbar-toggle{color:#ccc!important;text-shadow:none!important}.tm-navbar-toggle:focus,.tm-navbar-toggle:hover{color:#fff!important}.tm-footer{background:#252525;border-top:1px solid #232425;margin-bottom:0;bottom:0;padding:10px;color:#fff}.tm-wrapper{min-height:100%;margin:0 auto -51px!important}.tm-push,footer{height:51px}.uk-navbar-content > a {color:#fff !important;}
+  </style>
 </head>
 
-<body style="direction: ltr;">
+<body class="uk-height-1-1">
+  <div class="tm-wrapper">
+    <nav class="uk-navbar uk-navbar-attached tm-navbar uk-margin-bottom">
+      <div class="uk-navbar-brand tm-navbar-brand">
+        glFusion Paypal Plugin Configuration
+      </div>
+      <div class="uk-navbar-flip uk-hidden-small">
+        <div class="uk-navbar-content tm-navbar-content" style="text-shadow:none;">
+          <a href="https://www.glfusion.org/wiki/">glFusion Wiki</a>
+        </div>
+      </div>
+    </nav>
 
-<div id="gl_container_fluid">
-<div id="gl_header"> <span style="color: rgb(255, 255, 255); float: left; padding-left: 10px; padding-top: 5px; vertical-align: middle;">glFusion
-Documentation Project </span> <a style="float: right; padding-right: 10px; padding-top: 5px; vertical-align: middle;" href="http://www.glfusion.org/wiki/doku.php">glFusion Wiki</a>
-</div>
+    <div class="uk-container uk-container-center uk-margin-bottom">
+      <h1>glFusion lgLib Plugin Configuration</h1>
+      <p>The lgLib plugin provides certain functions, javascript, and CSS that is commonly used across plugins.</p>
 
-<div id="gl_wrapper">
-<div class="body-container">
-<h1>lgLib Configuration</h1>
-The lgLib plugin provides certain functions, javascript, and CSS that is commonly used across plugins.
-<table class="inline">
+      <h2>Main Paypal Options</h2>
 
-  <tbody>
-    <tr>
-    <th class="col0 leftalign" colspan="2">General Settings</th>
-    </tr>
+      <dl id="desc_admin_email_addr">
+        <dt>Administrator&apos;s Email Address</dt>
+        <dd>Enter the email addresses to which confirmation email messages should be sent. If this is empty, the site email address will be used.</dd>
+      </dl>
 
-    <tr class="row0">
-      <td class="col0 leftalign" valign="top"><a name="desc_cal_style"></a>Calendar Style</td>
-      <td class="col1 leftalign">Select the visiual style to be used for the
-popup calendar.<br /><br />
-<i>After changing this option, you must clear the layout cache</i>
-  </td>
-    </tr>
+      <dl id="desc_cal_style">
+        <dt>Calendar Style</dt>
+        <dd>Select the visiual style to be used for the popup calendar.<br /><br />
+<i>After changing this option, you must clear the layout cache</i></dd>
+      </dl>
 
-    <tr class="row0">
-      <td class="col0 leftalign" valign="top"><a name="desc_img_disp_relpath"></a>Path to display images</td>
-      <td class="col1 leftalign">
-        Enter the path for the plugin to create images for display. This path is relative to the plugin's HTML directory, so the resulting image url is &quot;http://yoursite.com/lglib/path/you/enter&quot;
-      </td>
-    </tr>
+      <dl id="desc_img_disp_relpath">
+        <dt>Path to display images</dt>
+        <dd>Enter the path for the plugin to create images for display. This path is relative to the plugin's HTML directory, so the resulting image url is &quot;http://yoursite.com/lglib/path/you/enter&quot;</dd>
+      </dl>
 
-    <tr class="row0">
-      <td class="col0 leftalign" valign="top"><a name="desc_cron_schedule_interval"></a>Scheduled Task Interval</td>
-      <td class="col1 leftalign">
-        This plugin includes a specialized cron.php file that can be called locally or remotely to trigger scheduled tasks. Use this if you're concerned about a) irregular execution via normal site visits, or b) have lengthy tasks to perform and don&apos;t want to penalize your site visitors.
+      <dl id="desc_cron_schedule_interval">
+        <dt>Scheduled Task Interval</dt>
+        <dd>This plugin includes a specialized cron.php file that can be called locally or remotely to trigger scheduled tasks. Use this if you're concerned about a) irregular execution via normal site visits, or b) have lengthy tasks to perform and don&apos;t want to penalize your site visitors.
         <p>To use this feature, set this value to some number of seconds (e.g. 3600 for hourly jobs) and set the global site cron interval to zero. Then, via a host cron job or remote monitoring tool, execute /lglib/cron.php. For example, you could set your remote monitoring tool to call http://yoursite/lglib/cron.php every 5 minutes. All scheduled tasks will be executed from this tool rather than by your site visitors.</p>
-        <p><i>If you leave the global site cron interval set, regular scheduled tasks will be spawned by site visitors as usual. Database backups are always handled by lglib&apos;s cron handler due to the time required.</i></p>
-      </td>
-    </tr>
+        <p><i>If you leave the global site cron interval set, regular scheduled tasks will be spawned by site visitors as usual. Database backups are always handled by lglib&apos;s cron handler due to the time required.</i></p></dd>
+      </dl>
 
-    <tr class="row0">
-      <td class="col0 leftalign" valign="top"><a name="desc_cron_key"></a>Scheduled Task Security Key</td>
-      <td class="col1 leftalign">
-        As a basic security measure, you can protect the scheduled task URL by providing some random string. This string must be included with the URL (as &quot;http://yoursite/lglib/cron.php?key=XXXXX&quot;) or as an argument to the command line (&quot;php lglib/cron.php XXXXX&quot;). If this value is configured but not supplied when cron.php is invoked, no action will be taken.
-      </td>
-    </tr>
+      <dl id="desc_cron_key">
+        <dt>Scheduled Task Security Key</dt>
+        <dd>As a basic security measure, you can protect the scheduled task URL by providing some random string. This string must be included with the URL (as &quot;http://yoursite/lglib/cron.php?key=XXXXX&quot;) or as an argument to the command line (&quot;php lglib/cron.php XXXXX&quot;). If this value is configured but not supplied when cron.php is invoked, no action will be taken.</dd>
+      </dl>
 
-    <tr class="row0">
-      <td class="col0 leftalign" valign="top"><a name="desc_img_cache_interval"></a>Image Cache Cleaning Interval</td>
-      <td class="col1 leftalign">
-        Enter a number of minutes to wait between cache cleaning cycles. To minimize load and wait time for the visitor, the image cache is only cleaned every X minutes and only one cache directory out of 16 is cleaned at a time. Enter zero to disable cache cleaning.
-      </td>
-    </tr>
+      <dl id="desc_img_cache_interval">
+        <dt>Image Cache Cleaning Interval</dt>
+        <dd>Enter a number of minutes to wait between cache cleaning cycles. To minimize load and wait time for the visitor, the image cache is only cleaned every X minutes and only one cache directory out of 16 is cleaned at a time. Enter zero to disable cache cleaning.</dd>
+      </dl>
 
-    <tr class="row0">
-      <td class="col0 leftalign" valign="top"><a name="desc_img_cache_maxage"></a>Cached Image Max Age</td>
-      <td class="col1 leftalign">
-        Enter the number of days that a cached image may remain before being automatically removed. A small number here will keep disk usage low, but may increase wait times for visitors as images are recreated. A value of zero disables cache cleaning.
-      </td>
-    </tr>
+      <dl id="desc_img_cache_maxage">
+        <dt>Cached Image Max Age</dt>
+        <dd>Enter the number of days that a cached image may remain before being automatically removed. A small number here will keep disk usage low, but may increase wait times for visitors as images are recreated. A value of zero disables cache cleaning.</dd>
+      </dl>
 
-    <tr class="row0">
-      <td class="col0 leftalign" valign="top"><a name="desc_slimbox_autoactivation"></a>Auto-Activate Slimbox?</td>
-      <td class="col1 leftalign">
-        <p>Slimbox is included to provide a pop-up image viewer when links to images are encountered. If this option is enabled, all image URLs will use the Slimbox viewer insteade of opening a new tab or window. You may need to clear your cache after changing this option.</p>
-        <p>Auto-activation does not examin the &quot;rel=&quot; tag, so grouping images will not work.</p>
-      </td>
-    </tr>
+      <dl id="desc_slimbox_autoactivation">
+        <dt>Auto-Activate Slimbox?</dt>
+        <dd><p>Slimbox is included to provide a pop-up image viewer when links to images are encountered. If this option is enabled, all image URLs will use the Slimbox viewer insteade of opening a new tab or window. You may need to clear your cache after changing this option.</p>
+        <p><b>Note:</b> Auto-activation does not examine the &quot;rel=&quot; tag, so grouping images will not work.</p></dd>
+      </dl>
 
-    <tr class="row0">
-      <td class="col0 leftalign" valign="top"><a name="desc_use_lglib_messages"></a>Use lglib_messages Template Var?</td>
-      <td class="col1 leftalign">
-        This plugin can display pop-up messages created by other plugins or events. By default, they are displayed as part of the {info_block} template variable at the top of the content area. Setting this value to &quot;Yes&quot; will use the {lglib_messages} template variable which you must place in a desired location manually.
-      </td>
-    </tr>
+      <dl id="desc_use_lglib_messages">
+        <dt>Use lglib_messages Template Var?</dt>
+        <dd>This plugin can display pop-up messages created by other plugins or events. By default, they are displayed as part of the {info_block} template variable at the top of the content area. Setting this value to &quot;Yes&quot; will use the {lglib_messages} template variable which you must place in a desired location manually.</dd>
+      </dl>
 
-    <tr class="row0">
-      <td class="col0 leftalign" valign="top"><a name="desc_use_lglib_messages"></a>Use lglib_messages Template Var?</td>
-      <td class="col1 leftalign">
-        This plugin can display pop-up messages created by other plugins or events. By default, they are displayed as part of the {info_block} template variable at the top of the content area. Setting this value to &quot;Yes&quot; will use the {lglib_messages} template variable which you must place in a desired location manually.
-      </td>
-    </tr>
-
-  </tbody>
-</table>
-
-</div>
-
-</div>
-
-</div>
-
+    </div>
+  </div>
 </body>
 </html>
