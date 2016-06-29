@@ -20,6 +20,8 @@ if (GVERSION < '1.5.0') {
     // Enable Mootools and disable jQuery
     $_SYSTEM['disable_mootools'] = false;
     $_SYSTEM['disable_jquery'] = true;
+    $_SYSTEM['disable_jquery_menu'] = true;
+    $_SYSTEM['disable_jquery_slimbox'] = true;
 }
 
 /** Import configuration-handling class */
@@ -248,7 +250,7 @@ function plugin_getheadercss_lglib()
     if (!$_SYSTEM['disable_mootools']) {
         $files[] = "{$prefix}slimbox.css";
     }
-    if (!$_SYSTEM['disable_jquery']) {
+    if (!$_SYSTEM['disable_jquery_slimbox']) {
         $files[] = "{$prefix}slimbox2.css";
     }
 
@@ -309,7 +311,7 @@ function plugin_getheaderjs_lglib()
     if (!$_SYSTEM['disable_mootools']) {
         $files[] = "$js_dir/slimbox.js";
     }
-    if (!$_SYSTEM['disable_jquery']) {
+    if (!$_SYSTEM['disable_jquery_slimbox']) {
         $files[] = "$js_dir/slimbox2.js";
         if ($_LGLIB_CONF['slimbox_autoactivation']) {
             // no 'rel="slimbox"' tags needed
