@@ -83,6 +83,11 @@ SESS_setVar('lglib', array(
     'path_to_mogrify' => $_CONF['path_to_mogrify'],
 ));
 
+// Set default message location to top center unless otherwise set
+if (!isset($_SYSTEM['alert_position'])) {
+    $_SYSTEM['alert_position'] = 'top-center';
+}
+
 /**
 *   Include the plugin-specific language file, and the corresponding
 *   admin-created custom language file, if any.  Looks for the site
@@ -178,7 +183,7 @@ function plugin_cclabel_lglib()
 {
     global $LANG_LGLIB;
 
-    if (SEC_inGroup('Root')) {
+    if (SEC_inGroup('Root') && GVERSION < '1.6.1') {
         return array(
             $LANG_LGLIB['menu_label'],
             LGLIB_ADMIN_URL . '/index.php',
@@ -693,8 +698,6 @@ function LGLIB_expireMessages()
 */
 function LGLIB_showAllMessages($persist = false)
 {
-    global $_USER;
-
     $retval = '';
 
     LGLIB_expireMessages();
