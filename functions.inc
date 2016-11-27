@@ -156,7 +156,7 @@ function USES_lglib_class_fpdf($file='')
 }
 
 function USES_lglib_class_html2pdf()
-{   require_once LGLIB_PI_PATH . '/classes/pdf/html2pdf/html2pdf.class.php'; }
+{   require_once LGLIB_PI_PATH . '/classes/pdf/html2pdf/vendor/autoload.php'; }
 
 /**
 *   Get the currently installed version.
@@ -313,9 +313,14 @@ function plugin_getheaderjs_lglib()
     // Either jQuery or Mootools
     if (!isset($_SYSTEM['disable_mootools']) || $_SYSTEM['disable_mootools'] == false) {
         $files[] = "$js_dir/slimbox.js";
-    }
+    } /*else {
+        $files[] = "$js_dir/lglib_misc.js";
+    }*/
+
     if (!isset($_SYSTEM['disable_jquery_slimbox']) || $_SYSTEM['disable_jquery_slimbox'] == false) {
-        $files[] = "$js_dir/slimbox2.js";
+        if (GVERSION < '1.6.0') {
+            $files[] = "$js_dir/slimbox2.js";
+        }
         if ($_LGLIB_CONF['slimbox_autoactivation']) {
             // no 'rel="slimbox"' tags needed
             $files[] = "$js_dir/autoactivation.js";
