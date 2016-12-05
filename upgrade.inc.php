@@ -6,7 +6,7 @@
 *   @copyright  Copyright (c) 2013 Lee Garner <lee@leegarner.com>
 *   @package    lglib
 *   @version    0.0.2
-*   @license    http://opensource.org/licenses/gpl-2.0.php 
+*   @license    http://opensource.org/licenses/gpl-2.0.php
 *               GNU Public License v2 or later
 *   @filesource
 */
@@ -35,9 +35,7 @@ function LGLIB_do_upgrade($current_ver)
     if ($current_ver < '0.0.2') {
         // upgrade from 0.0.1 to 0.0.2
         COM_errorLog("Updating Plugin to 0.0.2");
-        $error = LGLIB_do_upgrade_sql('0.0.2');
-        if ($error)
-            return $error;
+        if (!LGLIB_do_upgrade_sql('0.0.2')) return false;
     }
 
     if ($current_ver < '0.0.4') {
@@ -74,9 +72,7 @@ function LGLIB_do_upgrade($current_ver)
         $c = config::get_instance();
         $c->add('slimbox_autoactivation', $_LGLIB_DEFAULTS['slimbox_autoactivation'],
                 'select', 0, 0, 3, 70, true, $_LGLIB_CONF['pi_name']);
-        $error = LGLIB_do_upgrade_sql('0.0.7');
-        if ($error)
-            return $error;
+        if (!LGLIB_do_upgrade_sql('0.0.7')) return false;
     }
 
     if ($current_ver < '1.0.1') {
@@ -95,17 +91,16 @@ function LGLIB_do_upgrade($current_ver)
 *   Actually perform any sql updates.
 *
 *   @param  string  $version    Version being upgraded TO
-*   @param  array   $sql        Array of SQL statement(s) to execute
+*   @return boolean         True on success, False on failure
 */
 function LGLIB_do_upgrade_sql($version)
 {
     global $_TABLES, $_LGLIB_CONF, $_UPGRADE_SQL;
 
-
     // If no sql statements passed in, return success
     if (!isset($_UPGRADE_SQL[$version]) ||
             !is_array($_UPGRADE_SQL[$version]))
-        return 0;
+        return true;
 
     // Execute SQL now to perform the upgrade
     COM_errorLOG("--Updating lgLib to version $version");
@@ -114,11 +109,10 @@ function LGLIB_do_upgrade_sql($version)
         DB_query($q, '1');
         if (DB_error()) {
             COM_errorLog("SQL Error during lgLib plugin update: $q",1);
-            return 1;
-            break;
+            return false;
         }
     }
-    return 0;
+    return true;
 }
 
 ?>
