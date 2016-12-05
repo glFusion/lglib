@@ -5,10 +5,10 @@
 *   required by other plugins.
 *
 *   @author     Lee Garner <lee@leegarner.com>
-*   @copyright  Copyright (c) 2012-2014 Lee Garner <lee@leegarner.com>
+*   @copyright  Copyright (c) 2012-2016 Lee Garner <lee@leegarner.com>
 *   @package    lglib
-*   @version    0.0.7
-*   @license    http://opensource.org/licenses/gpl-2.0.php 
+*   @version    1.0.3
+*   @license    http://opensource.org/licenses/gpl-2.0.php
 *               GNU Public License v2 or later
 *   @filesource
 */
@@ -171,19 +171,17 @@ function plugin_chkVersion_lglib()
 
 
 /**
-* This will put an option for the plugin in the command and control block 
-* on moderation.php
+*   Puts an option for the plugin in the command and control block.
+*   Not used in glFusion versions > 1.6.0 since the database backup function
+*   has been updated in the main DB Backup option.
 *
-* Add the plugin name, icon and link to the command and control block in 
-* moderation.php
-*
-* @return   array  Array containing (plugin name, admin url, url of plugin icon)
+*   @return   array  Array of (plugin name, admin url, url of plugin icon)
 */
-function plugin_cclabel_lglib() 
+function plugin_cclabel_lglib()
 {
-    global $LANG_LGLIB;
+    global $LANG_LGLIB, $_CONF;
 
-    if (SEC_inGroup('Root') && GVERSION < '1.6.1') {
+    if (SEC_inGroup('Root') && GVERSION < '1.6.1' && $_CONF['allow_mysql_dump']) {
         return array(
             $LANG_LGLIB['menu_label'],
             LGLIB_ADMIN_URL . '/index.php',
@@ -194,12 +192,13 @@ function plugin_cclabel_lglib()
     }
 }
 
+
 /**
 *   Adds the plugin to the Admin menu.
 *
 *   @return array   Array(pi_name, admin url, # of items) or '' for none.
 */
-function plugin_getadminoption_lglib() 
+function plugin_getadminoption_lglib()
 {
     global $LANG_LGLIB;
 
@@ -867,7 +866,7 @@ function LGLIB_getSession($name, $remove=false)
     return $retval;
 }
 
-    
+
 /**
 *   Log activity to a plugin-specific log file
 *   Logs will be written to /private/logs/<pi_name>.log
@@ -965,7 +964,7 @@ function LGLIB_ImageUrl($orig_path, $width=0, $height=0, $rnd = 0)
 
     // Separate the path and create a MD5 hash of its path and size
     $path_parts = pathinfo($orig_path);
-    $disp_fname = md5("$rnd-$orig_path-$width-$height") . '.' . 
+    $disp_fname = md5("$rnd-$orig_path-$width-$height") . '.' .
             $path_parts['extension'];
 
     // Image path portion of url
@@ -1120,6 +1119,5 @@ function LGLIB_update_job_status($jobid, $status)
             SET status = '{$status}'
             WHERE id = $jobid");
 }
-
 
 ?>

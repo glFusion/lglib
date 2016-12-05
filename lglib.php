@@ -3,9 +3,9 @@
 *   Table names and other global configuration values.
 *
 *   @author     Lee Garner <lee@leegarner.com>
-*   @copyright  Copyright (c) 2012-2014 Lee Garner <lee@leegarner.com>
+*   @copyright  Copyright (c) 2012-2016 Lee Garner <lee@leegarner.com>
 *   @package    lglib
-*   @version    1.0.0
+*   @version    1.0.3
 *   @license    http://opensource.org/licenses/gpl-2.0.php 
 *               GNU Public License v2 or later
 *   @filesource
