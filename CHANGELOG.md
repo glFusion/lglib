@@ -1,5 +1,8 @@
 # lgLib utility plugin for glFusion
 
+## 1.0.4
+- Modify html2pdf with limited fonts to reduce plugin size
+
 ## 1.0.3
 - Updates for glFusion 1.5+ and UIkit themes
 - Update html2pdf to 4.5.1 (http://html2pdf.fr/)
