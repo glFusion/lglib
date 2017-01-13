@@ -1,5 +1,9 @@
 # lgLib utility plugin for glFusion
 
+## 1.0.5
+- Add service function to resize images, return more information
+- Add generic LGLIB_getDocUrl() to get documentation pages
+
 ## 1.0.4
 - Modify html2pdf with limited fonts to reduce plugin size
 

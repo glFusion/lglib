@@ -3,9 +3,9 @@
 *   Table names and other global configuration values.
 *
 *   @author     Lee Garner <lee@leegarner.com>
-*   @copyright  Copyright (c) 2012-2016 Lee Garner <lee@leegarner.com>
+*   @copyright  Copyright (c) 2012-2017 Lee Garner <lee@leegarner.com>
 *   @package    lglib
-*   @version    1.0.3
+*   @version    1.0.5
 *   @license    http://opensource.org/licenses/gpl-2.0.php 
 *               GNU Public License v2 or later
 *   @filesource
@@ -13,7 +13,7 @@
 
 // Static configuration items
 global $_LGLIB_CONF;
-$_LGLIB_CONF['pi_version'] = '1.0.4';
+$_LGLIB_CONF['pi_version'] = '1.0.5';
 $_LGLIB_CONF['pi_name'] = 'lglib';
 $_LGLIB_CONF['gl_version'] = '1.4.0';
 $_LGLIB_CONF['pi_url'] = 'http://www.leegarner.com';
