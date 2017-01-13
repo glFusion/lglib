@@ -5,9 +5,9 @@
 *   required by other plugins.
 *
 *   @author     Lee Garner <lee@leegarner.com>
-*   @copyright  Copyright (c) 2012-2016 Lee Garner <lee@leegarner.com>
+*   @copyright  Copyright (c) 2012-2017 Lee Garner <lee@leegarner.com>
 *   @package    lglib
-*   @version    1.0.3
+*   @version    1.0.5
 *   @license    http://opensource.org/licenses/gpl-2.0.php
 *               GNU Public License v2 or later
 *   @filesource
@@ -351,6 +351,14 @@ function LGLIB_getDocURL($file='', $pi_name='lglib', $doclang='english')
     $doc_url = '';
 
     if ($file != '') {
+        // Split out any .html extension to insert ".legacy" if needed
+        $fparts = pathinfo($file);
+        $file = $fparts['filename'];
+        if (version_compare(GVERSION, '1.6.0', '<')) {
+            $file .= '.legacy';
+        }
+        $file .= '.html';
+
         if (!is_file($doc_path . $file)) {
             $doclang = 'english';
         }
@@ -892,7 +900,7 @@ function LGLIB_auditLog($pi_name, $logentry = '')
 
     // Can't open the log file?  Return an error
     if (!$file = fopen($logfile, 'a')) {
-        COM_errorLog("Unable to open {$pi_name}.log");
+        COM_errorLog("Cannot open {$pi_name}.log. Msg: $logentry");
         return;
     }
 
@@ -939,8 +947,9 @@ function LGLIB_titleCase($str)
 
 /**
 *   Get the URL to an image.
-*   If the requested size doesn't exist, it's created in the cache directory.
-*   The original version is never shown.
+*   New version just calls service_imageurl_lglib() and returns the url
+*   for backward compatibility.
+*
 *   Sample usage:
 *       echo '<img src=" . LGLIB_ImageUrl(/some/file/path.jpg, 800, 600) . '">';
 *
@@ -952,72 +961,19 @@ function LGLIB_titleCase($str)
 */
 function LGLIB_ImageUrl($orig_path, $width=0, $height=0, $rnd = 0)
 {
-    global $_LGLIB_CONF, $_CONF;
-
-    // Initialize return value to empty URL.
-    // Maybe change to a stock "missing" image in the future.
+    $args = array(
+        'filepath'  => $orig_path,
+        'width'     => $width,
+        'height'    => $height,
+        'rnd'       => $rnd,
+    );
     $url = '';
-
-    // If original image doesn't exist, return empty url,
-    // don't bother continuing.
-    if (!is_file($orig_path)) return $url;
-
-    // Separate the path and create a MD5 hash of its path and size
-    $path_parts = pathinfo($orig_path);
-    $disp_fname = md5("$rnd-$orig_path-$width-$height") . '.' .
-            $path_parts['extension'];
-
-    // Image path portion of url
-    $img_path = $_LGLIB_CONF['pi_name'] . '/' . $_LGLIB_CONF['img_disp_relpath'] .
-            '/' . $disp_fname[0];
-
-    // Image url relative to display base url
-    $disp_relurl = $img_path . '/' . $disp_fname;
-
-    // Display image full path, for checking file_exists and storing resized
-    $disp_fullpath = $_CONF['path_html'] . $disp_relurl;
-
-    $maxage = (int)$_LGLIB_CONF['img_cache_maxage'];
-    $interval = (int)$_LGLIB_CONF['img_cache_interval'];
-    if ($maxage > 0 && $interval > 0) {
-        // Clean up old files
-        // Get absolute path for flag file and finding old cache files
-        $img_path = $_CONF['path_html'] . $img_path;
-
-        $lastCleanFile = $img_path . '/.lastclean.touch';
-        if (!is_file($lastCleanFile)) {
-            @touch($lastCleanFile);
-        }
-        if (@filemtime($lastCleanFile) < ((time() - $interval) * 60)) {
-            $files = glob($img_path . '/*');
-            if ($files) {
-                $timeAgo = time() - ($maxage * 86400);
-                foreach ($files as $file) {
-                    if (@filemtime($file) < $timeAgo) {
-                        @unlink($file);
-                    }
-                }
-            }
-        }
+    $status = service_imageurl_lglib($args, $output, $svc_msg);
+    if ($status == PLG_RET_OK) {
+        return $output['url'];
+    } else {
+        return '';
     }
-
-    // If the file isn't found, try to create it.
-    if (!is_file($disp_fullpath)) {
-        // Found an error with getting exif into in IMG_resizeImage(),
-        // use less-robust version in lgImage instead
-        USES_lglib_class_image();
-        lgImage::ReSize($orig_path, $disp_fullpath, $width, $height);
-        //USES_lib_image();
-        //IMG_resizeImage($orig_path, $disp_fullpath, $width, $height);
-    }
-
-    // If the file exists, return the full url.
-    // If not, there's a problem and the empty url will be returned.
-    if (is_file($disp_fullpath)) {
-        $url = $_CONF['site_url'] . '/' . $disp_relurl;
-    }
-
-    return $url;
 }
 
 
@@ -1118,6 +1074,113 @@ function LGLIB_update_job_status($jobid, $status)
     DB_query("UPDATE {$_TABLES['lglib_jobqueue']}
             SET status = '{$status}'
             WHERE id = $jobid");
+}
+
+
+/**
+*   Get the image info for a resized image.
+*
+*   Args array is expected to ontain values for 'filepath', 'width', 'height',
+*   and an optional random number for force image regeneration.
+*
+*   @uses   lgImage::ReSize()
+*   @param  array   $args       Array of item information
+*   @param  array   &$output    Pointer to output array
+*   @param  array   &$svc_msg   Unused
+*   @return integer             Status code
+*/
+function service_imageurl_lglib($args, &$output, &$svc_msg)
+{
+    global $_LGLIB_CONF, $_CONF;
+
+    // Initialize return value to empty URL.
+    // Maybe change to a stock "missing" image in the future.
+    $output = array();
+
+    // Sanitize arguments
+    $width = isset($args['width']) ? (int)$args['width'] : 0;
+    $height = isset($args['height']) ? (int)$args['height'] : 0;
+    $rnd = isset($args['rnd']) ? (int)$args['rnd'] : 0;
+    $orig_path = isset($args['filepath']) ? $args['filepath'] : '';
+
+    // If original image doesn't exist, return empty url,
+    // don't bother continuing.
+    if (empty($orig_path) || !is_file($orig_path))
+        return PLG_RET_ERROR;
+
+    // Separate the path and create a MD5 hash of its path and size
+    $path_parts = pathinfo($orig_path);
+    $disp_fname = md5("$rnd-$orig_path-$width-$height") . '.' .
+            $path_parts['extension'];
+
+    // Image path portion of url
+    $img_path = $_LGLIB_CONF['pi_name'] . '/' . $_LGLIB_CONF['img_disp_relpath'] .
+            '/' . $disp_fname[0];
+
+    // Image url relative to display base url
+    $disp_relurl = $img_path . '/' . $disp_fname;
+
+    // Display image full path, for checking file_exists and storing resized
+    $disp_fullpath = $_CONF['path_html'] . $disp_relurl;
+
+    $maxage = (int)$_LGLIB_CONF['img_cache_maxage'];
+    $interval = (int)$_LGLIB_CONF['img_cache_interval'];
+    if ($maxage > 0 && $interval > 0) {
+        // Clean up old files
+        // Get absolute path for flag file and finding old cache files
+        $img_path = $_CONF['path_html'] . $img_path;
+
+        $lastCleanFile = $img_path . '/.lastclean.touch';
+        if (!is_file($lastCleanFile)) {
+            @touch($lastCleanFile);
+        }
+        if (@filemtime($lastCleanFile) < ((time() - $interval) * 60)) {
+            $files = glob($img_path . '/*');
+            if ($files) {
+                $timeAgo = time() - ($maxage * 86400);
+                foreach ($files as $file) {
+                    if (@filemtime($file) < $timeAgo) {
+                        @unlink($file);
+                    }
+                }
+            }
+        }
+    }
+
+    // If the file isn't found, try to create it.
+    if (!is_file($disp_fullpath)) {
+        // Found an error with getting exif into in IMG_resizeImage(),
+        // use less-robust version in lgImage instead
+        USES_lglib_class_image();
+        $A = lgImage::ReSize($orig_path, $disp_fullpath, $width, $height);
+        $width = $A['d_width'];
+        $height = $A['d_height'];
+        $mime_type = $A['mime'];
+    } else {
+        // Have an existing file, need to get the dimensions
+        $A = getimagesize($disp_fullpath);
+        $width = $A[0];
+        $height = $A[1];
+        $mime_type = $A['mime'];
+    }
+
+    // If the file exists, return the full url.
+    // If not, there's a problem and the empty url will be returned.
+    if ($sizes !== false && is_file($disp_fullpath)) {
+        $output = array(
+            'url'   => $_CONF['site_url'] . '/' . $disp_relurl,
+            'path'  => $disp_fullpath,
+            'width' => $width,
+            'height' => $height,
+            'mime'  => $mime_type,
+        );
+        return PLG_RET_OK;
+    } else {
+        $output = array(
+            'url'   => '',
+        );
+        return PLG_RET_ERROR;
+    }
 }
 
 ?>
