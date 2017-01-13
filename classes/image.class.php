@@ -3,10 +3,10 @@
 *   Class to handle images
 *
 *   @author     Lee Garner <lee@leegarner.com>
-*   @copyright  Copyright (c) 2012-2014 Lee Garner <lee@leegarner.com>
+*   @copyright  Copyright (c) 2012-2017 Lee Garner <lee@leegarner.com>
 *   @package    lglib
-*   @version    0.0.5
-*   @license    http://opensource.org/licenses/gpl-2.0.php 
+*   @version    1.0.5
+*   @license    http://opensource.org/licenses/gpl-2.0.php
 *               GNU Public License v2 or later
 *   @filesource
 */
@@ -15,35 +15,35 @@
 /**
  *  Image-handling class
  */
-class lgImage 
+class lgImage
 {
-
     /**
-     *  Calculate the new dimensions needed to keep the image within
-     *  the provided width & height while preserving the aspect ratio.
-     *
-     *  @param  integer $width New width, in pixels
-     *  @param  integer $height New height, in pixels
-     *  @return mixed   array of dimensions, or false on error
-     */
+    *   Calculate the new dimensions needed to keep the image within
+    *   the provided width & height while preserving the aspect ratio.
+    *
+    *   @param  integer $width New width, in pixels
+    *   @param  integer $height New height, in pixels
+    *   @return mixed   array of dimensions, or false on error
+    */
     public static function reDim($orig_path, $width=0, $height=0)
     {
         $dimensions = getimagesize($orig_path);
-        if ($dimenstions === false) {
+        if ($dimensions === false) {
             return false;
         }
 
         $s_width = $dimensions[0];
         $s_height = $dimensions[1];
+        $mime_type = $dimensions['mime'];
 
         // get both sizefactors that would resize one dimension correctly
         if ($width > 0 && $s_width > $width)
-            $sizefactor_w = (double) ($width / $s_width);
+            $sizefactor_w = (double)($width / $s_width);
         else
             $sizefactor_w = 1;
 
         if ($height > 0 && $s_height > $height)
-            $sizefactor_h = (double) ($height / $s_height);
+            $sizefactor_h = (double)($height / $s_height);
         else
             $sizefactor_h = 1;
 
@@ -53,7 +53,13 @@ class lgImage
         $newwidth = (int)($s_width * $sizefactor);
         $newheight = (int)($s_height * $sizefactor);
 
-        return array($s_width, $s_height, $newwidth, $newheight);
+        return array(
+            's_width'   => $s_width,
+            's_height'  => $s_height,
+            'd_width'   => $newwidth,
+            'd_height'  => $newheight,
+            'mime'      => $mime_type,
+        );
     }
 
 
@@ -65,44 +71,38 @@ class lgImage
      *  @param  string  $type       Either 'thumb' or 'disp'
      *  @param  integer $newWidth   New width, in pixels
      *  @param  integer $newHeight  New height, in pixels
-     *  @return string  Blank if successful, error message otherwise.
+     *  @return mixed   Array of new width,height if successful, false if failed
      */
     public static function ReSize($src, $dst, $newWidth=0, $newHeight=0)
     {
         global $_LGLIB_CONF;
 
         // Calculate the new dimensions
-        $A = self::reDim($src, $newWidth, $newHeight); 
+        $A = self::reDim($src, $newWidth, $newHeight);
         if ($A === false) {
             COM_errorLog("Invalid image $src");
-            return 'invalid image conversion';
+            return false;
         }
 
-        list($sWidth,$sHeight,$dWidth,$dHeight) = $A;
-
-        // Get the mime type for the glFusion resizing functions
-        $mime_type = image_type_to_mime_type(exif_imagetype($src));
-
-        // Returns an array, with [0] either true/false and [1] 
+        // Returns an array, with [0] either true/false and [1]
         // containing a message.
-        $result = array();
         if (function_exists(_img_resizeImage)) {
-            $result = _img_resizeImage($src, $dst, $sHeight, $sWidth, 
-                            $dHeight, $dWidth, $mime_type);
+            $result = _img_resizeImage($src, $dst,
+                        $A['s_height'], $A['s_width'],
+                        $A['d_height'], $A['d_width'],
+                        $A['mime']);
         } else {
-            $result[0] = false;
+            $result = array(false);
         }
 
-        if ($result[0] == true)
-            return '';
-        else {
+        if ($result[0] === false) {
             COM_errorLog("Failed to convert $src ($sHeight x $sWidth) to $dst ($dHeight x $dWidth)");
-            return 'invalid image conversion';
+            return false;
+        } else {
+            return $A;
         }
-
     }   // function reSize()
 
-     
 }   // class lgImage
 
 ?>
