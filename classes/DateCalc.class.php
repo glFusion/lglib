@@ -45,6 +45,7 @@ if (!defined('DATE_CALC_BEGIN_WEEKDAY')) {
  *
  * modified by lgarner <lee@leegarner.com>- changed default formats & added
  *  weekOfMonth()
+ *  endOfMonth()
  */
 
 /**
@@ -883,7 +884,6 @@ class Date_Calc {
      *
      * @return string date in given format
      */
-
     public static function beginOfMonth($month="",$year="",$format="%Y-%m-%d")
     {
         if(empty($year))
@@ -908,7 +908,6 @@ class Date_Calc {
      *
      * @return string date in given format
      */
-
     public static function beginOfWeek($day="",$month="",$year="",$format="%Y-%m-%d")
     {
         if(empty($year))
@@ -1331,7 +1330,7 @@ class Date_Calc {
      * @return string date in given format
      */
 
-    public static function dateFormat($day,$month,$year,$format)
+    public static function dateFormat($day,$month,$year,$format='%y-%m-%d')
     {
         if(!Date_Calc::isValidDate($day,$month,$year))
         {
@@ -1625,22 +1624,31 @@ class Date_Calc {
         else
             $instance = 1;
 
-/*        if ($prevweek <= 0) {
-            $instance = 1;
-        } else if ($prevweek > 0 && $prevweek < 8) {
-             $instance = 2;
-        } else if ($prevweek > 7 && $prevweek < 15) {
-            $instance = 3;
-        } else if ($prevweek > 14 && $prevweek < 22) {
-             $instance = 4;
-        } else if ($prevweek > 21) {
-             $instance = 5;
-        }*/
         return $instance;
     }
 
 
-} // end class Date_calendar
+    /**
+    *   Returns the end date of the month
+    *
+    *   @access public
+    *
+    *   @param  integer $month  Month
+    *   @param  integer $year   Year
+    *   @return string  Formatted date for last day
+    */
+    public static function endOfMonth($month='',$year='',$format='%Y-%m-%d')
+    {
+        if(empty($year))
+            $year = self::dateNow("%Y");
+        if(empty($month))
+            $month = self::dateNow("%m");
+        $day = self::daysInMonth($month,$year);
+
+        return self::dateFormat($day,$month,$year,$format);
+     }
+
+} // end class Date_Calc
 
 // For compatibility with plugins that have used the lgDate class
 class lgDate extends Date_Calc
