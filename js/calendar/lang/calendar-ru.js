@@ -1,7 +1,9 @@
 // ** I18N
 
 // Calendar RU language
-// Translation: Sly Golovanov, http://golovanov.net, <sly@golovanov.net>
+// Author: Mihai Bazon, <mihai_bazon@yahoo.com>
+// Translator: Sly Golovanov, http://golovanov.net, <sly@golovanov.net>
+// Updated: Siegfried Gutschi (März 2017) <sigi AT modellbaukalender DOT info>
 // Encoding: any
 // Distributed under the same terms as the calendar itself.
 
@@ -42,6 +44,10 @@ Calendar._SDN = new Array
  "пят",
  "суб",
  "вск");
+ 
+// First day of the week. "0" means display Sunday first, "1" means display
+// Monday first, etc.
+Calendar._FD = 0;
 
 // full month names
 Calendar._MN = new Array
@@ -57,7 +63,7 @@ Calendar._MN = new Array
  "октябрь",
  "ноябрь",
  "декабрь");
-
+ 
 // short month names
 Calendar._SMN = new Array
 ("янв",
@@ -109,9 +115,6 @@ Calendar._TT["DAY_FIRST"] = "Первый день недели будет %s";
 // This may be locale-dependent.  It specifies the week-end days, as an array
 // of comma-separated numbers.  The numbers are from 0 to 6: 0 means Sunday, 1
 // means Monday, etc.
-// First day of the week. "0" means display Sunday first, "1" means display
-// Monday first, etc.
-Calendar._FD = 0;
 Calendar._TT["WEEKEND"] = "0,6";
 
 Calendar._TT["CLOSE"] = "Закрыть";

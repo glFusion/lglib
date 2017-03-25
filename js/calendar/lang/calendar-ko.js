@@ -1,10 +1,10 @@
 // ** I18N
 
-// Calendar EN language
+// Calendar KO language
 // Author: Mihai Bazon, <mihai_bazon@yahoo.com>
-// Translation: Yourim Yi <yyi@yourim.net>
+// Translator: Yourim Yi <yyi@yourim.net>
+// Updated: Siegfried Gutschi (M‰rz 2017) <sigi AT modellbaukalender DOT info>
 // Encoding: EUC-KR
-// lang : ko
 // Distributed under the same terms as the calendar itself.
 
 // For translators: please use UTF-8 if possible.  We strongly believe that
@@ -12,7 +12,6 @@
 // include your contact information in the header, as can be seen above.
 
 // full day names
-
 Calendar._DN = new Array
 ("¿œø‰¿œ",
  "ø˘ø‰¿œ",
@@ -45,6 +44,10 @@ Calendar._SDN = new Array
  "±›",
  "≈‰",
  "¿œ");
+ 
+// First day of the week. "0" means display Sunday first, "1" means display
+// Monday first, etc.
+Calendar._FD = 0;
 
 // full month names
 Calendar._MN = new Array
@@ -60,7 +63,7 @@ Calendar._MN = new Array
  "10ø˘",
  "11ø˘",
  "12ø˘");
-
+ 
 // short month names
 Calendar._SMN = new Array
 ("1",
@@ -83,13 +86,10 @@ Calendar._TT["INFO"] = "calendar ø° ¥Î«ÿº≠";
 Calendar._TT["ABOUT"] =
 "DHTML Date/Time Selector\n" +
 "(c) dynarch.com 2002-2005 / Author: Mihai Bazon\n" + // don't translate this this ;-)
-"\n"+
-"√÷Ω≈ πˆ¿¸¿ª πﬁ¿∏Ω√∑¡∏È http://www.dynarch.com/projects/calendar/ ø° πÊπÆ«œººø‰\n" +
-"\n"+
-"GNU LGPL ∂Û¿ÃºæΩ∫∑Œ πË∆˜µÀ¥œ¥Ÿ. \n"+
+"\n"+ "√÷Ω≈ πˆ¿¸¿ª πﬁ¿∏Ω√∑¡∏È http://www.dynarch.com/projects/calendar/ ø° πÊπÆ«œººø‰\n" +
+"\n"+ "GNU LGPL ∂Û¿ÃºæΩ∫∑Œ πË∆˜µÀ¥œ¥Ÿ. \n"+
 "∂Û¿ÃºæΩ∫ø° ¥Î«— ¿⁄ºº«— ≥ªøÎ¿∫ http://gnu.org/licenses/lgpl.html ¿ª ¿–¿∏ººø‰." +
-"\n\n" +
-"≥Ø¬• º±≈√:\n" +
+"\n\n" + "≥Ø¬• º±≈√:\n" +
 "- ø¨µµ∏¶ º±≈√«œ∑¡∏È \xab, \xbb πˆ∆∞¿ª ªÁøÎ«’¥œ¥Ÿ\n" +
 "- ¥ﬁ¿ª º±≈√«œ∑¡∏È " + String.fromCharCode(0x2039) + ", " + String.fromCharCode(0x203a) + " πˆ∆∞¿ª ¥©∏£ººø‰\n" +
 "- ∞Ëº” ¥©∏£∞Ì ¿÷¿∏∏È ¿ß ∞™µÈ¿ª ∫¸∏£∞‘ º±≈√«œΩ« ºˆ ¿÷Ω¿¥œ¥Ÿ.";
@@ -107,8 +107,16 @@ Calendar._TT["NEXT_YEAR"] = "¥Ÿ¿Ω «ÿ (±Ê∞‘ ¥©∏£∏È ∏Ò∑œ)";
 Calendar._TT["SEL_DATE"] = "≥Ø¬•∏¶ º±≈√«œººø‰";
 Calendar._TT["DRAG_TO_MOVE"] = "∏∂øÏΩ∫ µÂ∑°±◊∑Œ ¿Ãµø «œººø‰";
 Calendar._TT["PART_TODAY"] = " (ø¿¥√)";
-Calendar._TT["MON_FIRST"] = "ø˘ø‰¿œ¿ª «— ¡÷¿« Ω√¿€ ø‰¿œ∑Œ";
-Calendar._TT["SUN_FIRST"] = "¿œø‰¿œ¿ª «— ¡÷¿« Ω√¿€ ø‰¿œ∑Œ";
+
+// the following is to inform that "%s" is to be the first day of week
+// %s will be replaced with the day name.
+Calendar._TT["DAY_FIRST"] = "Display %s first";
+
+// This may be locale-dependent.  It specifies the week-end days, as an array
+// of comma-separated numbers.  The numbers are from 0 to 6: 0 means Sunday, 1
+// means Monday, etc.
+Calendar._TT["WEEKEND"] = "0,6";
+
 Calendar._TT["CLOSE"] = "¥›±‚";
 Calendar._TT["TODAY"] = "ø¿¥√";
 Calendar._TT["TIME_PART"] = "(Shift-)≈¨∏Ø ∂«¥¬ µÂ∑°±◊ «œººø‰";
@@ -118,9 +126,4 @@ Calendar._TT["DEF_DATE_FORMAT"] = "%Y-%m-%d";
 Calendar._TT["TT_DATE_FORMAT"] = "%b/%e [%a]";
 
 Calendar._TT["WK"] = "¡÷";
-
-// First day of the week. "0" means display Sunday first, "1" means display
-// Monday first, etc.
-Calendar._FD = 0;
-Calendar._TT["WEEKEND"] = "0,6";
-
+Calendar._TT["TIME"] = "Time";

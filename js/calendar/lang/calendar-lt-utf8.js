@@ -1,8 +1,10 @@
 // ** I18N
 
 // Calendar LT language
-// Author: Martynas Majeris, <martynas@solmetra.lt>
-// Encoding: UTF-8
+// Author: Mihai Bazon, <mihai_bazon@yahoo.com>
+// Translator: Martynas Majeris, <martynas@solmetra.lt>
+// Updated: Siegfried Gutschi (März 2017) <sigi AT modellbaukalender DOT info>
+// Encoding: utf-8
 // Distributed under the same terms as the calendar itself.
 
 // For translators: please use UTF-8 if possible.  We strongly believe that
@@ -42,6 +44,10 @@ Calendar._SDN = new Array
  "Pen",
  "Šeš",
  "Sek");
+ 
+// First day of the week. "0" means display Sunday first, "1" means display
+// Monday first, etc.
+Calendar._FD = 0;
 
 // full month names
 Calendar._MN = new Array
@@ -57,7 +63,7 @@ Calendar._MN = new Array
  "Spalis",
  "Lapkritis",
  "Gruodis");
-
+ 
 // short month names
 Calendar._SMN = new Array
 ("Sau",
@@ -101,8 +107,16 @@ Calendar._TT["NEXT_YEAR"] = "Kiti metai (laikykite, jei norite meniu)";
 Calendar._TT["SEL_DATE"] = "Pasirinkite datą";
 Calendar._TT["DRAG_TO_MOVE"] = "Tempkite";
 Calendar._TT["PART_TODAY"] = " (šiandien)";
-Calendar._TT["MON_FIRST"] = "Pirma savaitės diena - pirmadienis";
-Calendar._TT["SUN_FIRST"] = "Pirma savaitės diena - sekmadienis";
+
+// the following is to inform that "%s" is to be the first day of week
+// %s will be replaced with the day name.
+Calendar._TT["DAY_FIRST"] = "Display %s first";
+
+// This may be locale-dependent.  It specifies the week-end days, as an array
+// of comma-separated numbers.  The numbers are from 0 to 6: 0 means Sunday, 1
+// means Monday, etc.
+Calendar._TT["WEEKEND"] = "0,6";
+
 Calendar._TT["CLOSE"] = "Uždaryti";
 Calendar._TT["TODAY"] = "Šiandien";
 Calendar._TT["TIME_PART"] = "Spustelkite arba tempkite jei norite pakeisti";
@@ -112,9 +126,4 @@ Calendar._TT["DEF_DATE_FORMAT"] = "%Y-%m-%d";
 Calendar._TT["TT_DATE_FORMAT"] = "%A, %Y-%m-%d";
 
 Calendar._TT["WK"] = "sav";
-
-// First day of the week. "0" means display Sunday first, "1" means display
-// Monday first, etc.
-Calendar._FD = 0;
-Calendar._TT["WEEKEND"] = "0,6";
-
+Calendar._TT["TIME"] = "Time";

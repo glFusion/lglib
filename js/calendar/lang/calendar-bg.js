@@ -3,6 +3,7 @@
 // Calendar BG language
 // Author: Mihai Bazon, <mihai_bazon@yahoo.com>
 // Translator: Valentin Sheiretsky, <valio@valio.eu.org>
+// Updated: Siegfried Gutschi (Mдrz 2017) <sigi AT modellbaukalender DOT info>
 // Encoding: Windows-1251
 // Distributed under the same terms as the calendar itself.
 
@@ -44,6 +45,10 @@ Calendar._SDN = new Array
  "Съб",
  "Нед");
 
+// First day of the week. "0" means display Sunday first, "1" means display
+// Monday first, etc.
+Calendar._FD = 0;
+
 // full month names
 Calendar._MN = new Array
 ("Януари",
@@ -73,7 +78,6 @@ Calendar._SMN = new Array
  "Окт",
  "Ное",
  "Дек");
-Calendar._FD = 0;
 
 // tooltips
 Calendar._TT = {};

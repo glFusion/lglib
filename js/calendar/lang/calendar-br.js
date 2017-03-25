@@ -1,7 +1,9 @@
 ﻿// ** I18N
 
-// Calendar pt-BR language
-// Author: Fernando Dourado, <fernando.dourado@ig.com.br>
+// Calendar BR language
+// Author: Mihai Bazon, <mihai_bazon@yahoo.com>
+// Translator: Fernando Dourado, <fernando.dourado@ig.com.br>
+// Updated: Siegfried Gutschi (März 2017) <sigi AT modellbaukalender DOT info>
 // Encoding: any
 // Distributed under the same terms as the calendar itself.
 
@@ -33,7 +35,19 @@ Calendar._DN = new Array
 // this feature.
 
 // short day names
-// [No changes using default values]
+Calendar._SDN = new Array
+("Dom",
+ "Seg",
+ "Ter",
+ "Qua",
+ "Qui",
+ "Sex",
+ "Sab",
+ "Dom");
+ 
+// First day of the week. "0" means display Sunday first, "1" means display
+// Monday first, etc.
+Calendar._FD = 0;
 
 // full month names
 Calendar._MN = new Array
@@ -51,7 +65,19 @@ Calendar._MN = new Array
  "Dezembro");
 
 // short month names
-// [No changes using default values]
+Calendar._SMN = new Array
+("Jan",
+ "Fev",
+ "Mar",
+ "Abr",
+ "Mai",
+ "Jun",
+ "Jul",
+ "Ago",
+ "Set",
+ "Out",
+ "Nov",
+ "Dez");
 
 // tooltips
 Calendar._TT = {};
@@ -61,16 +87,12 @@ Calendar._TT["ABOUT"] =
 "DHTML Date/Time Selector\n" +
 "(c) dynarch.com 2002-2005 / Author: Mihai Bazon\n" + // don't translate this this ;-)
 "For latest version visit: http://www.dynarch.com/projects/calendar/\n" +
-"Distributed under GNU LGPL.  See http://gnu.org/licenses/lgpl.html for details." +
-"\n\n" +
+"Distributed under GNU LGPL.  See http://gnu.org/licenses/lgpl.html for details." + "\n\n" +
 "Translate to portuguese Brazil (pt-BR) by Fernando Dourado (fernando.dourado@ig.com.br)\n" +
-"Tradução para o português Brasil (pt-BR) por Fernando Dourado (fernando.dourado@ig.com.br)" +
-"\n\n" +
-"Selecionar data:\n" +
+"Tradução para o português Brasil (pt-BR) por Fernando Dourado (fernando.dourado@ig.com.br)" + "\n\n" + "Selecionar data:\n" +
 "- Use as teclas \xab, \xbb para selecionar o ano\n" +
 "- Use as teclas " + String.fromCharCode(0x2039) + ", " + String.fromCharCode(0x203a) + " para selecionar o mês\n" +
 "- Clique e segure com o mouse em qualquer botão para selecionar rapidamente.";
-
 Calendar._TT["ABOUT_TIME"] = "\n\n" +
 "Selecionar hora:\n" +
 "- Clique em qualquer uma das partes da hora para aumentar\n" +
@@ -105,5 +127,3 @@ Calendar._TT["TT_DATE_FORMAT"] = "%d de %B de %Y";
 
 Calendar._TT["WK"] = "sem";
 Calendar._TT["TIME"] = "Hora:";
-
-

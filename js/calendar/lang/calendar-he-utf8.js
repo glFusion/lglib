@@ -1,8 +1,10 @@
 // ** I18N
 
-// Calendar EN language
-// Author: Idan Sofer, <idan@idanso.dyndns.org>
-// Encoding: UTF-8
+// Calendar HE language
+// Author: Mihai Bazon, <mihai_bazon@yahoo.com>
+// Translator: Idan Sofer, <idan@idanso.dyndns.org>
+// Updated: Siegfried Gutschi (März 2017) <sigi AT modellbaukalender DOT info>
+// Encoding: utf-8
 // Distributed under the same terms as the calendar itself.
 
 // For translators: please use UTF-8 if possible.  We strongly believe that
@@ -42,6 +44,10 @@ Calendar._SDN = new Array
  "ו",
  "ש",
  "א");
+ 
+// First day of the week. "0" means display Sunday first, "1" means display
+// Monday first, etc.
+Calendar._FD = 0;
 
 // full month names
 Calendar._MN = new Array
@@ -57,7 +63,7 @@ Calendar._MN = new Array
  "אוקטובר",
  "נובמבר",
  "דצמבר");
-
+ 
 // short month names
 Calendar._SMN = new Array
 ("ינא",
@@ -83,12 +89,12 @@ Calendar._TT["ABOUT"] =
 "הגירסא האחרונה זמינה ב: http://www.dynarch.com/projects/calendar/\n" +
 "מופץ תחת זיכיון ה GNU LGPL.  עיין ב http://gnu.org/licenses/lgpl.html לפרטים נוספים." +
 "\n\n" +
-בחירת תאריך:\n" +
+"בחירת תאריך:\n" +
 "- השתמש בכפתורים \xab, \xbb לבחירת שנה\n" +
 "- השתמש בכפתורים " + String.fromCharCode(0x2039) + ", " + String.fromCharCode(0x203a) + " לבחירת חודש\n" +
 "- החזק העכבר לחוץ מעל הכפתורים המוזכרים לעיל לבחירה מהירה יותר.";
 Calendar._TT["ABOUT_TIME"] = "\n\n" +
-"בחירת זמן:\n" +
+"- בחירת זמן:\n" +
 "- לחץ על כל אחד מחלקי הזמן כדי להוסיף\n" +
 "- או shift בשילוב עם לחיצה כדי להחסיר\n" +
 "- או לחץ וגרור לפעולה מהירה יותר.";
@@ -109,7 +115,7 @@ Calendar._TT["DAY_FIRST"] = "הצג %s קודם";
 // This may be locale-dependent.  It specifies the week-end days, as an array
 // of comma-separated numbers.  The numbers are from 0 to 6: 0 means Sunday, 1
 // means Monday, etc.
-Calendar._TT["WEEKEND"] = "6";
+Calendar._TT["WEEKEND"] = "0,6";
 
 Calendar._TT["CLOSE"] = "סגור";
 Calendar._TT["TODAY"] = "היום";
