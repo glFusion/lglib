@@ -1,7 +1,9 @@
 // ** I18N
 
 // Calendar LV language
-// Author: Juris Valdovskis, <juris@dc.lv>
+// Author: Mihai Bazon, <mihai_bazon@yahoo.com>
+// Translator: Juris Valdovskis, <juris@dc.lv>
+// Updated: Siegfried Gutschi (März 2017) <sigi AT modellbaukalender DOT info>
 // Encoding: cp1257
 // Distributed under the same terms as the calendar itself.
 
@@ -42,6 +44,10 @@ Calendar._SDN = new Array
  "Pk",
  "Se",
  "Sv");
+ 
+// First day of the week. "0" means display Sunday first, "1" means display
+// Monday first, etc.
+Calendar._FD = 0;
 
 // full month names
 Calendar._MN = new Array
@@ -57,7 +63,7 @@ Calendar._MN = new Array
  "Oktobris",
  "Novembris",
  "Decembris");
-
+ 
 // short month names
 Calendar._SMN = new Array
 ("Jan",
@@ -110,7 +116,6 @@ Calendar._TT["DAY_FIRST"] = "Attçlot %s kâ pirmo";
 // of comma-separated numbers.  The numbers are from 0 to 6: 0 means Sunday, 1
 // means Monday, etc.
 Calendar._TT["WEEKEND"] = "1,7";
-Calendar._FD = 0;
 
 Calendar._TT["CLOSE"] = "Aizvçrt";
 Calendar._TT["TODAY"] = "Ðodien";

@@ -1,9 +1,15 @@
 // ** I18N
 
 // Calendar ZH language
-// Author: muziq, <muziq@sina.com>
+// Author: Mihai Bazon, <mihai_bazon@yahoo.com>
+// Translator: muziq, <muziq@sina.com>
+// Updated: Siegfried Gutschi (M鋜z 2017) <sigi AT modellbaukalender DOT info>
 // Encoding: GB2312 or GBK
 // Distributed under the same terms as the calendar itself.
+
+// For translators: please use UTF-8 if possible.  We strongly believe that
+// Unicode is the answer to a real internationalized world.  Also please
+// include your contact information in the header, as can be seen above.
 
 // full day names
 Calendar._DN = new Array
@@ -38,6 +44,10 @@ Calendar._SDN = new Array
  "五",
  "六",
  "日");
+ 
+// First day of the week. "0" means display Sunday first, "1" means display
+// Monday first, etc.
+Calendar._FD = 0;
 
 // full month names
 Calendar._MN = new Array
@@ -53,7 +63,7 @@ Calendar._MN = new Array
  "十月",
  "十一月",
  "十二月");
-
+ 
 // short month names
 Calendar._SMN = new Array
 ("一月",
@@ -117,5 +127,3 @@ Calendar._TT["TT_DATE_FORMAT"] = "%A, %b %e日";
 
 Calendar._TT["WK"] = "周";
 Calendar._TT["TIME"] = "时间:";
-Calendar._FD = 0;
-

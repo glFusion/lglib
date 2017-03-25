@@ -1,8 +1,10 @@
 // ** I18N
 
 // Calendar NO language
-// Author: Daniel Holmen, <daniel.holmen@ciber.no>
-// Encoding: UTF-8
+// Author: Mihai Bazon, <mihai_bazon@yahoo.com>
+// Translator: Daniel Holmen, <daniel.holmen@ciber.no>
+// Updated: Siegfried Gutschi (März 2017) <sigi AT modellbaukalender DOT info>
+// Encoding: utf-8
 // Distributed under the same terms as the calendar itself.
 
 // For translators: please use UTF-8 if possible.  We strongly believe that
@@ -42,6 +44,10 @@ Calendar._SDN = new Array
  "Fre",
  "Lør",
  "Søn");
+ 
+// First day of the week. "0" means display Sunday first, "1" means display
+// Monday first, etc.
+Calendar._FD = 0;
 
 // full month names
 Calendar._MN = new Array
@@ -57,7 +63,7 @@ Calendar._MN = new Array
  "Oktober",
  "November",
  "Desember");
-
+ 
 // short month names
 Calendar._SMN = new Array
 ("Jan",
@@ -101,8 +107,16 @@ Calendar._TT["NEXT_YEAR"] = "Neste år (hold for meny)";
 Calendar._TT["SEL_DATE"] = "Velg dato";
 Calendar._TT["DRAG_TO_MOVE"] = "Dra for å flytte";
 Calendar._TT["PART_TODAY"] = " (idag)";
-Calendar._TT["MON_FIRST"] = "Vis mandag først";
-Calendar._TT["SUN_FIRST"] = "Vis søndag først";
+
+// the following is to inform that "%s" is to be the first day of week
+// %s will be replaced with the day name.
+Calendar._TT["DAY_FIRST"] = "Display %s first";
+
+// This may be locale-dependent.  It specifies the week-end days, as an array
+// of comma-separated numbers.  The numbers are from 0 to 6: 0 means Sunday, 1
+// means Monday, etc.
+Calendar._TT["WEEKEND"] = "0,6";
+
 Calendar._TT["CLOSE"] = "Lukk";
 Calendar._TT["TODAY"] = "Idag";
 Calendar._TT["TIME_PART"] = "(Shift-)Klikk eller dra for å endre verdi";
@@ -112,9 +126,4 @@ Calendar._TT["DEF_DATE_FORMAT"] = "%d.%m.%Y";
 Calendar._TT["TT_DATE_FORMAT"] = "%a, %b %e";
 
 Calendar._TT["WK"] = "uke";
-
-// First day of the week. "0" means display Sunday first, "1" means display
-// Monday first, etc.
-Calendar._FD = 0;
-Calendar._TT["WEEKEND"] = "0,6";
-
+Calendar._TT["TIME"] = "Tijd:";

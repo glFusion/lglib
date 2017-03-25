@@ -1,9 +1,10 @@
 // ** I18N
 
-// Calendar EN language
-// Author: Mihai Bazon, <mishoo@infoiasi.ro>
+// Calendar CN language
+// Author: Mihai Bazon, <mihai_bazon@yahoo.com>
+// Translator: Niko <nikoused@gmail.com>
+// Updated: Siegfried Gutschi (März 2017) <sigi AT modellbaukalender DOT info>
 // Encoding: any
-// Translator : Niko <nikoused@gmail.com>
 // Distributed under the same terms as the calendar itself.
 
 // For translators: please use UTF-8 if possible.  We strongly believe that
@@ -43,6 +44,10 @@ Calendar._SDN = new Array
  "\u5468\u4e94",
  "\u5468\u516d",
  "\u5468\u65e5");
+ 
+// First day of the week. "0" means display Sunday first, "1" means display
+// Monday first, etc.
+Calendar._FD = 0;
 
 // full month names
 Calendar._MN = new Array
@@ -110,7 +115,6 @@ Calendar._TT["DAY_FIRST"] = "%s\u4e3a\u8fd9\u5468\u7684\u7b2c\u4e00\u5929";
 // of comma-separated numbers.  The numbers are from 0 to 6: 0 means Sunday, 1
 // means Monday, etc.
 Calendar._TT["WEEKEND"] = "0,6";
-Calendar._FD = 0;
 
 Calendar._TT["CLOSE"] = "\u5173\u95ed";
 Calendar._TT["TODAY"] = "\u4eca\u5929";

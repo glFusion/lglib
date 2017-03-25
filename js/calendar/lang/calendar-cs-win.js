@@ -1,31 +1,87 @@
-/* 
-	calendar-cs-win.js
-	language: Czech
-	encoding: windows-1250
-	author: Lubos Jerabek (xnet@seznam.cz)
-	        Jan Uhlir (espinosa@centrum.cz)
-*/
-
 // ** I18N
-Calendar._DN  = new Array('Nedìle','Pondìlí','Úterı','Støeda','Ètvrtek','Pátek','Sobota','Nedìle');
-Calendar._SDN = new Array('Ne','Po','Út','St','Èt','Pá','So','Ne');
-Calendar._MN  = new Array('Leden','Únor','Bøezen','Duben','Kvìten','Èerven','Èervenec','Srpen','Záøí','Øíjen','Listopad','Prosinec');
-Calendar._SMN = new Array('Led','Úno','Bøe','Dub','Kvì','Èrv','Èvc','Srp','Záø','Øíj','Lis','Pro');
+
+// Calendar CS language
+// Author: Mihai Bazon, <mihai_bazon@yahoo.com>
+// Translator: Lubos Jerabek (xnet@seznam.cz) | Jan Uhlir (espinosa@centrum.cz)
+// Updated: Siegfried Gutschi (März 2017) <sigi AT modellbaukalender DOT info>
+// Encoding: windows-1250
+// Distributed under the same terms as the calendar itself.
+
+// For translators: please use UTF-8 if possible.  We strongly believe that
+// Unicode is the answer to a real internationalized world.  Also please
+// include your contact information in the header, as can be seen above.
+
+// full day names
+Calendar._DN  = new Array
+('Nedìle',
+ 'Pondìlí',
+ 'Úterı',
+ 'Støeda',
+ 'Ètvrtek',
+ 'Pátek',
+ 'Sobota',
+ 'Nedìle');
+
+// Please note that the following array of short day names (and the same goes
+// for short month names, _SMN) isn't absolutely necessary.  We give it here
+// for exemplification on how one can customize the short day names, but if
+// they are simply the first N letters of the full name you can simply say:
+//
+//   Calendar._SDN_len = N; // short day name length
+//   Calendar._SMN_len = N; // short month name length
+//
+// If N = 3 then this is not needed either since we assume a value of 3 if not
+// present, to be compatible with translation files that were written before
+// this feature.
+
+// short day names
+Calendar._SDN = new Array
+('Ne',
+ 'Po',
+ 'Út',
+ 'St',
+ 'Èt',
+ 'Pá',
+ 'So',
+ 'Ne');
+ 
+// First day of the week. "0" means display Sunday first, "1" means display
+// Monday first, etc.
+Calendar._FD = 0;
+
+// full month names
+Calendar._MN  = new Array
+('Leden',
+ 'Únor',
+ 'Bøezen',
+ 'Duben',
+ 'Kvìten',
+ 'Èerven',
+ 'Èervenec',
+ 'Srpen',
+ 'Záøí',
+ 'Øíjen',
+ 'Listopad',
+ 'Prosinec');
+
+// short month names
+Calendar._SMN = new Array
+('Led',
+ 'Úno',
+ 'Bøe',
+ 'Dub',
+ 'Kvì',
+ 'Èrv',
+ 'Èvc',
+ 'Srp',
+ 'Záø',
+ 'Øíj',
+ 'Lis',
+ 'Pro');
 
 // tooltips
 Calendar._TT = {};
 Calendar._TT["INFO"] = "O komponentì kalendáø";
-Calendar._TT["TOGGLE"] = "Zmìna prvního dne v tıdnu";
-Calendar._TT["PREV_YEAR"] = "Pøedchozí rok (pøidr pro menu)";
-Calendar._TT["PREV_MONTH"] = "Pøedchozí mìsíc (pøidr pro menu)";
-Calendar._TT["GO_TODAY"] = "Dnešní datum";
-Calendar._TT["NEXT_MONTH"] = "Další mìsíc (pøidr pro menu)";
-Calendar._TT["NEXT_YEAR"] = "Další rok (pøidr pro menu)";
-Calendar._TT["SEL_DATE"] = "Vyber datum";
-Calendar._TT["DRAG_TO_MOVE"] = "Chy a táhni, pro pøesun";
-Calendar._TT["PART_TODAY"] = " (dnes)";
-Calendar._TT["MON_FIRST"] = "Uka jako první Pondìlí";
-//Calendar._TT["SUN_FIRST"] = "Uka jako první Nedìli";
 
 Calendar._TT["ABOUT"] =
 "DHTML Date/Time Selector\n" +
@@ -37,12 +93,20 @@ Calendar._TT["ABOUT"] =
 "- Use the \xab, \xbb buttons to select year\n" +
 "- Pouijte tlaèítka " + String.fromCharCode(0x2039) + ", " + String.fromCharCode(0x203a) + " k vıbìru mìsíce\n" +
 "- Podrte tlaèítko myši na jakémkoliv z tìch tlaèítek pro rychlejší vıbìr.";
-
 Calendar._TT["ABOUT_TIME"] = "\n\n" +
 "Vıbìr èasu:\n" +
 "- Kliknìte na jakoukoliv z èástí vıbìru èasu pro zvıšení.\n" +
 "- nebo Shift-click pro sníení\n" +
 "- nebo kliknìte a táhnìte pro rychlejší vıbìr.";
+
+Calendar._TT["PREV_YEAR"] = "Pøedchozí rok (pøidr pro menu)";
+Calendar._TT["PREV_MONTH"] = "Pøedchozí mìsíc (pøidr pro menu)";
+Calendar._TT["GO_TODAY"] = "Dnešní datum";
+Calendar._TT["NEXT_MONTH"] = "Další mìsíc (pøidr pro menu)";
+Calendar._TT["NEXT_YEAR"] = "Další rok (pøidr pro menu)";
+Calendar._TT["SEL_DATE"] = "Vyber datum";
+Calendar._TT["DRAG_TO_MOVE"] = "Chy a táhni, pro pøesun";
+Calendar._TT["PART_TODAY"] = " (dnes)";
 
 // the following is to inform that "%s" is to be the first day of week
 // %s will be replaced with the day name.

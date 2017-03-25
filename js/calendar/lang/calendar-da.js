@@ -1,12 +1,14 @@
 // ** I18N
 
 // Calendar DA language
-// Author: Michael Thingmand Henriksen, <michael (a) thingmand dot dk>
+// Author: Mihai Bazon, <mihai_bazon@yahoo.com>
+// Translator: Michael Thingmand Henriksen, <michael (a) thingmand dot dk>
+// Updated: Siegfried Gutschi (März 2017) <sigi AT modellbaukalender DOT info>
 // Encoding: any
 // Distributed under the same terms as the calendar itself.
 
-// For translators: please use UTF-8 if possible. We strongly believe that
-// Unicode is the answer to a real internationalized world. Also please
+// For translators: please use UTF-8 if possible.  We strongly believe that
+// Unicode is the answer to a real internationalized world.  Also please
 // include your contact information in the header, as can be seen above.
 
 // full day names
@@ -21,12 +23,12 @@ Calendar._DN = new Array
 "Søndag");
 
 // Please note that the following array of short day names (and the same goes
-// for short month names, _SMN) isn't absolutely necessary. We give it here
+// for short month names, _SMN) isn't absolutely necessary.  We give it here
 // for exemplification on how one can customize the short day names, but if
 // they are simply the first N letters of the full name you can simply say:
 //
-// Calendar._SDN_len = N; // short day name length
-// Calendar._SMN_len = N; // short month name length
+//   Calendar._SDN_len = N; // short day name length
+//   Calendar._SMN_len = N; // short month name length
 //
 // If N = 3 then this is not needed either since we assume a value of 3 if not
 // present, to be compatible with translation files that were written before
@@ -42,6 +44,10 @@ Calendar._SDN = new Array
 "Fre",
 "Lør",
 "Søn");
+ 
+// First day of the week. "0" means display Sunday first, "1" means display
+// Monday first, etc.
+Calendar._FD = 0;
 
 // full month names
 Calendar._MN = new Array
@@ -110,7 +116,6 @@ Calendar._TT["DAY_FIRST"] = "Vis %s først";
 // of comma-separated numbers. The numbers are from 0 to 6: 0 means Sunday, 1
 // means Monday, etc.
 Calendar._TT["WEEKEND"] = "0,6";
-Calendar._FD = 0;
 
 Calendar._TT["CLOSE"] = "Luk";
 Calendar._TT["TODAY"] = "I dag";

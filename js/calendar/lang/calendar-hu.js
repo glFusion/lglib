@@ -1,8 +1,9 @@
 // ** I18N
 
 // Calendar HU language
-// Author: ???
-// Modifier: KARASZI Istvan, <jscalendar@spam.raszi.hu>
+// Author: Mihai Bazon, <mihai_bazon@yahoo.com>
+// Translator: KARASZI Istvan, <jscalendar@spam.raszi.hu>
+// Updated: Siegfried Gutschi (März 2017) <sigi AT modellbaukalender DOT info>
 // Encoding: any
 // Distributed under the same terms as the calendar itself.
 
@@ -43,6 +44,10 @@ Calendar._SDN = new Array
  "p",
  "szo",
  "v");
+ 
+// First day of the week. "0" means display Sunday first, "1" means display
+// Monday first, etc.
+Calendar._FD = 0;
 
 // full month names
 Calendar._MN = new Array
@@ -58,7 +63,7 @@ Calendar._MN = new Array
  "október",
  "november",
  "december");
-
+ 
 // short month names
 Calendar._SMN = new Array
 ("jan",
@@ -111,7 +116,6 @@ Calendar._TT["DAY_FIRST"] = "%s legyen a hét elsõ napja";
 // of comma-separated numbers.  The numbers are from 0 to 6: 0 means Sunday, 1
 // means Monday, etc.
 Calendar._TT["WEEKEND"] = "0,6";
-Calendar._FD = 0;
 
 Calendar._TT["CLOSE"] = "Bezár";
 Calendar._TT["TODAY"] = "Ma";

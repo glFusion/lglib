@@ -1,7 +1,9 @@
 // ** I18N
 
-// Calendar pt_BR language
-// Author: Adalberto Machado, <betosm@terra.com.br>
+// Calendar PT language
+// Author: Mihai Bazon, <mihai_bazon@yahoo.com>
+// Translator: Adalberto Machado, <betosm@terra.com.br>
+// Updated: Siegfried Gutschi (März 2017) <sigi AT modellbaukalender DOT info>
 // Encoding: any
 // Distributed under the same terms as the calendar itself.
 
@@ -42,6 +44,10 @@ Calendar._SDN = new Array
  "Sex",
  "Sab",
  "Dom");
+ 
+// First day of the week. "0" means display Sunday first, "1" means display
+// Monday first, etc.
+Calendar._FD = 0;
 
 // full month names
 Calendar._MN = new Array
@@ -57,7 +63,7 @@ Calendar._MN = new Array
  "Outubro",
  "Novembro",
  "Dezembro");
-
+ 
 // short month names
 Calendar._SMN = new Array
 ("Jan",
@@ -110,7 +116,6 @@ Calendar._TT["DAY_FIRST"] = "Mostre %s primeiro";
 // of comma-separated numbers.  The numbers are from 0 to 6: 0 means Sunday, 1
 // means Monday, etc.
 Calendar._TT["WEEKEND"] = "0,6";
-Calendar._FD = 0;
 
 Calendar._TT["CLOSE"] = "Fechar";
 Calendar._TT["TODAY"] = "Hoje";
