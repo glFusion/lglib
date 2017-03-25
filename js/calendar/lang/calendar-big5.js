@@ -1,14 +1,16 @@
 // ** I18N
 
 // Calendar big5 language
-// Author: Gary Fu, <gary@garyfu.idv.tw>
-// Encoding: big5
+// Author: Mihai Bazon, <mihai_bazon@yahoo.com>
+// Translator: Gary Fu, <gary@garyfu.idv.tw>
+// Updated: Siegfried Gutschi (M酺z 2017) <sigi AT modellbaukalender DOT info>
+// Encoding: any
 // Distributed under the same terms as the calendar itself.
 
 // For translators: please use UTF-8 if possible.  We strongly believe that
 // Unicode is the answer to a real internationalized world.  Also please
 // include your contact information in the header, as can be seen above.
-	
+
 // full day names
 Calendar._DN = new Array
 ("星期日",
@@ -42,6 +44,10 @@ Calendar._SDN = new Array
  "五",
  "六",
  "日");
+
+// First day of the week. "0" means display Sunday first, "1" means display
+// Monday first, etc.
+Calendar._FD = 0;
 
 // full month names
 Calendar._MN = new Array
@@ -110,7 +116,6 @@ Calendar._TT["DAY_FIRST"] = "將 %s 顯示在前";
 // of comma-separated numbers.  The numbers are from 0 to 6: 0 means Sunday, 1
 // means Monday, etc.
 Calendar._TT["WEEKEND"] = "0,6";
-Calendar._FD = 0;
 
 Calendar._TT["CLOSE"] = "關閉";
 Calendar._TT["TODAY"] = "今日";

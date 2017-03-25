@@ -1,7 +1,9 @@
 // ** I18N
 
 // Calendar DE language
-// Author: Jack (tR), <jack@jtr.de>
+// Author: Mihai Bazon, <mihai_bazon@yahoo.com>
+// Translator: Jack (tR), <jack@jtr.de>
+// Updated: Siegfried Gutschi (März 2017) <sigi AT modellbaukalender DOT info>
 // Encoding: any
 // Distributed under the same terms as the calendar itself.
 
@@ -32,8 +34,6 @@ Calendar._DN = new Array
 // present, to be compatible with translation files that were written before
 // this feature.
 
-Calendar._FD = 0;
-
 // short day names
 Calendar._SDN = new Array
 ("So",
@@ -44,6 +44,10 @@ Calendar._SDN = new Array
  "Fr",
  "Sa",
  "So");
+ 
+// First day of the week. "0" means display Sunday first, "1" means display
+// Monday first, etc.
+Calendar._FD = 1;
 
 // full month names
 Calendar._MN = new Array
@@ -59,6 +63,21 @@ Calendar._MN = new Array
  "Oktober",
  "November",
  "Dezember");
+
+// short month names
+Calendar._SMN = new Array
+("Jan",
+ "Feb",
+ "M\u00e4r",
+ "Apr",
+ "Mai",
+ "Jun",
+ "Jul",
+ "Aug",
+ "Sep",
+ "Okt",
+ "Nov",
+ "Dez");
 
 // tooltips
 Calendar._TT = {};
@@ -80,12 +99,11 @@ Calendar._TT["ABOUT_TIME"] = "\n\n" +
 "- oder klicken Sie mit festgehaltener Shift-Taste um diese zu verringern\n" +
 "- oder klicken und festhalten f\u00fcr Schnellauswahl.";
 
-Calendar._TT["TOGGLE"] = "Ersten Tag der Woche w\u00e4hlen";
-Calendar._TT["PREV_YEAR"] = "Voriges Jahr (Festhalten f\u00fcr Schnellauswahl)";
-Calendar._TT["PREV_MONTH"] = "Voriger Monat (Festhalten f\u00fcr Schnellauswahl)";
+Calendar._TT["PREV_YEAR"] = "Voriges Jahr (Halten f\u00fcr Schnellauswahl)";
+Calendar._TT["PREV_MONTH"] = "Voriger Monat (Halten f\u00fcr Schnellauswahl)";
 Calendar._TT["GO_TODAY"] = "Heute ausw\u00e4hlen";
-Calendar._TT["NEXT_MONTH"] = "N\u00e4chst. Monat (Festhalten f\u00fcr Schnellauswahl)";
-Calendar._TT["NEXT_YEAR"] = "N\u00e4chst. Jahr (Festhalten f\u00fcr Schnellauswahl)";
+Calendar._TT["NEXT_MONTH"] = "N\u00e4chster Monat (Halten f\u00fcr Schnellauswahl)";
+Calendar._TT["NEXT_YEAR"] = "N\u00e4chstes Jahr (Halten f\u00fcr Schnellauswahl)";
 Calendar._TT["SEL_DATE"] = "Datum ausw\u00e4hlen";
 Calendar._TT["DRAG_TO_MOVE"] = "Zum Bewegen festhalten";
 Calendar._TT["PART_TODAY"] = " (Heute)";
@@ -105,7 +123,7 @@ Calendar._TT["TIME_PART"] = "(Shift-)Klick oder Festhalten und Ziehen um den Wer
 
 // date formats
 Calendar._TT["DEF_DATE_FORMAT"] = "%d.%m.%Y";
-Calendar._TT["TT_DATE_FORMAT"] = "%a, %b %e";
+Calendar._TT["TT_DATE_FORMAT"] = "%a. - %d %b. %Y";
 
 Calendar._TT["WK"] = "wk";
 Calendar._TT["TIME"] = "Zeit:";

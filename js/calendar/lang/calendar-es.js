@@ -1,9 +1,9 @@
 // ** I18N
 
-// Calendar ES (spanish) language
+// Calendar ES language
 // Author: Mihai Bazon, <mihai_bazon@yahoo.com>
-// Updater: Servilio Afre Puentes <servilios@yahoo.com>
-// Updated: 2004-06-03
+// Translator: Servilio Afre Puentes <servilios@yahoo.com> 2004-06-03
+// Updated: Siegfried Gutschi (März 2017) <sigi AT modellbaukalender DOT info>
 // Encoding: utf-8
 // Distributed under the same terms as the calendar itself.
 
@@ -44,7 +44,7 @@ Calendar._SDN = new Array
  "Vie",
  "Sáb",
  "Dom");
-
+ 
 // First day of the week. "0" means display Sunday first, "1" means display
 // Monday first, etc.
 Calendar._FD = 1;
@@ -63,7 +63,7 @@ Calendar._MN = new Array
  "Octubre",
  "Noviembre",
  "Diciembre");
-
+ 
 // short month names
 Calendar._SMN = new Array
 ("Ene",
