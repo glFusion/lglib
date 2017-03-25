@@ -3,9 +3,9 @@
 *   Admin functions for the lgLib plugin
 *
 *   @author     Lee Garner <lee@leegarner.com>
-*   @copyright  Copyright (c) 2012-2014 Lee Garner <lee@leegarner.com>
+*   @copyright  Copyright (c) 2012-2017 Lee Garner <lee@leegarner.com>
 *   @package    lglib
-*   @version    0.0.5
+*   @version    1.0.5
 *   @license    http://opensource.org/licenses/gpl-2.0.php 
 *               GNU Public License v2 or later
 *   @filesource
@@ -19,7 +19,8 @@ $pi_title = $_LGLIB_CONF['pi_display_name'] . ' ' .
 LGLIB_setGlobal('pi_title', $pi_title);
 
 // If user isn't a root user or if the backup feature is disabled, bail.
-if (!SEC_inGroup('Root') || GVERSION > '1.6.0') {
+// Also if using glFusion > 1.6.0, which includes the backup function.
+if (!SEC_inGroup('Root') || GVERSION > '1.6.0' || !$_CONF['allow_mysql_dump']) {
     COM_accessLog("User {$_USER['username']} tried to illegally access the lglib admin page.");
     COM_404();
     exit;
