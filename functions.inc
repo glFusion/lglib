@@ -155,6 +155,11 @@ function USES_lglib_class_fpdf($file='')
     }
 }
 
+function USES_lglib_class_tcpdf()
+{
+    require_once LGLIB_PI_PATH . '/classes/pdf/html2pdf/vendor/tecnickcom/tcpdf/tcpdf.php';
+}
+
 function USES_lglib_class_html2pdf()
 {   require_once LGLIB_PI_PATH . '/classes/pdf/html2pdf/vendor/autoload.php'; }
 
