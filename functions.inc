@@ -88,6 +88,8 @@ if (!isset($_SYSTEM['alert_position'])) {
     $_SYSTEM['alert_position'] = 'top-center';
 }
 
+$_LGLIB_CONF['_is_uikit'] = $_SYSTEM['framework'] == 'uikit' ? true : false;
+
 /**
 *   Include the plugin-specific language file, and the corresponding
 *   admin-created custom language file, if any.  Looks for the site
@@ -205,9 +207,9 @@ function plugin_cclabel_lglib()
 */
 function plugin_getadminoption_lglib()
 {
-    global $LANG_LGLIB;
+    global $_CONF, $LANG_LGLIB;
 
-    if (SEC_inGroup('Root')) {
+    if (SEC_inGroup('Root') && GVERSION < '1.6.1' && $_CONF['allow_mysql_dump']) {
         $retval = array(
             $LANG_LGLIB['menu_label'],
             LGLIB_ADMIN_URL . '/index.php',
@@ -1185,6 +1187,28 @@ function service_imageurl_lglib($args, &$output, &$svc_msg)
             'url'   => '',
         );
         return PLG_RET_ERROR;
+    }
+}
+
+
+/**
+*   Get an icon from the CSS icon set, either UIkit or FontAwesome
+*
+*   @param  string  $name   Base name of icon, e.g. "edit" for "uk-icon-edit"
+*   @param  string  $style  Style name from local CSS
+*   @return string      Class names for icon
+*/
+function LGLIB_getIcon($name, $style='info')
+{
+    global $_LGLIB_CONF;
+
+    if ($style != '')
+        $style = ' lglib-icon-' . $style;
+
+    if ($_LGLIB_CONF['_is_uikit']) {
+        return ' uk-icon-' . $name . $style;
+    } else {
+        return 'fa fa-' . $name . $style;
     }
 }
 
