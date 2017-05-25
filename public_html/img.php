@@ -1,15 +1,15 @@
 <?php
-//  $Id: functions.inc 525 2012-03-02 00:24:02Z root $
 /**
-*   Common functions for the Photo Competition plugin.
+*   Adpatation of TimThumb for use with glFusion.
+*   Only supports internal images, no external images are processed.
 *   Based partially on timthumb 2.8.9 by Ben Gillbanks and Mark Maunder
 *   See http://code.google.com/p/timthumb/ for the original
 *
 *   @author     Lee Garner <lee@leegarner.com>
-*   @copyright  Copyright (c) 2009-2012 Lee Garner <lee@leegarner.com>
+*   @copyright  Copyright (c) 2009-2017 Lee Garner <lee@leegarner.com>
 *   @package    lglib
-*   @version    0.0.1
-*   @license    http://opensource.org/licenses/gpl-2.0.php 
+*   @version    1.0.5
+*   @license    http://opensource.org/licenses/gpl-2.0.php
 *               GNU Public License v2 or later
 *   @filesource
 */
@@ -21,10 +21,10 @@
  * loaded by timthumb. This will save you having to re-edit these variables
  * everytime you download a new version
 */
-define('TIM_VERSION', '2.8.9');     // Version of this script 
+define('TIM_VERSION', '2.8.9');     // Version of this script
 
 $_IMG_CONF = array(
-    'debug_level'   => 3,
+    'debug_level'   => 0,
     'memory_limit'  => '30M',
     'file_cache_enabled' => true,
     'cache_clean_interval' => 86400,
@@ -48,24 +48,25 @@ $_IMG_CONF = array(
     'pngcrush_path' => '/usr/bin/pngcrush',
     'wait_between_fetch_errors' => 3600,
     'max_file_size' => 10485760,
+    'origpath' => '',
 );
 
 define('BLOCK_EXTERNAL_LEECHERS', true);
-define('ALLOW_ALL_EXTERNAL_SITES', true); 
-define('ALLOW_EXTERNAL', true);
+define('ALLOW_ALL_EXTERNAL_SITES', true);
+define('ALLOW_EXTERNAL', false);
 define('DEFAULT_Q', 90);
 define('DEFAULT_ZC', 1);
 define('DEFAULT_F', '');
 define('DEFAULT_S', 0);
 define('DEFAULT_CC', 'ffffff');
 if(! defined('OPTIPNG_ENABLED') )       define ('OPTIPNG_ENABLED', false);
-if(! defined('OPTIPNG_PATH') )          define ('OPTIPNG_PATH', '/usr/bin/optipng'); //This will run first because it gives better compression than pngcrush. 
+if(! defined('OPTIPNG_PATH') )          define ('OPTIPNG_PATH', '/usr/bin/optipng'); //This will run first because it gives better compression than pngcrush.
 if(! defined('PNGCRUSH_ENABLED') )      define ('PNGCRUSH_ENABLED', false);
 if(! defined('PNGCRUSH_PATH') )         define ('PNGCRUSH_PATH', '/usr/bin/pngcrush'); //This will only run if OPTIPNG_PATH is not set or is not valid
 //Load a config file if it exists. Otherwise, use the values below
 if (file_exists(dirname(__FILE__) . '/config.php'))
     require_once 'config.php';
-if(! defined('PNG_IS_TRANSPARENT') )    define ('PNG_IS_TRANSPARENT', FALSE);                       // Define if a png image should have a transparent background color. Use False value if you want to display a custom coloured canvas_colour 
+if(! defined('PNG_IS_TRANSPARENT') )    define ('PNG_IS_TRANSPARENT', FALSE);                       // Define if a png image should have a transparent background color. Use False value if you want to display a custom coloured canvas_colour
 if(! defined('CURL_TIMEOUT') )              define ('CURL_TIMEOUT', 20);                            // Timeout duration for Curl. This only applies if you have
 
 
@@ -75,6 +76,7 @@ class TimThumb
     protected $is404 = false;
     protected $origDirectory = '';
     protected $cacheDirectory = '';
+    protected $basename = '';
     protected $lastURLError = false;
     protected $localImage = '';
     protected $localImageMTime = 0;
@@ -101,6 +103,12 @@ class TimThumb
     protected $path_to_mogrify;
     protected $image_lib;
 
+
+    /**
+    *   Entry point
+    *   Instantiates the object and calls run() to process and render the
+    *   image
+    */
     public static function start()
     {
         global $_IMG_CONF;
@@ -108,7 +116,7 @@ class TimThumb
         $tim = new TimThumb();
         $tim->handleErrors();
         $tim->securityChecks();
-        if($tim->tryBrowserCache()) {
+        if ($tim->tryBrowserCache()) {
             exit(0);
         }
         $tim->handleErrors();
@@ -121,6 +129,11 @@ class TimThumb
         exit(0);
     }
 
+
+    /**
+    *   Constructor
+    *   Populates variables in $_IMG_CONF from URL and session vars
+    */
     public function __construct()
     {
         global $_IMG_CONF;
@@ -131,12 +144,14 @@ class TimThumb
             ' to ' . $_SERVER['REQUEST_URI']);
 
         // LgLib sets configurable config values in $_SESSION, and plugins may
-        // override them with their own values
+        // override them with their own values.
+        // Since this module does not include lib-common.php (for speed), the
+        // session ID has to be provided by the URL.
         if (!isset($_SESSION)) {
             if (isset($_GET['sess'])) session_id($_GET['sess']);
             session_start();
         }
-        if (is_array($_SESSION['lglib'])) {
+        if (isset($_SESSION['lglib']) && is_array($_SESSION['lglib'])) {
             $_IMG_CONF = array_merge($_IMG_CONF, $_SESSION['lglib']);
         }
 
@@ -144,20 +159,16 @@ class TimThumb
         // variable names.
         if (isset($_GET['plugin'])) {
             $plugin = $_GET['plugin'];
-            if (is_array($_SESSION[$plugin])) {
+            if (isset($_SESSION[$plugin]) && is_array($_SESSION[$plugin])) {
                 $_IMG_CONF = array_merge($_IMG_CONF, $_SESSION[$plugin]);
             }
         }
         // At this point, $_IMG_CONF contains all configuration items.
-
         $this->origDirectory = $_IMG_CONF['origpath'];
         $this->cacheDirectory = $_IMG_CONF['cache_dir'];
         $this->image_lib = $_IMG_CONF['image_lib'];
         $this->path_to_mogrify = $_IMG_CONF['path_to_mogrify'];
-        // Clean the cache before we do anything because we don't want the first visitor after
-        // FILE_CACHE_TIME_BETWEEN_CLEANS expires to get a stale image. 
-        $this->cleanCache();
-        
+
         $this->myHost = preg_replace('/^www\./i', '', $_SERVER['HTTP_HOST']);
         $this->src = $this->param('src');
         $this->url = parse_url($this->src);
@@ -204,9 +215,12 @@ class TimThumb
                     return $this->error("You may not fetch images from that site. To enable this site in timthumb, you can either add it to \$ALLOWED_SITES and set ALLOW_EXTERNAL=true. Or you can set ALLOW_ALL_EXTERNAL_SITES=true, depending on your security needs.");
                 }
             }
-            $cachePrefix = '_ext';
-            $arr = explode('&', $_SERVER['QUERY_STRING']);
-            asort($arr);
+
+            //$cachePrefix = '_ext';
+            //$arr = explode('&', $_SERVER['QUERY_STRING']);
+            //asort($arr);
+            $tmp_filename = md5($this->salt . implode('', $arr) .
+                $this->fileCacheVersion);
             $this->cachefile = $this->cacheDirectory . '/' .
                 $_IMG_CONF['cache_prefix'] . $cachePrefix .
                 md5($this->salt . implode('', $arr) .
@@ -229,15 +243,29 @@ class TimThumb
             }
             $this->debug(1, "Local image path is {$this->localImage}");
             $this->localImageMTime = @filemtime($this->localImage);
+            $width = (int)$this->param('width', 0);
+            $height = (int)$this->param('height', 0);
+            $rnd = (int)$this->param('rnd', 0);
+            $path_parts = pathinfo($this->src);
+            $this->basename = $path_parts['basename'];
+            //$tmp_filename = md5("{$this->salt}-$rnd-{$this->src}-$width-$height") . '.' .
+            // This creates filenames the same as LGLIB_ImageUrl()
+            $tmp_filename = md5("$rnd-{$this->src}-$width-$height") . '.' .
+                $path_parts['extension'];
+            $this->cachefile = $this->cacheDirectory . '/' . $tmp_filename[0] . '/' .
+                $tmp_filename;
+
             //We include the mtime of the local file in case in changes on disk.
-            $this->cachefile = $this->cacheDirectory . '/' .
+            /*$this->cachefile = $this->cacheDirectory . '/' .
                 $_IMG_CONF['cache_prefix'].
                 md5($this->salt . $this->localImageMTime .
                     $_SERVER ['QUERY_STRING'] . $this->fileCacheVersion);
-                //  . FILE_CACHE_SUFFIX;  omit here
+                //  . FILE_CACHE_SUFFIX;  omit here*/
         }
         $this->debug(2, "Cache file is: " . $this->cachefile);
-
+        // Clean the cache before we do anything because we don't want the first visitor after
+        // FILE_CACHE_TIME_BETWEEN_CLEANS expires to get a stale image.
+        $this->cleanCache();
         return true;
     }
 
@@ -284,7 +312,7 @@ class TimThumb
     {
         global $_IMG_CONF;
 
-        if ($this->haveErrors()) { 
+        if ($this->haveErrors()) {
             /*if (NOT_FOUND_IMAGE && $this->is404()) {
                 if ($this->serveImg($this->origDirectory . '/' . NOT_FOUND_IMAGE)) {
                     exit(0);
@@ -301,7 +329,7 @@ class TimThumb
                 }
             }
             $this->serveErrors();
-            exit(0); 
+            exit(0);
         }
         return false;
     }
@@ -330,7 +358,7 @@ class TimThumb
         $this->debug(3, "Got a conditional get");
         $mtime = false;
         //We've already checked if the real file exists in the constructor
-        if (!is_file($this->cachefile . $_IMG_CONF['cache_suffix'])) {
+        if (!is_file($this->cachefile)) {
             //If we don't have something cached, regenerate the cached image.
             return false;
         }
@@ -340,7 +368,7 @@ class TimThumb
             $this->debug(3, "Local real file's modification time is $mtime");
         } else {
             //If it's not a local request then use the mtime of the cached file to determine the 304
-            $mtime = @filemtime($this->cachefile . $_IMG_CONF['cache_suffix']);
+            $mtime = @filemtime($this->cachefile);
             $this->debug(3, "Cached file's modification time is $mtime");
         }
         if (!$mtime) {
@@ -374,7 +402,7 @@ class TimThumb
         global $_IMG_CONF;
 
         $this->debug(3, "Trying server cache");
-        $cachefile = $this->cachefile . $_IMG_CONF['cache_suffix'];
+        $cachefile = $this->cachefile;
         if (file_exists($cachefile)) {
             $this->debug(3, "Cachefile $cachefile exists");
 
@@ -396,7 +424,6 @@ class TimThumb
         $this->debug(3, "Adding error message: $err");
         $this->errors[] = $err;
         return false;
-
     }
 
     protected function haveErrors()
@@ -416,7 +443,7 @@ class TimThumb
             $html .= '<li>' . htmlentities($err) . '</li>';
         }
         $html .= '</ul>';
-        echo '<h1>A TimThumb error has occured</h1>The following error(s) occured:<br />' . $html . '<br />';
+        echo '<h1>A rendering error has occured</h1>The following error(s) occured:<br />' . $html . '<br />';
         echo '<br />Query String : ' . htmlentities ($_SERVER['QUERY_STRING']);
         echo '<br />TimThumb version : ' . TIM_VERSION . '</pre>';
     }
@@ -454,16 +481,21 @@ class TimThumb
             if ($this->processImage($this->localImage)) {
                 $this->serveCacheFile();
                 return true;
-            } else { 
+            } else {
                 return false;
             }
         }
     }
 
 
+    /**
+    *   Serve an external image
+    *   Downloads the image to a temporary file to use as the source.
+    *   The temp file is deleted when the object is destroyed
+    */
     protected function serveExternalImage()
     {
-        if (!preg_match('/^https?:\/\/[a-zA-Z0-9\-\.]+/i', $this->src)) {
+        if (!$this->isURL) { 
             $this->error("Invalid URL supplied.");
             return false;
         }
@@ -471,7 +503,7 @@ class TimThumb
         $this->debug(3, "Fetching external image into temporary file $tempfile");
         $this->toDelete($tempfile);
         #fetch file here
-        if(! $this->getURL($this->src, $tempfile)){
+        if (!$this->getURL($this->src, $tempfile)) {
             @unlink($this->cachefile);
             touch($this->cachefile);
             $this->debug(3, "Error fetching URL: " . $this->lastURLError);
@@ -480,7 +512,7 @@ class TimThumb
         }
 
         $mimeType = $this->getMimeType($tempfile);
-        if(! preg_match("/^image\/(?:jpg|jpeg|gif|png)$/i", $mimeType)){
+        if (!preg_match("/^image\/(?:jpg|jpeg|gif|png)$/i", $mimeType)) {
             $this->debug(3, "Remote file has invalid mime type: $mimeType");
             @unlink($this->cachefile);
             touch($this->cachefile);
@@ -495,6 +527,7 @@ class TimThumb
         }
     }
 
+
     /**
     *   Clean old files from the cache.
     *
@@ -504,13 +537,15 @@ class TimThumb
     {
         global $_IMG_CONF;
 
-        if ($_IMG_CONF['cache_clean_interval'] < 0) {
+        if ($_IMG_CONF['cache_clean_interval'] < 0 || empty($this->basename)) {
             // No cache cleaning required
             return false;
         }
-        $this->debug(3, "cleanCache() called");
-        $lastCleanFile = $this->cacheDirectory . '/timthumb_cacheLastCleanTime.touch';
-        
+
+        $cachedir = $this->cacheDirectory . '/' . $this->basename[0];
+        $this->debug(3, "cleanCache() called for $cachedir");
+        $lastCleanFile = $cachedir . '/lastclean.touch';
+
         //If this is a new timthumb installation we need to create the file
         if (!is_file($lastCleanFile)) {
             $this->debug(1, "File tracking last clean doesn't exist. Creating $lastCleanFile");
@@ -527,7 +562,7 @@ class TimThumb
             if (!touch($lastCleanFile)) {
                 $this->error("Could not create cache clean timestamp file.");
             }
-            $files = glob($this->cacheDirectory . '/*' . $_IMG_CONF['cache_suffix']);
+            $files = glob($cachedir . '/*');
             if ($files) {
                 $timeAgo = time() - $_IMG_CONF['cache_max_age'];
                 foreach ($files as $file) {
@@ -547,6 +582,7 @@ class TimThumb
 
     /**
     *   Perform the image resizing and write the cache file
+    *   Selects im_imageResize or gd_imageResize based on configuration
     *
     *   @param  string  $localImage Full path to image
     *   @return boolean     True on success, False on failure
@@ -567,8 +603,8 @@ class TimThumb
         }
 
         // get standard input properties
-        $new_width =  (int)abs($this->param('w', 0));
-        $new_height = (int)abs($this->param('h', 0));
+        $new_width =  (int)abs($this->param('width', 0));
+        $new_height = (int)abs($this->param('height', 0));
 
         // set default width and height if neither are set already
         if ($new_width == 0 && $new_height == 0) {
@@ -609,7 +645,8 @@ class TimThumb
         if (flock($fh, LOCK_EX)) {
             // rename generally overwrites, but doing this in case of platform
             // specific quirks. File might not exist yet.
-            @unlink($this->cachefile . $_IMG_CONF['cache_suffix']);
+            @unlink($this->cachefile);
+
             switch ($this->image_lib) {
             case 'gdlib':
                 $result = $this->gd_imgResize($this->localImage,
@@ -618,6 +655,11 @@ class TimThumb
                 break;
             case 'imagemagick':
                 $result = $this->im_imgResize($this->localImage,
+                    $this->cachefile,
+                    $s_height, $s_width, $d_height, $d_width, $mimeType);
+                break;
+            case 'graphicsmagick':
+                $result = $this->gm_imgResize($this->localImage,
                     $this->cachefile,
                     $s_height, $s_width, $d_height, $d_width, $mimeType);
                 break;
@@ -633,7 +675,6 @@ class TimThumb
             fclose($fh);
             return $this->error("Could not get a lock for writing.");
         }
-
         return true;
     }
 
@@ -667,8 +708,7 @@ class TimThumb
     {
         global $_IMG_CONF;
 
-        $cachefile = $this->cachefile . $_IMG_CONF['cache_suffix'];
-        //$cachefile = $this->cachefile;
+        $cachefile = $this->cachefile;
         $this->debug(3, "Serving $cachefile");
 
         if (!is_file($cachefile)) {
@@ -681,16 +721,17 @@ class TimThumb
             return $this->error("Could not open cachefile.");
         }
 
-        fseek($fp, strlen($this->filePrependSecurityBlock), SEEK_SET);
-        $imgType = fread($fp, 3);
-        fseek($fp, 3, SEEK_CUR);
+        //fseek($fp, strlen($this->filePrependSecurityBlock), SEEK_SET);
+        //$imgType = fread($fp, 3);
+        $imgType = $this->getMimeType($cachefile);
+        /*fseek($fp, 3, SEEK_CUR);
         if (ftell($fp) != strlen($this->filePrependSecurityBlock) + 6) {
             @unlink($this->cachefile);
             return $this->error("The cached image file seems to be corrupt.");
-        }
+        }*/
 
-        $imageDataSize = filesize($cachefile) - (strlen($this->filePrependSecurityBlock) + 6);
-        //$imageDataSize = filesize($cachefile);
+        //$imageDataSize = filesize($cachefile) - (strlen($this->filePrependSecurityBlock) + 6);
+        $imageDataSize = filesize($cachefile);
         $this->sendImageHeaders($imgType, $imageDataSize);
         //$this->sendImageHeaders('image/jpeg', $imageDataSize);
         $bytesSent = @fpassthru($fp);
@@ -787,7 +828,7 @@ class TimThumb
         case 'image/gif':
             $image = imagecreatefromgif($src);
             break;
-            
+
         default:
             $this->error("Unrecognised mimeType");
         }
@@ -927,42 +968,17 @@ class TimThumb
 
 
     /**
-    *   Calculate the new dimensions needed to keep the image within
-    *   the provided width & height while preserving the aspect ratio.
+    *   Resize an image using the GD library
     *
-    *   @param  integer $width New width, in pixels
-    *   @param  integer $height New height, in pixels
-    *   @return array   $old_width, $old_height, $newwidth, $newheight
+    *   @param  string  $srcImage       Path to source image
+    *   @param  string  $destImage      Path to new destination image
+    *   @param  integer $sImageHeight   Source image height
+    *   @param  integer $sImageWidth    Source image width
+    *   @param  integer $dImageHeight   Destination image height
+    *   @param  integer $dImageWidth    Destinagion image width
+    *   @param  string  $mimeType       MIME type of image
+    *   @return boolean     True on success, False on failure
     */
-    protected function reDim($width=0, $height=0)
-    {
-        $file = $this->filePath();
-        $dimensions = getimagesize($this->pathOrig . '/' . $file);
-        //$dimensions = getimagesize($this->pathOrig . '/' . $this->basename);
-        $s_width = $dimensions[0];
-        $s_height = $dimensions[1];
-
-        // get both sizefactors that would resize one dimension correctly
-        if ($width > 0 && $s_width > $width)
-            $sizefactor_w = (double) ($width / $s_width);
-        else
-            $sizefactor_w = 1;
-
-        if ($height > 0 && $s_height > $height)
-            $sizefactor_h = (double) ($height / $s_height);
-        else
-            $sizefactor_h = 1;
-
-        // Use the smaller factor to stay within the parameters
-        $sizefactor = min($sizefactor_w, $sizefactor_h);
-
-        $newwidth = (int)($s_width * $sizefactor);
-        $newheight = (int)($s_height * $sizefactor);
-
-        return array($s_width, $s_height, $newwidth, $newheight);
-    }
-
-
     protected function gd_imgResize($srcImage, $destImage, $sImageHeight, $sImageWidth,
         $dImageHeight, $dImageWidth, $mimeType)
     {
@@ -985,9 +1001,6 @@ class TimThumb
         case 'image/gif' :
             $image = @imagecreatefromgif($srcImage);
             break;
-        case 'image/x-targa' :
-        case 'image/tga' :
-            return $this->error('TGA format not supported by GD Libs');
         default :
             return $this->error('IMG_resizeImage: GD Libs only nupport JPG, PNG, and GIF image types.');
         }
@@ -1001,7 +1014,7 @@ class TimThumb
         $newimage = imagecreatetruecolor($dImageWidth, $dImageHeight);
         imagecopyresampled($newimage, $image, 0,0,0,0,  $dImageWidth, $dImageHeight, $sImageWidth, $sImageHeight);
         imagedestroy($image);
-        $destImage .= $_IMG_CONF['cache_suffix'];
+        $destImage;
 
         switch ($mimeType) {
         case 'image/jpeg' :
@@ -1045,31 +1058,76 @@ class TimThumb
 
 
     /**
+    *   Use GraphicsMagick to resize an image
+    *
+    *   @uses   TimThumb::execCmd
+    *   @param  string  $srcImage       Path to source image
+    *   @param  string  $destImage      Path to new destination image
+    *   @param  integer $sImageHeight   Source image height
+    *   @param  integer $sImageWidth    Source image width
+    *   @param  integer $dImageHeight   Destination image height
+    *   @param  integer $dImageWidth    Destinagion image width
+    *   @param  string  $mimeType       MIME type of image
+    *   @return boolean     True on success, False on failure
+    */
+    protected function gm_imgResize($srcImage, $destImage, $sImageHeight, $sImageWidth,
+        $dImageHeight, $dImageWidth, $mimeType)
+    {
+        global $_IMG_CONF;
+
+        if (empty($this->path_to_mogrify)) return false;
+
+        $newdim = $dImageWidth . 'x' . $dImageHeight;
+        $gm_cmd = '"' . $this->path_to_mogrify . '/gm" convert' .
+                " -flatten -quality {$this->JpegQuality} -size $newdim $srcImage -geometry $newdim $destImage";
+        list($results, $status) = $this->execCmd($gm_cmd);
+        if ($status == 0) {
+            @rename($destImage, $destImage);
+            return true;
+        } else {
+            return $this->error('Error performing graphicsMagick conversion: ' . $gm_cmd);
+        }
+    }
+
+
+    /**
     *   Use ImageMagick to resize an image
     *
     *   @uses   TimThumb::execCmd
+    *   @param  string  $srcImage       Path to source image
+    *   @param  string  $destImage      Path to new destination image
+    *   @param  integer $sImageHeight   Source image height
+    *   @param  integer $sImageWidth    Source image width
+    *   @param  integer $dImageHeight   Destination image height
+    *   @param  integer $dImageWidth    Destinagion image width
+    *   @param  string  $mimeType       MIME type of image
+    *   @return boolean     True on success, False on failure
     */
     protected function im_imgResize($srcImage, $destImage, $sImageHeight, $sImageWidth,
         $dImageHeight, $dImageWidth, $mimeType)
     {
         global $_IMG_CONF;
 
-        //if (empty($_SESSION['path_to_mogrify'])) return false;
         if (empty($this->path_to_mogrify)) return false;
 
         $newdim = $dImageWidth . 'x' . $dImageHeight;
-        //$im_cmd = '"' . $_SESSION['path_to_mogrify'] . "/convert" . '"' . 
-        $im_cmd = '"' . $this->path_to_mogrify . "/convert" . '"' . 
+        $im_cmd = '"' . $this->path_to_mogrify . "/convert" . '"' .
                 " -flatten -quality {$this->JpegQuality} -size $newdim $srcImage -geometry $newdim $destImage";
         list($results, $status) = $this->execCmd($im_cmd);
         if ($status == 0) {
-            @rename($destImage, $destImage . $_IMG_CONF['cache_suffix']);
+            @rename($destImage, $destImage);
             return true;
         } else {
-            return false;
+            return $this->error('Error performing imageMagick conversion: ' . $im_cmd);
         }
     }
 
+
+    /**
+    *   Adds a file to be deleted when the current object is destroyeda
+    *
+    *   @param  string  $name   Full path of file to delete
+    */
     protected function toDelete($name)
     {
         $this->debug(3, "Scheduling file $name to delete on destruct.");
@@ -1077,7 +1135,8 @@ class TimThumb
     }
 
 
-    protected function getURL($url, $tempfile){
+    protected function getURL($url, $tempfile)
+    {
         $this->lastURLError = false;
         $url = preg_replace('/ /', '%20', $url);
         if(function_exists('curl_init')){
@@ -1138,8 +1197,8 @@ class TimThumb
             }
             return true;
         }
-
     }
+
 
     public static function curlWrite($h, $d)
     {
@@ -1186,7 +1245,7 @@ class TimThumb
                 11 => array (IMG_FILTER_SMOOTH, 0),
             );
         }
-        // get standard input properties        
+        // get standard input properties
         $new_width =  (int) abs ($this->param('w', 0));
         $new_height = (int) abs ($this->param('h', 0));
         $zoom_crop = (int) $this->param('zc', DEFAULT_ZC);
@@ -1256,7 +1315,7 @@ class TimThumb
         $canvas_color_B = hexdec (substr ($canvas_color, 4, 2));
 
         // Create a new transparent color for image
-        // If is a png and PNG_IS_TRANSPARENT is false then remove the alpha transparency 
+        // If is a png and PNG_IS_TRANSPARENT is false then remove the alpha transparency
         // (and if is set a canvas color show it in the background)
         if(preg_match('/^image\/png$/i', $mimeType) && !PNG_IS_TRANSPARENT && $canvas_trans){
             $color = imagecolorallocatealpha ($canvas, $canvas_color_R, $canvas_color_G, $canvas_color_B, 127);
@@ -1463,7 +1522,7 @@ class TimThumb
         $tempfile4 = tempnam($this->cacheDirectory, 'timthumb_tmpimg_');
         $context = stream_context_create ();
         $fp = fopen($tempfile,'r',0,$context);
-        file_put_contents($tempfile4, $this->filePrependSecurityBlock . $imgType . ' ?' . '>'); //6 extra bytes, first 3 being image type 
+        file_put_contents($tempfile4, $this->filePrependSecurityBlock . $imgType . ' ?' . '>'); //6 extra bytes, first 3 being image type
         file_put_contents($tempfile4, $fp, FILE_APPEND);
         fclose($fp);
         @unlink($tempfile);
@@ -1490,7 +1549,6 @@ class TimThumb
         imagedestroy($image);
         return true;
     }
-
 
 }
 
