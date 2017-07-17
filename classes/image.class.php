@@ -21,13 +21,14 @@ class lgImage
     *   Calculate the new dimensions needed to keep the image within
     *   the provided width & height while preserving the aspect ratio.
     *
-    *   @param  integer $width New width, in pixels
-    *   @param  integer $height New height, in pixels
-    *   @return mixed   array of dimensions, or false on error
+    *   @param  string  $origpath   Original image path
+    *   @param  integer $width      New width, in pixels
+    *   @param  integer $height     New height, in pixels
+    *   @return mixed       array of dimensions, or false on error
     */
     public static function reDim($orig_path, $width=0, $height=0)
     {
-        $dimensions = getimagesize($orig_path);
+        $dimensions = @getimagesize($orig_path);
         if ($dimensions === false) {
             return false;
         }
