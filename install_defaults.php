@@ -40,6 +40,7 @@ $_LGLIB_DEFAULTS = array(
     'slimbox_autoactivation' => 0,  // default, no autoactiviation .js loaded
     // Use the lglib_messages template var? False to append messages to info_block
     'use_lglib_messages' => 0,
+    'enable_smartresizer' => 0,
 );
 
 /**
@@ -76,6 +77,8 @@ function plugin_initconfig_lglib()
                 'select', 0, 0, 3, 70, true, $_LGLIB_CONF['pi_name']);
         $c->add('use_lglib_messages', $_LGLIB_DEFAULTS['use_lglib_messages'],
                 'select', 0, 0, 3, 80, true, $_LGLIB_CONF['pi_name']);
+        $c->add('enable_smartresizer', $_LGLIB_DEFAULTS['enable_smartresizer'],
+                'select', 0, 0, 3, 90, true, $_LGLIB_CONF['pi_name']);
      }
 
      return true;

@@ -13,6 +13,8 @@ plugins:
   * FPDF, by Olivier PLATHEY
   * HTML2PDF, by Laurent MINGUET
 - Message storage and retrieval for inter-plugin messaging
+- Automatically resize images (Experimental!). Enable the smartresizer
+in the pluginc configuration to test this feature.
 
 These scripts, especially the calendar, may not work correctly if they are
 loaded more than once, so this plugin becomes the single source for them.

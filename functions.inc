@@ -406,50 +406,12 @@ function plugin_getconfigelementhelp_lglib($option, $doclang='english')
 /**
 *   Upgrade the plugin to the currently-installed version.
 *
-*   @return mixed   True if successful, error message number otherwise
+*   @return boolean True if successful, False otherwise
 */
 function plugin_upgrade_lglib()
 {
-    global $_TABLES, $_LGLIB_CONF;
-
-    $pi_name = $_LGLIB_CONF['pi_name'];
-
-    // Get the current version, compare to the version in the plugin code
-    $current_ver = DB_getItem($_TABLES['plugins'], 'pi_version',
-        "pi_name = '$pi_name'");
-    if (!$current_ver) {
-        COM_errorLog("Error getting the $pi_name Plugin version",1);
-        return '03';
-    }
-
-    // if we're at the current version, what are we doing here?
-    if ($current_ver >= $_LGLIB_CONF['pi_version']) {
-        COM_errorLog("Current version $current_ver is already up to date");
-        return '06';
-    }
-
-    // If we're still here, perform the upgrade functions.
-    USES_lglib_upgrade();
-    $error = LGLIB_do_upgrade($current_ver);
-    if ($error) {
-        COM_errorLog("Error updating the $pi_name Plugin version",1);
-        return '04';
-    }
-
-    // now update the current version number.
-    DB_query("UPDATE {$_TABLES['plugins']} SET
-            pi_version = '{$_LGLIB_CONF['pi_version']}',
-            pi_gl_version = '{$_LGLIB_CONF['gl_version']}',
-            pi_homepage = '{$_LGLIB_CONF['pi_url']}'
-        WHERE pi_name = '$pi_name'");
-
-    if (DB_error()) {
-        COM_errorLog("Error updating the $pi_name Plugin version",1);
-        return '05';
-    }
-
-    COM_errorLog("Succesfully updated the $pi_name Plugin!",1);
-    return true;
+    require_once __DIR__ . '/upgrade.inc.php';
+    return LGLIB_do_upgrade();
 }
 
 
@@ -474,14 +436,25 @@ function plugin_templateSetVars_lglib($templatename, &$template)
     if ($messages === NULL) {
         $messages = LGLIB_showAllMessages();
     }
-    if ($messages == '') return;
-    if ($_CONF_LGLIB['use_lglib_messages']) {
-        $template->set_var('lglib_messages', $messages);
-    } elseif ($templatename == 'footer') {
-        // Have to do this during the 'footer' template to make sure it's
-        // only done once.
-        $info_block = $template->get_var('info_block') . $messages;
-        $template->set_var('info_block', $info_block);
+    if ($messages != '') {
+        if ($_CONF_LGLIB['use_lglib_messages']) {
+            $template->set_var('lglib_messages', $messages);
+        } elseif ($templatename == 'footer') {
+            // Have to do this during the 'footer' template to make sure it's
+            // only done once.
+            $info_block = $template->get_var('info_block') . $messages;
+            $template->set_var('info_block', $info_block);
+        }
+    }
+
+    // Resize images referenced in the templates if so configured
+    if ($_CONF_LGLIB['enable_smartresizer']) {
+       require_once __DIR__ . '/classes/SmartResizer.class.php';
+       if ($templatename == 'article' && isset($template->varvals['story_introtext'])) {
+            LGLib\SmartResizer::Template($template, 'story_introtext');
+            LGLib\SmartResizer::Template($template, 'story_bodytext_only');
+            LGLib\SmartResizer::Template($template, 'story_text_no_br');
+        }
     }
 }
 
