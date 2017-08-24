@@ -53,7 +53,8 @@ private $ln_height;
 function PDF_HTML($orientation='P', $unit='mm', $format='A4')
 {
     //Call parent constructor
-    $this->FPDF($orientation,$unit,$format);
+    parent::__construct($orientation, $unit, $format);
+    //$this->FPDF($orientation,$unit,$format);
     //Initialization
     $this->B=0;
     $this->I=0;

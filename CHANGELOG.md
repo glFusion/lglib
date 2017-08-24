@@ -4,6 +4,7 @@
 - Add service function to resize images, return more information
 - Add generic LGLIB_getDocUrl() to get documentation pages
 - Add automatic image resizing and lightbox display
+- Fixes to PDF classes for PHP 7
 
 ## 1.0.4
 - Modify html2pdf with limited fonts to reduce plugin size

@@ -12,7 +12,7 @@ function Open($file='doc.pdf')
     $this->f=fopen($file,'wb');
     if(!$this->f)
         $this->Error('Unable to create output file: '.$file);
-    parent::Open();
+    //parent::Open();
     $this->_putheader();
 }
 
@@ -29,7 +29,7 @@ function Image($file, $x=null, $y=null, $w=0, $h=0, $type='', $link='')
     parent::Image($file,$x,$y,$w,$h,$type,$link);
 }
 
-function Output($name=null, $dest=null)
+function Output($name=null, $dest=null, $isUTF8=false)
 {
     if($this->state<3)
         $this->Close();
@@ -48,7 +48,7 @@ function _endpage()
     $this->buffer='';
 }
 
-function _newobj()
+function _newobj($n=NULL)
 {
     $this->n++;
     $this->offsets[$this->n]=ftell($this->f);
