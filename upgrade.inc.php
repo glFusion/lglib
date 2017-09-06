@@ -3,9 +3,9 @@
 *   Upgrade routines for the lgLib plugin
 *
 *   @author     Lee Garner <lee@leegarner.com>
-*   @copyright  Copyright (c) 2013 Lee Garner <lee@leegarner.com>
+*   @copyright  Copyright (c) 2013-2017 Lee Garner <lee@leegarner.com>
 *   @package    lglib
-*   @version    0.0.2
+*   @version    1.0.5
 *   @license    http://opensource.org/licenses/gpl-2.0.php
 *               GNU Public License v2 or later
 *   @filesource
@@ -41,6 +41,7 @@ function LGLIB_do_upgrade($current_ver)
     } else {
         return false;
     }
+    $installed_ver = plugin_chkVersion_lglib();
 
     // Get the config object
     $c = config::get_instance();
@@ -114,9 +115,11 @@ function LGLIB_do_upgrade($current_ver)
         if (!LGLIB_do_set_version($current_ver)) return false;
     }
 
-    // Final version setting in case there was no upgrade process for
-    // this version
-    if (!LGLIB_do_set_version($_LGLIB_CONF['pi_version'])) return false;
+    // Final version update to catch updates that don't go through
+    // any of the update functions, e.g. code-only updates
+    if (!COM_checkVersion($current_ver, $installed_ver)) {
+        if (!LGLIB_do_set_version($installed_ver)) return false;
+    }
     return true;
 }
 
