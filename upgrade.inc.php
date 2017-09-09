@@ -124,7 +124,7 @@ function LGLIB_do_upgrade()
         );
         foreach ($dirs as $dir) {
             if (!is_dir($dir)) {
-                $mkdir($dir, true);
+                mkdir($dir, true);
             }
         }
         if (!LGLIB_do_set_version($current_ver)) return false;
