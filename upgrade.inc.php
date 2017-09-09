@@ -15,10 +15,10 @@
 global $_CONF, $_LGLIB_CONF, $_DB_dbms;
 
 /** Include the default configuration values */
-require_once LGLIB_PI_PATH . '/install_defaults.php';
+require_once __DIR__ . '/install_defaults.php';
 
 /** Include the table creation strings */
-require_once LGLIB_PI_PATH . "/sql/{$_DB_dbms}_install.php";
+require_once __DIR__ . "/sql/{$_DB_dbms}_install.php";
 
 /**
 *   Perform the upgrade starting at the current version.
@@ -26,7 +26,7 @@ require_once LGLIB_PI_PATH . "/sql/{$_DB_dbms}_install.php";
 *   @param  string  $current_ver    Current installed version to be upgraded
 *   @return integer                 Error code, 0 for success
 */
-function LGLIB_do_upgrade($current_ver)
+function LGLIB_do_upgrade()
 {
     global $_LGLIB_DEFAULTS, $_LGLIB_CONF, $_PLUGIN_INFO;
 

@@ -5,9 +5,9 @@
 *   since there are no tables or user interfaces.
 *
 *   @author     Lee Garner <lee@leegarner.com>
-*   @copyright  Copyright (c) 2012 Lee Garner <lee@leegarner.com>
+*   @copyright  Copyright (c) 2012-2017 Lee Garner <lee@leegarner.com>
 *   @package    lglib
-*   @version    0.0.1
+*   @version    1.0.5
 *   @license    http://opensource.org/licenses/gpl-2.0.php 
 *               GNU Public License v2 or later
 *   @filesource
@@ -20,9 +20,11 @@ if (!defined ('GVERSION')) {
 /** @global string $_DB_dbms */
 global $_DB_dbms;
 
-require_once dirname(__FILE__) . '/functions.inc';
-require_once dirname(__FILE__) . '/lglib.php';
-require_once LGLIB_PI_PATH . "/sql/{$_DB_dbms}_install.php";
+require_once __DIR__ . '/functions.inc';
+require_once __DIR__ . '/lglib.php';
+require_once __DIR__ . "/sql/{$_DB_dbms}_install.php";
+
+$datadir = $_CONF['path'] . 'data/' . $_LGLIB_CONF['pi_name'];
 
 //  Plugin installation options
 $INSTALL_plugin[$_LGLIB_CONF['pi_name']] = array(
@@ -38,11 +40,13 @@ $INSTALL_plugin[$_LGLIB_CONF['pi_name']] = array(
             'display'   => $_LGLIB_CONF['pi_display_name']
     ),
     array('type'    => 'mkdir',
-        'dirs'      => array($_CONF['path'] . 'data/' .
-                            $_LGLIB_CONF['pi_name'],
-                        $_CONF['path'] . 'data/' .
-                            $_LGLIB_CONF['pi_name'] . '/cache',
-                    ),
+        'dirs'      => array($datadir,
+            $datadir . '/0', $datadir . '/1', $datadir . '/2', $datadir . '/3',
+            $datadir . '/4', $datadir . '/5', $datadir . '/6', $datadir . '/7',
+            $datadir . '/8', $datadir . '/9', $datadir . '/a', $datadir . '/b',
+            $datadir . '/c', $datadir . '/d', $datadir . '/e', $datadir . '/f',
+            $datadir . '/cache',
+        ),
     ),
         
     array('type' => 'table', 
@@ -52,7 +56,6 @@ $INSTALL_plugin[$_LGLIB_CONF['pi_name']] = array(
     array('type' => 'table', 
             'table'     => $_TABLES['lglib_jobqueue'], 
             'sql'       => $_SQL['lglib_jobqueue']),
-
 );
     
  
@@ -99,7 +102,6 @@ function plugin_autouninstall_lglib()
             $_LGLIB_CONF['pi_name'] . '_dbback_lastrun',
         ),
     );
-
     return $out;
 }
 
