@@ -1,6 +1,8 @@
 # lgLib utility plugin for glFusion
 
 ## 1.0.5
+Released 2017-09-09
+- Make sure image cache directories are created
 - Add service function to resize images, return more information
 - Add generic LGLIB_getDocUrl() to get documentation pages
 - Add automatic image resizing and lightbox display
