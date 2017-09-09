@@ -56,6 +56,7 @@ $LANG_confignames['lglib'] = array(
     'img_cache_maxage' => 'Cached Image Max Age (days)',
     'slimbox_autoactivation' => 'Auto-Activate Slimbox?',
     'use_lglib_messages' => 'Use lglib_messages template var?',
+    'enable_smartresizer' => 'Enable Smart Image Resizer?',
 );
 
 $LANG_configsubgroups['lglib'] = array(

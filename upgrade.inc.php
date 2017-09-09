@@ -112,6 +112,21 @@ function LGLIB_do_upgrade()
         COM_errorLog("Updating Plugin to $current_ver");
         $c->add('enable_smartresizer', $_LGLIB_DEFAULTS['enable_smartresizer'],
                 'select', 0, 0, 3, 90, true, $_LGLIB_CONF['pi_name']);
+
+        // Make sure default cache directory is set up
+        $datadir = $_LGLIB_CONF['cache_dir'];
+        $dirs = array($datadir,
+            $datadir . '/0', $datadir . '/1', $datadir . '/2', $datadir . '/3',
+            $datadir . '/4', $datadir . '/5', $datadir . '/6', $datadir . '/7',
+            $datadir . '/8', $datadir . '/9', $datadir . '/a', $datadir . '/b',
+            $datadir . '/c', $datadir . '/d', $datadir . '/e', $datadir . '/f',
+            $datadir . '/cache',
+        );
+        foreach ($dirs as $dir) {
+            if (!is_dir($dir)) {
+                $mkdir($dir, true);
+            }
+        }
         if (!LGLIB_do_set_version($current_ver)) return false;
     }
 
