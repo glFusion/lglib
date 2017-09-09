@@ -28,7 +28,7 @@ require_once __DIR__ . "/sql/{$_DB_dbms}_install.php";
 */
 function LGLIB_do_upgrade()
 {
-    global $_LGLIB_DEFAULTS, $_LGLIB_CONF, $_PLUGIN_INFO;
+    global $_LGLIB_DEFAULTS, $_LGLIB_CONF, $_PLUGIN_INFO, $_CONF;
 
     if (isset($_PLUGIN_INFO[$_LGLIB_CONF['pi_name']])) {
         if (is_array($_PLUGIN_INFO[$_LGLIB_CONF['pi_name']])) {
