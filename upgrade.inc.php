@@ -30,13 +30,13 @@ function LGLIB_do_upgrade()
 {
     global $_LGLIB_DEFAULTS, $_LGLIB_CONF, $_PLUGIN_INFO;
 
-    if (isset($_PLUGIN_INFO[$_CONF_LGLIB['pi_name']])) {
-        if (is_array($_PLUGIN_INFO[$_CONF_LGLIB['pi_name']])) {
+    if (isset($_PLUGIN_INFO[$_LGLIB_CONF['pi_name']])) {
+        if (is_array($_PLUGIN_INFO[$_LGLIB_CONF['pi_name']])) {
             // glFusion > 1.6.5
-            $current_ver = $_PLUGIN_INFO[$_CONF_LGLIB['pi_name']]['pi_version'];
+            $current_ver = $_PLUGIN_INFO[$_LGLIB_CONF['pi_name']]['pi_version'];
         } else {
             // legacy
-            $current_ver = $_PLUGIN_INFO[$_CONF_LGLIB['pi_name']];
+            $current_ver = $_PLUGIN_INFO[$_LGLIB_CONF['pi_name']];
         }
     } else {
         return false;
@@ -163,18 +163,18 @@ function LGLIB_do_upgrade_sql($version)
 */
 function LGLIB_do_set_version($ver)
 {
-    global $_TABLES, $_CONF_LGLIB;
+    global $_TABLES, $_LGLIB_CONF;
 
     // now update the current version number.
     $sql = "UPDATE {$_TABLES['plugins']} SET
-            pi_version = '{$_CONF_LGLIB['pi_version']}',
-            pi_gl_version = '{$_CONF_LGLIB['gl_version']}',
-            pi_homepage = '{$_CONF_LGLIB['pi_url']}'
-        WHERE pi_name = '{$_CONF_LGLIB['pi_name']}'";
+            pi_version = '{$_LGLIB_CONF['pi_version']}',
+            pi_gl_version = '{$_LGLIB_CONF['gl_version']}',
+            pi_homepage = '{$_LGLIB_CONF['pi_url']}'
+        WHERE pi_name = '{$_LGLIB_CONF['pi_name']}'";
 
     $res = DB_query($sql, 1);
     if (DB_error()) {
-        COM_errorLog("Error updating the {$_CONF_LGLIB['pi_display_name']} Plugin version",1);
+        COM_errorLog("Error updating the {$_LGLIB_CONF['pi_display_name']} Plugin version",1);
         return false;
     } else {
         return true;
