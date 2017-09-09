@@ -24,8 +24,6 @@ require_once __DIR__ . '/functions.inc';
 require_once __DIR__ . '/lglib.php';
 require_once __DIR__ . "/sql/{$_DB_dbms}_install.php";
 
-$datadir = $_CONF['path'] . 'data/' . $_LGLIB_CONF['pi_name'];
-
 //  Plugin installation options
 $INSTALL_plugin[$_LGLIB_CONF['pi_name']] = array(
     'installer' => array('type' => 'installer', 
@@ -39,16 +37,7 @@ $INSTALL_plugin[$_LGLIB_CONF['pi_name']] = array(
             'url'       => $_LGLIB_CONF['pi_url'], 
             'display'   => $_LGLIB_CONF['pi_display_name']
     ),
-    array('type'    => 'mkdir',
-        'dirs'      => array($datadir,
-            $datadir . '/0', $datadir . '/1', $datadir . '/2', $datadir . '/3',
-            $datadir . '/4', $datadir . '/5', $datadir . '/6', $datadir . '/7',
-            $datadir . '/8', $datadir . '/9', $datadir . '/a', $datadir . '/b',
-            $datadir . '/c', $datadir . '/d', $datadir . '/e', $datadir . '/f',
-            $datadir . '/cache',
-        ),
-    ),
-        
+       
     array('type' => 'table', 
             'table'     => $_TABLES['lglib_messages'], 
             'sql'       => $_SQL['lglib_messages']),
@@ -115,6 +104,30 @@ function plugin_load_configuration_lglib()
 {
     require_once dirname(__FILE__) . '/install_defaults.php';
     return plugin_initconfig_lglib();
+}
+
+/**
+*   Post-installation tasks
+*   1. Create cache dirs
+*/
+function plugin_postinstall_lglib()
+{
+    global $_CONF;
+
+    // Make sure default cache directory is set up
+    $datadir = $_CONF['path'] . 'data/' . $_LGLIB_CONF['pi_name'];
+    $dirs = array($datadir,
+        $datadir . '/0', $datadir . '/1', $datadir . '/2', $datadir . '/3',
+        $datadir . '/4', $datadir . '/5', $datadir . '/6', $datadir . '/7',
+        $datadir . '/8', $datadir . '/9', $datadir . '/a', $datadir . '/b',
+        $datadir . '/c', $datadir . '/d', $datadir . '/e', $datadir . '/f',
+        $datadir . '/cache',
+    );
+    foreach ($dirs as $dir) {
+        if (!is_dir($dir)) {
+            mkdir($dir, true);
+        }
+    }
 }
 
 ?>
