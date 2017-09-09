@@ -114,7 +114,7 @@ function LGLIB_do_upgrade()
                 'select', 0, 0, 3, 90, true, $_LGLIB_CONF['pi_name']);
 
         // Make sure default cache directory is set up
-        $datadir = $_LGLIB_CONF['cache_dir'];
+        $datadir = $_CONF['path'] . 'data/' . $_LGLIB_CONF['pi_name'];
         $dirs = array($datadir,
             $datadir . '/0', $datadir . '/1', $datadir . '/2', $datadir . '/3',
             $datadir . '/4', $datadir . '/5', $datadir . '/6', $datadir . '/7',
