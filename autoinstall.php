@@ -125,7 +125,7 @@ function plugin_postinstall_lglib()
     );
     foreach ($dirs as $dir) {
         if (!is_dir($dir)) {
-            mkdir($dir, true);
+            mkdir($dir);
         }
     }
 }
