@@ -123,8 +123,10 @@ function LGLIB_do_upgrade()
             $datadir . '/cache',
         );
         foreach ($dirs as $dir) {
-            if (!is_dir($dir)) {
-                mkdir($dir);
+            if (is_dir($dir)) {
+                chmod($dir, 0755);
+            } else {
+                mkdir($dir, 0755);
             }
         }
         if (!LGLIB_do_set_version($current_ver)) return false;

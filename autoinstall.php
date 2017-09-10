@@ -112,7 +112,7 @@ function plugin_load_configuration_lglib()
 */
 function plugin_postinstall_lglib()
 {
-    global $_CONF;
+    global $_CONF, $_LGLIB_CONF;
 
     // Make sure default cache directory is set up
     $datadir = $_CONF['path'] . 'data/' . $_LGLIB_CONF['pi_name'];
@@ -124,8 +124,10 @@ function plugin_postinstall_lglib()
         $datadir . '/cache',
     );
     foreach ($dirs as $dir) {
-        if (!is_dir($dir)) {
-            mkdir($dir);
+        if (is_dir($dir)) {
+            chmod($dir, 0755);
+        } else {
+            mkdir($dir, 0755);
         }
     }
 }
