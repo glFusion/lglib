@@ -16,11 +16,6 @@
 if (!defined('GVERSION')) {
     die('This file can not be used on its own.');
 }
-if (GVERSION < '1.5.0') {
-    // Enable Mootools and disable jQuery
-    $_SYSTEM['disable_mootools'] = false;
-    $_SYSTEM['disable_jquery_slimbox'] = true;
-}
 
 /** Import configuration-handling class */
 require_once $_CONF['path_system'] . 'classes/config.class.php';
@@ -113,6 +108,36 @@ if (is_file(LGLIB_PI_PATH . '/config.php')) {
     include_once LGLIB_PI_PATH . '/config.php';
 }
 
+spl_autoload_register(function($class)
+{
+    if (strpos($class, 'LGLib\\') === 0) {
+        $class = str_replace('LGLib\\', '', $class);
+        $path = __DIR__ . '/classes/' . $class . '.class.php';
+        if (file_exists($path)) {
+            include $path;
+        }
+        return;
+    }
+    switch ($class) {
+    case 'FPDF':
+        $path = __DIR__ . '/classes/pdf/fpdf/fpdf.php';
+        break;
+    case 'FPDF2File':
+    case 'PDF_HTML2File':
+        $path = __DIR__ . '/classes/pdf/' . $class . '.php';
+        break;
+    default:
+        $path = __DIR__ . '/classes/' . $class . '.class.php';
+        break;
+    }
+    if (file_exists($path)) {
+        // Using "include_once" to provide compatibility with plugins that
+        // still call the USES_ functions to load classes.
+        include_once $path;
+    }
+});
+
+
 /** Include the PEAR Date Calc class */
 function USES_lglib_class_datecalc()
 {
@@ -196,6 +221,18 @@ function plugin_cclabel_lglib()
         );
     } else {
         return '';
+    }
+}
+
+
+/**
+*   When this plugin is disabled, notify other plugins.
+*/
+function plugin_enablestatechange_lglib($enable)
+{
+    if (!$enable) {
+COM_errorLog("calling itemdeleted");
+        PLG_itemDeleted('*', 'lglib');
     }
 }
 
@@ -450,8 +487,9 @@ function plugin_templateSetVars_lglib($templatename, &$template)
     // Resize images referenced in the templates if so configured
     if ($_CONF_LGLIB['enable_smartresizer']) {
        require_once __DIR__ . '/classes/SmartResizer.class.php';
-       if ($templatename == 'article' && isset($template->varvals['story_introtext'])) {
+       if ($templatename == 'article') {
             LGLib\SmartResizer::Template($template, 'story_introtext');
+            LGLib\SmartResizer::Template($template, 'story_introtext_only');
             LGLib\SmartResizer::Template($template, 'story_bodytext_only');
             LGLib\SmartResizer::Template($template, 'story_text_no_br');
         }

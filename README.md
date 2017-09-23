@@ -4,11 +4,8 @@ lglib
 This plugin provides some javascript and css files that are used by other
 plugins:
 
-- a popup calendar
-- a slimbox implementation that allows paging between images without a
-    slideshow
-- image resizing and url creation
-- an updated database backup
+- a popup calendar (see http://www.leegarner.com/jscalendar-1.0)
+- image resizing and url creation for static image URLs
 - PDF libraries
   * FPDF, by Olivier PLATHEY
   * HTML2PDF, by Laurent MINGUET
@@ -29,4 +26,5 @@ takes over the system cron function to prevent any long-running tasks such
 as database backups from affecting site visitors.
 
 In addition to the FPDF and HTML2PDF libraries mentioned above, this
-plugin also includes NameParser.class.php ((c) Josh Fraser).
+plugin also includes NameParser.class.php ((c) Josh Fraser) and the DHTML
+calendar by Milhai Bazon, (c) dynarch.com 2002-2005

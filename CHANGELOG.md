@@ -1,5 +1,10 @@
 # lgLib utility plugin for glFusion
 
+## 1.0.6
+Release TBD
+- Remove template var dependency in smart resizing
+- Implement class autoloader for PDF classes
+
 ## 1.0.5
 Released 2017-09-09
 - Make sure image cache directories are created
