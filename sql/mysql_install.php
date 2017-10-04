@@ -23,7 +23,7 @@ $_SQL['lglib_messages'] = "CREATE TABLE {$_TABLES['lglib_messages']} (
   `persist` tinyint(1) unsigned default 0,
   `dt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `expires` datetime
-)";
+) ENGINE=MyISAM";
 
 $_SQL['lglib_jobqueue'] = "CREATE TABLE `{$_TABLES['lglib_jobqueue']}` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -33,7 +33,7 @@ $_SQL['lglib_jobqueue'] = "CREATE TABLE `{$_TABLES['lglib_jobqueue']}` (
   `status` varchar(20) NOT NULL DEFAULT 'ready',
   `params` text,
   PRIMARY KEY (`id`)
-)";
+) ENGINE=MyISAM";
 
 $_UPGRADE_SQL['0.0.2'] = array(
     "CREATE TABLE {$_TABLES['lglib_messages']} (
@@ -45,7 +45,7 @@ $_UPGRADE_SQL['0.0.2'] = array(
       `persist` tinyint(1) unsigned default 0,
       `dt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
       `expires` datetime
-    )",
+    ) ENGINE=MyISAM",
 );
 
 $_UPGRADE_SQL['0.0.7'] = array(
@@ -57,7 +57,7 @@ $_UPGRADE_SQL['0.0.7'] = array(
     `status` varchar(20) NOT NULL DEFAULT 'ready',
     `params` text,
     PRIMARY KEY (`id`)
-  )",
+    ) ENGINE=MyISAM",
 );
 
 ?>
