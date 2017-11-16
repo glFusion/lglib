@@ -485,7 +485,8 @@ function plugin_templateSetVars_lglib($templatename, &$template)
     }
 
     // Resize images referenced in the templates if so configured
-    if ($_CONF_LGLIB['enable_smartresizer']) {
+    // For glFusion 1.7.0 and up see plugin_outputfilter_lglib
+    if (GVERSION < '1.7.0' && $_CONF_LGLIB['enable_smartresizer']) {
        require_once __DIR__ . '/classes/SmartResizer.class.php';
        if ($templatename == 'article') {
             LGLib\SmartResizer::Template($template, 'story_introtext');
@@ -494,6 +495,26 @@ function plugin_templateSetVars_lglib($templatename, &$template)
             LGLib\SmartResizer::Template($template, 'story_text_no_br');
         }
     }
+}
+
+
+/**
+*   Perform filtering and updating on final output before display
+*
+*   @param  string  $output     HTML output to process
+*   @param  string  $plugin     Invoking plugin
+*   @return string              Updated $output
+*/
+function plugin_outputfilter_lglib($output, $plugin='')
+{
+    global $_CONF_LGLIB;
+
+    // Resize images referenced in the templates if so configured
+    if ($_CONF_LGLIB['enable_smartresizer']) {
+       //require_once __DIR__ . '/classes/SmartResizer.class.php';
+       LGLib\SmartResizer::Text($output);
+    }
+    return $output;
 }
 
 
@@ -551,7 +572,10 @@ function LGLIB_storeMessage($args, $title='', $persist=false, $expires = '',
     // Convert to a single "args" array argument, but maintain backward
     // compatibility for some time.
     if (is_array($args)) {
-        $msg = $args['message'];
+        if (isset($args['message']))
+            $msg = $args['message'];
+        elseif (isset($args['msg']))
+            $msg = $args['msg'];
         if (isset($args['title']) && empty($title))
             $title = $args['title'];
         if (isset($args['persist']))
@@ -560,17 +584,38 @@ function LGLIB_storeMessage($args, $title='', $persist=false, $expires = '',
             $expires = $args['expires'];
         if (isset($args['pi_code']) && empty($pi_code))
             $pi_code = $args['pi_code'];
+        elseif (isset($args['plugin']))
+            $pi_code = $args['plugin'];
         if (isset($args['uid']) && empty($uid))
             $uid = (int)$args['uid'];
         if (isset($args['use_sess_id']))
             $use_sess_id = $args['use_sess_id'] == true ? true : false;
+        if (isset($args['level']))
+            $level = $args['level'];
     } else {
         $msg = $args;
     }
     if (empty($msg)) return;
     if ($title == '') $title = $LANG_LGLIB['system_message'];
     if ($persist != false) $persist = true;
-
+    switch ($level) {
+    case 'error':
+    case 'err':
+    case false:
+    case 3:
+        $level = 3; break;
+    case 'warn':
+    case 'warning':
+    case 2:
+        $level = 2;
+        break;
+    case 'info':
+    case true;
+    case 1:
+    default:
+        $level = 1;
+        break;
+    }
     //if ($_CONF_LGLIB['msg_store'] == 'db') {
     if (LGLIB_MSG_STORE == 'db') {
         global $_TABLES;
@@ -580,8 +625,10 @@ function LGLIB_storeMessage($args, $title='', $persist=false, $expires = '',
         $persist = $persist ? 1 : 0;
         if (empty($expires)) {
             if ($uid < 2) {
+                // Anonymous messages expire in 4 hours
                 $expires = 'DATE_ADD(NOW(), INTERVAL 4 HOUR)';
             } else {
+                // Member messages exist until viewed
                 $expires = "'2037-12-31'";  // non-expiring
             }
         } else {
@@ -591,9 +638,9 @@ function LGLIB_storeMessage($args, $title='', $persist=false, $expires = '',
         if ($title != '') $title = DB_escapeString($title);
         if ($pi_code != '') $pi_code = DB_escapeString($pi_code);
         $sql = "INSERT INTO {$_TABLES['lglib_messages']}
-            (uid, sess_id, title, message, persist, expires, pi_code)
+            (uid, sess_id, title, message, persist, expires, pi_code, level)
             VALUES ('$uid', '$sess_id', '$title', '$msg', $persist,
-                $expires, '$pi_code')";
+                $expires, '$pi_code', $level)";
         DB_query($sql, 1);
         if (DB_error()) COM_errorLog("lglib: storeMessage SQL error: $sql");
     } else {
@@ -633,7 +680,8 @@ function LGLIB_getAllMessages()
         if (!empty($sess_id)) $q[] = "sess_id = '$sess_id'";
         if (empty($q)) return $messages;
         $query = implode(' OR ', $q);
-        $sql = "SELECT title, message, persist FROM {$_TABLES['lglib_messages']}
+        $sql = "SELECT title, message, persist, level
+                FROM {$_TABLES['lglib_messages']}
                 WHERE $query
                 ORDER BY dt DESC";
         $result = DB_query($sql, 1);
@@ -643,6 +691,7 @@ function LGLIB_getAllMessages()
                     'title'     => $A['title'],
                     'message'   => $A['message'],
                     'persist'   => $A['persist'] ? true : false,
+                    'level'     => $A['level'],
                 );
             }
         }
@@ -733,11 +782,14 @@ function LGLIB_showAllMessages($persist = false)
     LGLIB_expireMessages();
 
     $msgs = LGLIB_getAllMessages();
+    // Include a zero element if level is undefined
+    $levels = array('info', 'info', 'warning', 'error');
 
     if (empty($msgs)) return '';
     if (count($msgs) == 1) {
         $message = $msgs[0]['message'];
-        $title =  $msgs[0]['title'];
+        $title = $msgs[0]['title'];
+        $level = $msgs[0]['level'];
         if ($msgs[0]['persist']) $persist = true;
     } else {
         /*$retval .= '<script type="text/javascript">'.LB;
@@ -745,12 +797,15 @@ function LGLIB_showAllMessages($persist = false)
         $retval .= "Growl.Smoke.create();".LB;*/
         $message = '';
         $title = '';
+        $level = 1;     // Default to "info"
         foreach ($msgs as $msg) {
             $message .= '<li class="lglmessage">' .
                     $msg['message'] .
                     '</li>'.LB;
             // If any message requests "persist", then all persist
             if ($msg['persist']) $persist = true;
+            // Set to the highest (worst) error level
+            if ($msg['level'] > $level) $level = $msg['level'];
             // First title found in a message gets used instead of default
             if (empty($title) && !empty($msg['title'])) $title = $msg['title'];
             //$retval .= COM_showMessageText($message['message']);
@@ -769,10 +824,11 @@ function LGLIB_showAllMessages($persist = false)
         if (empty($title)) $title = $LANG_LGLIB['system_message'];
     }
     LGLIB_deleteAllMessages();
+    $leveltxt = isset($levels[$level]) ? $levels[$level] : 'info';
     if ($persist) {
-        return '<span class="info lglmessage">' . $message . '</span>' . LB;
+        return '<span class="' . $leveltxt . ' lglmessage">' . $message . '</span>' . LB;
     } else {
-        return COM_showMessageText($message, $title, $persist);
+        return COM_showMessageText($message, $title, $persist, $leveltxt);
     }
 }
 

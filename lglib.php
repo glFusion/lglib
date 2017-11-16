@@ -13,7 +13,7 @@
 
 // Static configuration items
 global $_LGLIB_CONF;
-$_LGLIB_CONF['pi_version'] = '1.0.5';
+$_LGLIB_CONF['pi_version'] = '1.0.6';
 $_LGLIB_CONF['pi_name'] = 'lglib';
 $_LGLIB_CONF['gl_version'] = '1.6.0';
 $_LGLIB_CONF['pi_url'] = 'http://www.leegarner.com';

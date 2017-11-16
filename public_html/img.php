@@ -635,7 +635,6 @@ class TimThumb
         $d_width = (int)($s_width * $sizefactor);
         $d_height = (int)($s_height * $sizefactor);
 
-        //$tempfile = tempnam($this->cacheDirectory, 'photocomp_tmpimg_');
         $lockFile = $this->cachefile . '.lock';
         $fh = fopen($lockFile, 'w');
         if (!$fh) {
