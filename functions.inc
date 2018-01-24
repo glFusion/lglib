@@ -433,10 +433,10 @@ function plugin_getconfigelementhelp_lglib($option, $doclang='english')
         return false;
 
     if (!empty($option)) {
-        $file .= '#desc_' . $option;
+        $doc_url .= '#desc_' . $option;
     }
 
-    return array($doc_url . $file, 0);
+    return array($doc_url, 0);
 }
 
 
@@ -463,7 +463,7 @@ function plugin_upgrade_lglib()
 */
 function plugin_templateSetVars_lglib($templatename, &$template)
 {
-    global $_CONF_LGLIB;
+    global $_LGLIB_CONF;
 
     static $messages = NULL;
 
@@ -474,7 +474,7 @@ function plugin_templateSetVars_lglib($templatename, &$template)
         $messages = LGLIB_showAllMessages();
     }
     if ($messages != '') {
-        if ($_CONF_LGLIB['use_lglib_messages']) {
+        if ($_LGLIB_CONF['use_lglib_messages']) {
             $template->set_var('lglib_messages', $messages);
         } elseif ($templatename == 'footer') {
             // Have to do this during the 'footer' template to make sure it's
@@ -486,7 +486,7 @@ function plugin_templateSetVars_lglib($templatename, &$template)
 
     // Resize images referenced in the templates if so configured
     // For glFusion 1.7.0 and up see plugin_outputfilter_lglib
-    if (GVERSION < '1.7.0' && $_CONF_LGLIB['enable_smartresizer']) {
+    if (GVERSION < '1.7.0' && $_LGLIB_CONF['enable_smartresizer']) {
        require_once __DIR__ . '/classes/SmartResizer.class.php';
        if ($templatename == 'article') {
             LGLib\SmartResizer::Template($template, 'story_introtext');
@@ -507,10 +507,10 @@ function plugin_templateSetVars_lglib($templatename, &$template)
 */
 function plugin_outputfilter_lglib($output, $plugin='')
 {
-    global $_CONF_LGLIB;
+    global $_LGLIB_CONF;
 
     // Resize images referenced in the templates if so configured
-    if ($_CONF_LGLIB['enable_smartresizer']) {
+    if ($_LGLIB_CONF['enable_smartresizer']) {
        //require_once __DIR__ . '/classes/SmartResizer.class.php';
        LGLib\SmartResizer::Text($output);
     }
@@ -567,10 +567,11 @@ function LGLIB_invokeService($type, $action, $args, &$output, &$svc_msg)
 function LGLIB_storeMessage($args, $title='', $persist=false, $expires = '',
     $pi_code = '', $uid = 0, $use_sess_id = true)
 {
-    global $LANG_LGLIB, $_CONF, $_CONF_LGLIB, $_USER;
+    global $LANG_LGLIB, $_CONF, $_LGLIB_CONF, $_USER;
 
     // Convert to a single "args" array argument, but maintain backward
     // compatibility for some time.
+    $level = 'info';
     if (is_array($args)) {
         if (isset($args['message']))
             $msg = $args['message'];
@@ -616,7 +617,7 @@ function LGLIB_storeMessage($args, $title='', $persist=false, $expires = '',
         $level = 1;
         break;
     }
-    //if ($_CONF_LGLIB['msg_store'] == 'db') {
+    //if ($_LGLIB_CONF['msg_store'] == 'db') {
     if (LGLIB_MSG_STORE == 'db') {
         global $_TABLES;
 
@@ -666,7 +667,7 @@ function LGLIB_storeMessage($args, $title='', $persist=false, $expires = '',
 */
 function LGLIB_getAllMessages()
 {
-    global $_TABLES, $_CONF, $_CONF_LGLIB, $_USER;
+    global $_TABLES, $_CONF, $_LGLIB_CONF, $_USER;
 
     $messages = array();
 
@@ -792,9 +793,6 @@ function LGLIB_showAllMessages($persist = false)
         $level = $msgs[0]['level'];
         if ($msgs[0]['persist']) $persist = true;
     } else {
-        /*$retval .= '<script type="text/javascript">'.LB;
-        $retval .= "Growl.Smoke = new Gr0wl.Smoke('growl/smoke.png');".LB;
-        $retval .= "Growl.Smoke.create();".LB;*/
         $message = '';
         $title = '';
         $level = 1;     // Default to "info"
@@ -808,22 +806,12 @@ function LGLIB_showAllMessages($persist = false)
             if ($msg['level'] > $level) $level = $msg['level'];
             // First title found in a message gets used instead of default
             if (empty($title) && !empty($msg['title'])) $title = $msg['title'];
-            //$retval .= COM_showMessageText($message['message']);
-            /*$retval .= "window.addEvent('domready',function() {
-                    Growl.Smoke({
-                        title: '{$message['title']}',
-                        text: '{$message['message']}',
-                        duration:4
-                    });
-                    Growl.Smoke.create();
-                });".LB;*/
         }
-        //$retval .= '</script>'.LB;
         $message = '<ul class="lglmessage">' . $message . '</ul>' . LB;
-        // Revert to the system message title if no other title found
-        if (empty($title)) $title = $LANG_LGLIB['system_message'];
     }
     LGLIB_deleteAllMessages();
+    // Revert to the system message title if no other title found
+    if (empty($title)) $title = $LANG_LGLIB['system_message'];
     $leveltxt = isset($levels[$level]) ? $levels[$level] : 'info';
     if ($persist) {
         return '<span class="' . $leveltxt . ' lglmessage">' . $message . '</span>' . LB;
@@ -1240,7 +1228,7 @@ function service_imageurl_lglib($args, &$output, &$svc_msg)
 
     // If the file exists, return the full url.
     // If not, there's a problem and the empty url will be returned.
-    if ($sizes !== false && is_file($disp_fullpath)) {
+    if (is_file($disp_fullpath)) {
         $output = array(
             'url'   => $_CONF['site_url'] . '/' . $disp_relurl,
             'path'  => $disp_fullpath,
