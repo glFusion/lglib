@@ -87,7 +87,7 @@ class lgImage
 
         // Returns an array, with [0] either true/false and [1]
         // containing a message.
-        if (function_exists(_img_resizeImage)) {
+        if (function_exists('_img_resizeImage')) {
             $result = _img_resizeImage($src, $dst,
                         $A['s_height'], $A['s_width'],
                         $A['d_height'], $A['d_width'],
