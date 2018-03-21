@@ -20,9 +20,12 @@ $_SQL['lglib_messages'] = "CREATE TABLE {$_TABLES['lglib_messages']} (
   `title` varchar(255) DEFAULT NULL,
   `message` text NOT NULL,
   `pi_code` varchar(255) DEFAULT NULL,
-  `persist` tinyint(1) unsigned default 0,
+  `persist` tinyint(1) unsigned DEFAULT '0',
   `dt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `expires` datetime
+  `expires` datetime DEFAULT NULL,
+  `level` tinyint(1) unsigned NOT NULL DEFAULT '1',
+  KEY `uid` (`uid`),
+  KEY `sess_id` (`sess_id`)
 ) ENGINE=MyISAM";
 
 $_SQL['lglib_jobqueue'] = "CREATE TABLE `{$_TABLES['lglib_jobqueue']}` (
@@ -35,7 +38,8 @@ $_SQL['lglib_jobqueue'] = "CREATE TABLE `{$_TABLES['lglib_jobqueue']}` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM";
 
-$_UPGRADE_SQL['0.0.2'] = array(
+$_UPGRADE_SQL = array(
+'0.0.2' => array(
     "CREATE TABLE {$_TABLES['lglib_messages']} (
       `uid` int(11) NOT NULL DEFAULT '1',
       `sess_id` varchar(255) NOT NULL DEFAULT '',
@@ -46,9 +50,8 @@ $_UPGRADE_SQL['0.0.2'] = array(
       `dt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
       `expires` datetime
     ) ENGINE=MyISAM",
-);
-
-$_UPGRADE_SQL['0.0.7'] = array(
+),
+'0.0.7' => array(
   "CREATE TABLE IF NOT EXISTS `{$_TABLES['lglib_jobqueue']}` (
     `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
     `submitted` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -58,6 +61,13 @@ $_UPGRADE_SQL['0.0.7'] = array(
     `params` text,
     PRIMARY KEY (`id`)
     ) ENGINE=MyISAM",
+),
+'1.0.6' => array(
+    "ALTER TABLE {$_TABLES['lglib_messages']}
+        ADD `level` tinyint(1) unsigned NOT NULL DEFAULT '1',
+        ADD KEY `uid` (`uid`),
+        ADD KEY `sess_id` (`sess_id`)",
+),
 );
 
 ?>
