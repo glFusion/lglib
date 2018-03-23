@@ -1224,6 +1224,7 @@ function service_imageurl_lglib($args, &$output, &$svc_msg)
         $width = $A[0];
         $height = $A[1];
         $mime_type = $A['mime'];
+        @touch($disp_fullpath);
     }
 
     // If the file exists, return the full url.
@@ -1265,6 +1266,41 @@ function LGLIB_getIcon($name, $style='info')
     } else {
         return 'fa fa-' . $name . $style;
     }
+}
+
+
+/**
+*   Get the colorpicker JS and CSS.
+*   There are default values for each parameter.
+*   Sample parameters: array(
+*       'fg_id'     => forground input field ID
+*       'fg_color'  => current foreground color, including '#'
+*       'bg_id'     => background input field ID
+*       'bg_color'  => current background color, including '#'
+*       'sample_id' => ID of sample display field
+*
+*   @param  array   $A  Optional array of field attributes
+*   @return string      HTML to load JS and CSS for the colorpicker
+*/
+function LGLIB_colorPicker($A = array())
+{
+    static $need_js = true;
+    if (!is_array($A)) return '';
+
+    $T = new \Template(__DIR__ . '/templates');
+    $T->set_file('picker', 'colorpicker.thtml');
+    $T->set_block('fld', 'pickerJS', 'JS');
+    $T->set_var(array(
+        'fg_id' => isset($A['fg_id']) ? $A['fg_id'] : 'fgcolor',
+        'fg_color' => isset($A['fg_color']) ? $A['fg_color'] : '#000000',
+        'bg_id' => isset($A['bg_id']) ? $A['bg_id'] : 'bgcolor',
+        'bg_color' => isset($A['bg_color']) ? $A['bg_color'] : '#FFFFFF',
+        'sample_id' => isset($A['sample_id']) ? $A['sample_id'] : 'sample',
+        'include_js' => $need_js,
+    ) );
+    $T->parse('output', 'picker');
+    $need_js = false;
+    return $T->finish($T->get_var('output'));
 }
 
 ?>
