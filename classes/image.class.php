@@ -97,7 +97,7 @@ class lgImage
         }
 
         if ($result[0] === false) {
-            COM_errorLog("Failed to convert $src ($sHeight x $sWidth) to $dst ($dHeight x $dWidth)");
+            COM_errorLog("Failed to convert $src ({$A['s_height']} x {$A['s_width']}) to $dst ($newHeight x $newWidth)");
             return false;
         } else {
             return $A;
