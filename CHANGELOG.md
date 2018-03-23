@@ -2,6 +2,8 @@
 
 ## 1.0.6
 Release TBD
+- Add "level" indicator in message handler
+- Add LGLIB_colorpicker() to provide color picker
 - Remove template var dependency in smart resizing
 - Implement class autoloader for PDF classes
 
