@@ -202,7 +202,6 @@ class Date_Calc {
 
     public static function dayOfWeek($day="",$month="",$year="")
     {
-
         if(empty($year))
             $year = Date_Calc::dateNow("%Y");
         if(empty($month))
@@ -998,9 +997,8 @@ class Date_Calc {
         $date = Date_Calc::daysToDate(Date_Calc::dateToDays($day+7,$month,$year),"%Y-%m-%d");
 
         $next_week_year = substr($date,0,4);
-        $next_week_month = substr($date,4,2);
-        $next_week_day = substr($date,6,2);
-
+        $next_week_month = substr($date,5,2);
+        $next_week_day = substr($date,8,2);
         $this_weekday = Date_Calc::dayOfWeek($next_week_day,$next_week_month,$next_week_year);
 
         $beginOfWeek = (Date_Calc::dateToDays($next_week_day,$next_week_month,$next_week_year)
