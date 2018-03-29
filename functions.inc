@@ -5,9 +5,9 @@
 *   required by other plugins.
 *
 *   @author     Lee Garner <lee@leegarner.com>
-*   @copyright  Copyright (c) 2012-2017 Lee Garner <lee@leegarner.com>
+*   @copyright  Copyright (c) 2012-2018 Lee Garner <lee@leegarner.com>
 *   @package    lglib
-*   @version    1.0.5
+*   @version    1.0.6
 *   @license    http://opensource.org/licenses/gpl-2.0.php
 *               GNU Public License v2 or later
 *   @filesource
@@ -23,8 +23,8 @@ $lgu_config = config::get_instance();
 $_LGLIB_CONF = $lgu_config->get_config('lglib');
 
 /** Additional config items and table definitions are added here */
-require_once dirname(__FILE__) . '/lglib.php';
-define('LGLIB_PI_PATH', $_CONF['path'] . 'plugins/' . $_LGLIB_CONF['pi_name']);
+require_once __DIR__ . '/lglib.php';
+define('LGLIB_PI_PATH', __DIR__);
 define('LGLIB_URL', $_CONF['site_url'] . '/' . $_LGLIB_CONF['pi_name']);
 define('LGLIB_ADMIN_URL', $_CONF['site_admin_url'] . '/plugins/' . $_LGLIB_CONF['pi_name']);
 
@@ -90,7 +90,7 @@ $_LGLIB_CONF['_is_uikit'] = $_SYSTEM['framework'] == 'uikit' ? true : false;
 *   admin-created custom language file, if any.  Looks for the site
 *   language first, then defaults to english.php if nothing else found.
 */
-$langpath = LGLIB_PI_PATH . '/language';
+$langpath = __DIR__ . '/language';
 if (is_file("$langpath/{$_CONF['language']}.php")) {
     $langfile = "{$_CONF['language']}.php";
 } else {
@@ -104,8 +104,8 @@ if (is_file("$langpath/custom/$langfile")) {
 }
 
 /** Include the user-supplied configuration file, if any */
-if (is_file(LGLIB_PI_PATH . '/config.php')) {
-    include_once LGLIB_PI_PATH . '/config.php';
+if (is_file(__DIR__ . '/config.php')) {
+    include_once __DIR__ . '/config.php';
 }
 
 spl_autoload_register(function($class)
@@ -141,27 +141,24 @@ spl_autoload_register(function($class)
 /** Include the PEAR Date Calc class */
 function USES_lglib_class_datecalc()
 {
-    require_once LGLIB_PI_PATH . '/classes/DateCalc.class.php';
+    require_once __DIR__ . '/classes/DateCalc.class.php';
 }
 
 function USES_lglib_class_nameparser()
 {
-    require_once LGLIB_PI_PATH . '/classes/NameParser.class.php';
-    //require_once LGLIB_PI_PATH . '/classes/HumanNameParser.class.php';
+    // Include a shim class during the transition to namespaces.
+    require_once __DIR__ . '/classes/NameParser_tmp.class.php';
+    //require_once __DIR__ . '/classes/HumanNameParser.class.php';
 }
 
 function USES_lglib_class_image()
 {
-    require_once LGLIB_PI_PATH . '/classes/image.class.php';
+    require_once __DIR__ . '/classes/image.class.php';
 }
-
-/** Upgrade functions */
-function USES_lglib_upgrade()
-{   require_once LGLIB_PI_PATH . '/upgrade.inc.php';   }
 
 /** Database backup class */
 function USES_lglib_class_dbbackup()
-{   require_once LGLIB_PI_PATH . '/classes/dbBackup.class.php';    }
+{   require_once __DIR__ . '/classes/dbBackup.class.php';    }
 
 /** PDF generation
 *   If a derived class file is requested, e.g "PDF_HTML", then load that file.
@@ -175,20 +172,20 @@ function USES_lglib_class_fpdf($file='')
         if ($ext != 'php') {
             $file .= '.php';
         }
-        require_once LGLIB_PI_PATH . '/classes/pdf/' . $file;
+        require_once __DIR__ . '/classes/pdf/' . $file;
     } else {
         // just load the base FPDF class
-        require_once LGLIB_PI_PATH . '/classes/pdf/fpdf/fpdf.php';
+        require_once __DIR__ . '/classes/pdf/fpdf/fpdf.php';
     }
 }
 
 function USES_lglib_class_tcpdf()
 {
-    require_once LGLIB_PI_PATH . '/classes/pdf/html2pdf/vendor/tecnickcom/tcpdf/tcpdf.php';
+    require_once __DIR__ . '/classes/pdf/html2pdf/vendor/tecnickcom/tcpdf/tcpdf.php';
 }
 
 function USES_lglib_class_html2pdf()
-{   require_once LGLIB_PI_PATH . '/classes/pdf/html2pdf/vendor/autoload.php'; }
+{   require_once __DIR__ . '/classes/pdf/html2pdf/vendor/autoload.php'; }
 
 /**
 *   Get the currently installed version.
@@ -305,7 +302,7 @@ function plugin_getheadercss_lglib()
     //  2. layout/plugin
     //  3. plugin/custom
     //  4. plugin (default distribution version)
-    $pi_css = LGLIB_PI_PATH . '/css/';
+    $pi_css = __DIR__ . '/css/';
     $layout_css = "{$_CONF['path_layout']}plugins/{$_LGLIB_CONF['pi_name']}/";
     foreach ($files as $file) {
         if (@file_exists($layout_css . 'custom/' . $file)) {
@@ -331,7 +328,7 @@ function plugin_getheaderjs_lglib()
 {
     global $_CONF, $_SYSTEM, $_LGLIB_CONF;
 
-    $js_dir = LGLIB_PI_PATH . '/js';
+    $js_dir = __DIR__ . '/js';
 
     // For the datepicker popup, check that the ISO language file exists.
     // Default to English if it doesn't.

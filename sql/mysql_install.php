@@ -3,9 +3,9 @@
 *   Table definitions for the lgLib plugin
 *
 *   @author     Lee Garner <lee@leegarner.com>
-*   @copyright  Copyright (c) 2012 Lee Garner <lee@leegarner.com>
+*   @copyright  Copyright (c) 2012-2018 Lee Garner <lee@leegarner.com>
 *   @package    lglib
-*   @version    0.0.1
+*   @version    1.0.6
 *   @license    http://opensource.org/licenses/gpl-2.0.php 
 *               GNU Public License v2 or later
 *   @filesource

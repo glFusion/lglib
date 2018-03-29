@@ -14,7 +14,7 @@
 *               Apache License, Version 2.0
 *   @filesource
 */
-namespace LGLib;
+
 define('NAME_TRIM_STR', " (),\t\n\r\0\x0B");
 
 /**

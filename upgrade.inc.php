@@ -3,9 +3,9 @@
 *   Upgrade routines for the lgLib plugin
 *
 *   @author     Lee Garner <lee@leegarner.com>
-*   @copyright  Copyright (c) 2013-2017 Lee Garner <lee@leegarner.com>
+*   @copyright  Copyright (c) 2013-2018 Lee Garner <lee@leegarner.com>
 *   @package    lglib
-*   @version    1.0.5
+*   @version    1.0.6
 *   @license    http://opensource.org/licenses/gpl-2.0.php
 *               GNU Public License v2 or later
 *   @filesource
@@ -144,6 +144,7 @@ function LGLIB_do_upgrade()
     if (!COM_checkVersion($current_ver, $installed_ver)) {
         if (!LGLIB_do_set_version($installed_ver)) return false;
     }
+    LGLIB_remove_old_files();
     return true;
 }
 
@@ -204,5 +205,32 @@ function LGLIB_do_set_version($ver)
         return true;
     }
 }
+
+
+/**
+*   Remove deprecated files
+*/
+function LGLIB_remove_old_files()
+{
+    global $_CONF;
+
+    $paths = array(
+        // private/plugins/lglib
+        __DIR__ => array(
+            //'classes/NameParser_tmp.class.php',   // 1.0.7
+            //'classes/DateCalc.class.php',
+        ),
+        // public_html/lglib
+        $_CONF['path_html'] . 'lglib' => array(
+        ),
+    );
+
+    foreach ($paths as $path) {
+        foreach ($path as $file) {
+            @unlink("$path/$file");
+        }
+    }
+}
+
 
 ?>
