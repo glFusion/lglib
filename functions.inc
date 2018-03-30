@@ -796,7 +796,7 @@ function LGLIB_showAllMessages($persist = false)
         foreach ($msgs as $msg) {
             $message .= '<li class="lglmessage">' .
                     $msg['message'] .
-                    '</li>'.LB;
+                    '</li>';
             // If any message requests "persist", then all persist
             if ($msg['persist']) $persist = true;
             // Set to the highest (worst) error level
@@ -804,7 +804,7 @@ function LGLIB_showAllMessages($persist = false)
             // First title found in a message gets used instead of default
             if (empty($title) && !empty($msg['title'])) $title = $msg['title'];
         }
-        $message = '<ul class="lglmessage">' . $message . '</ul>' . LB;
+        $message = '<ul class="lglmessage">' . $message . '</ul>';
     }
     LGLIB_deleteAllMessages();
     // Revert to the system message title if no other title found
