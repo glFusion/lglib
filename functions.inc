@@ -287,6 +287,7 @@ function plugin_getheadercss_lglib()
         'style.css',
         // Include the popup calendar CSS.
         "{$prefix}calendar-{$_LGLIB_CONF['cal_style']}.css",
+        'datetime1/jquery-ui-timepicker-addon.css',
     );
 
     // Either jQuery or Mootools version
@@ -342,6 +343,7 @@ function plugin_getheaderjs_lglib()
         "$js_dir/calendar/calendar.js",
         "$js_dir/calendar/lang/calendar-{$iso_lang}.js",
         "$js_dir/calendar/calendar-setup.js",
+        "$js_dir/datetime1/jquery-ui-timepicker-addon.js",
 
         // modal popups
         //"$js_dir/popup.js",

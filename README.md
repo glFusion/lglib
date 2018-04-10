@@ -4,6 +4,7 @@ lglib
 This plugin provides some javascript and css files that are used by other
 plugins:
 
+- a Jquery-based datetime picker (http://trentrichardson.com/examples/timepicker)
 - a popup calendar (see https://www.leegarner.com/jscalendar-1.0)
 - image resizing and url creation for static image URLs
 - PDF libraries
@@ -29,3 +30,5 @@ as database backups from affecting site visitors.
 In addition to the FPDF and HTML2PDF libraries mentioned above, this
 plugin also includes NameParser.class.php ((c) Josh Fraser) and the DHTML
 calendar by Milhai Bazon, (c) dynarch.com 2002-2005
+
+The new Jquery datetime picker is Copyright (c) 2016 Trent Richardson; Licensed MIT

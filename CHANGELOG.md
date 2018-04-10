@@ -1,5 +1,9 @@
 # lgLib utility plugin for glFusion
 
+## 1.0.7
+Release TBD
+- Add Jquery-based datetime picker
+
 ## 1.0.6
 Release 2018-04-10
 - Call PLG_itemDeleted() when plugin is removed
