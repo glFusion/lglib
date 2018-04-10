@@ -4,7 +4,7 @@ lglib
 This plugin provides some javascript and css files that are used by other
 plugins:
 
-- a popup calendar (see http://www.leegarner.com/jscalendar-1.0)
+- a popup calendar (see https://www.leegarner.com/jscalendar-1.0)
 - image resizing and url creation for static image URLs
 - PDF libraries
   * FPDF, by Olivier PLATHEY
@@ -12,6 +12,7 @@ plugins:
 - Message storage and retrieval for inter-plugin messaging
 - Automatically resize images (Experimental!). Enable the smartresizer
 in the pluginc configuration to test this feature.
+- A color picker
 
 These scripts, especially the calendar, may not work correctly if they are
 loaded more than once, so this plugin becomes the single source for them.

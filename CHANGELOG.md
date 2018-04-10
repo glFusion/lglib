@@ -1,7 +1,8 @@
 # lgLib utility plugin for glFusion
 
 ## 1.0.6
-Release TBD
+Release 2018-04-10
+- Call PLG_itemDeleted() when plugin is removed
 - Add "level" indicator in message handler
 - Add LGLIB_colorpicker() to provide color picker
 - Remove template var dependency in smart resizing
