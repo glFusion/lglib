@@ -225,12 +225,11 @@ function LGLIB_remove_old_files()
         ),
     );
 
-    foreach ($paths as $path) {
-        foreach ($path as $file) {
+    foreach ($paths as $path=>$files) {
+        foreach ($files as $file) {
             @unlink("$path/$file");
         }
     }
 }
-
 
 ?>
