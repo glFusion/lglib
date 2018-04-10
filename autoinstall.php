@@ -91,6 +91,7 @@ function plugin_autouninstall_lglib()
             $_LGLIB_CONF['pi_name'] . '_dbback_lastrun',
         ),
     );
+    PLG_itemDeleted('*', 'lglib');
     return $out;
 }
 
@@ -105,6 +106,7 @@ function plugin_load_configuration_lglib()
     require_once dirname(__FILE__) . '/install_defaults.php';
     return plugin_initconfig_lglib();
 }
+
 
 /**
 *   Post-installation tasks
