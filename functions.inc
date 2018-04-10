@@ -1284,11 +1284,24 @@ function LGLIB_getIcon($name, $style='info')
 function LGLIB_colorPicker($A = array())
 {
     static $need_js = true;
+
+    // Must be an array, if supplied
     if (!is_array($A)) return '';
 
     $T = new \Template(__DIR__ . '/templates');
     $T->set_file('picker', 'colorpicker.thtml');
-    $T->set_block('fld', 'pickerJS', 'JS');
+
+    // Set other config variables. Assume "true" unless "false" is received
+    $vars = array(
+        'showPaletteOnly',
+        'togglePaletteOnly',
+        'showInput',
+        'allowEmpty',
+    );
+    foreach ($vars as $var) {
+        $T->set_var($var, isset($A[$var]) && !$A[$var] ? 'false' : 'true');
+    }
+
     $T->set_var(array(
         'fg_id' => isset($A['fg_id']) ? $A['fg_id'] : 'fgcolor',
         'fg_color' => isset($A['fg_color']) ? $A['fg_color'] : '#000000',

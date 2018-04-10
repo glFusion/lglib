@@ -3,9 +3,9 @@
 *   Default English Language file for the lgLib plugin.
 *
 *   @author     Lee Garner <lee@leegarner.com>
-*   @copyright  Copyright (c) 2012 Lee Garner
+*   @copyright  Copyright (c) 2012-2018 Lee Garner
 *   @package    lglib
-*   @version    0.0.1
+*   @version    1.0.7
 *   @license    http://opensource.org/licenses/gpl-2.0.php 
 *               GNU Public License v2 or later
 *   @filesource
@@ -36,6 +36,10 @@ $LANG_LGLIB = array(
         'over', 'to', 'into', 'with',
     ),
     'menu_label' => 'lgLib',
+    // Colorpicker text
+    'more' => 'More',
+    'less' => 'Less',
+    'choose' => 'Chose',
 );
 
 // Messages for the plugin upgrade

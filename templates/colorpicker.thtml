@@ -1,22 +1,27 @@
 {# begin {templatelocation} #}
 {!if include_js}
-<script src="{site_url}/forum/javascript/spectrum.js"></script>
-<link rel="stylesheet" href="{site_url}/forum/javascript/spectrum.css" />
+<script src="{site_url}/lglib/colorpicker/spectrum.js"></script>
+<link rel="stylesheet" href="{site_url}/lglib/colorpicker/spectrum.css" />
 {!endif}
 <script>
 	$("#{fg_id}").spectrum({
 		color: "{fg_color}",
 		preferredFormat: "hex",
 		change: function(color) {
-			$('#{sample_id}').css('color',color.toHexString())
+{!if sample_id}
+			if (color) {
+				$('#{sample_id}').css('color',color.toHexString())
+			}
+{!endif}
 		},
-	showPaletteOnly: true,
-	togglePaletteOnly: true,
-	togglePaletteMoreText: '{$LANG_ADVT['more']}',
-	togglePaletteLessText: '{$LANG_ADVT['less']}',
+	showPaletteOnly: {showPaletteOnly},
+	togglePaletteOnly: {togglePaletteOnly},
+	showInput: {showInput},
+	allowEmpty: {allowEmpty},
+	togglePaletteMoreText: '{$LANG_LGLIB['more']}',
+	togglePaletteLessText: '{$LANG_LGLIB['less']}',
 	cancelText: '{$LANG_ADMIN['cancel']}',
-	chooseText: '{$LANG_ADVT['choose']}',
-	showInput: true,
+	chooseText: '{$LANG_LGLIB['choose']}',
 	palette: [
 		["#000","#444","#666","#999","#ccc","#eee","#f3f3f3","#fff"],
 		["#f00","#f90","#ff0","#0f0","#0ff","#00f","#90f","#f0f"],
@@ -32,15 +37,18 @@
 		color: "{bg_color}",
 		preferredFormat: "hex",
 		change: function(color) {
-			$('#{sample_id}').css('background',color.toHexString())
+			if (color) {
+				$('#{sample_id}').css('background',color.toHexString())
+			}
 		},
-	showPaletteOnly: true,
-	togglePaletteOnly: true,
-	togglePaletteMoreText: '{$LANG_ADVT['more']}',
-	togglePaletteLessText: '{$LANG_ADVT['less']}',
+	showPaletteOnly: {showPaletteOnly},
+	togglePaletteOnly: {togglePaletteOnly},
+	showInput: {showInput},
+	allowEmpty: {allowEmpty},
+	togglePaletteMoreText: '{$LANG_LGLIB['more']}',
+	togglePaletteLessText: '{$LANG_LGLIB['less']}',
 	cancelText: '{$LANG_ADMIN['cancel']}',
-	chooseText: '{$LANG_ADVT['choose']}',
-	showInput: true,
+	chooseText: '{$LANG_LGLIB['choose']}',
 	palette: [
 		["#000","#444","#666","#999","#ccc","#eee","#f3f3f3","#fff"],
 		["#f00","#f90","#ff0","#0f0","#0ff","#00f","#90f","#f0f"],
