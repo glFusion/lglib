@@ -5,15 +5,15 @@ This plugin provides some javascript and css files that are used by other
 plugins:
 
 - a Jquery-based datetime picker (http://trentrichardson.com/examples/timepicker)
-- a popup calendar (see https://www.leegarner.com/jscalendar-1.0)
+- a DHTML popup calendar (see https://www.leegarner.com/jscalendar-1.0) (to be deprecated)
 - image resizing and url creation for static image URLs
 - PDF libraries
   * FPDF, by Olivier PLATHEY
   * HTML2PDF, by Laurent MINGUET
 - Message storage and retrieval for inter-plugin messaging
 - Automatically resize images (Experimental!). Enable the smartresizer
-in the pluginc configuration to test this feature.
-- A color picker
+in the plugin configuration to test this feature.
+- A color picker by Brian Grinstead (https://github.com/bgrins/spectrum)
 
 These scripts, especially the calendar, may not work correctly if they are
 loaded more than once, so this plugin becomes the single source for them.
