@@ -1,7 +1,8 @@
 # lgLib utility plugin for glFusion
 
 ## 1.0.7
-Release TBD
+Release 2018-04-14
+- Fix language strings for colorpicker
 - Add Jquery-based datetime picker
 
 ## 1.0.6
