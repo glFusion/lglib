@@ -1,5 +1,9 @@
 # lgLib utility plugin for glFusion
 
+## 1.0.8
+Release TBD
+- Error-handling fixes for html2pdf classes
+
 ## 1.0.7
 Release 2018-04-14
 - Fix language strings for colorpicker
