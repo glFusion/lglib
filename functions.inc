@@ -602,6 +602,7 @@ function LGLIB_storeMessage($args, $title='', $persist=false, $expires = '',
     case 'error':
     case 'err':
     case false:
+    case 'alert':
     case 3:
         $level = 3; break;
     case 'warn':
