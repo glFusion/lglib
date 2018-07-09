@@ -1316,4 +1316,49 @@ function LGLIB_colorPicker($A = array())
     return $T->finish($T->get_var('output'));
 }
 
+
+/**
+*   Get an array variable, first checking whether it's set
+*
+*   @param  array   $A          Array where the variable should be
+*   @param  string  $key        Name of array element
+*   @param  string  $type       Type of return value
+*   @param  mixed   $default    Default value, if key is not set
+*   @return     Array element cast to $type, or NULL if not set
+*/
+function LGLIB_getVar($A, $key, $type = 'string', $default = NULL)
+{
+    // If the key is not set, return the default
+    if (!is_array($A) || !isset($A[$key])) {
+        return $default;
+    } else {
+        $val = $A[$key];
+    }
+
+    // Cast the value according to the specified type
+    switch ($type) {
+    case 'int':
+    case 'integer':
+        $val = (int)$val;
+        break;
+    case 'bool':
+        $val = (bool)$val;
+        break;
+    case 'float':
+        $val = (float)$val;
+        break;
+    case 'array':
+        // Cast value as an array only if it isn't already one
+        if (!is_array($val)) {
+            $val = array($val);
+        }
+        break;
+    case 'string':
+    default:
+        $val = (string)$val;
+        break;
+    }
+    return $val;
+}
+
 ?>

@@ -2,6 +2,7 @@
 
 ## 1.0.8
 Release TBD
+- Add LGLIB_getVar() to safely get array element values
 - Error-handling fixes for html2pdf classes
 
 ## 1.0.7
