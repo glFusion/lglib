@@ -15,7 +15,9 @@
 *   @filesource
 */
 namespace LGLib;
-define('NAME_TRIM_STR', " (),\t\n\r\0\x0B");
+if (!defined('NAME_TRIM_STR')) {
+    define('NAME_TRIM_STR', " (),\t\n\r\0\x0B");
+}
 
 /**
 *   Class to parse names into componentes.
