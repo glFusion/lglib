@@ -7,7 +7,7 @@
 *   @author     Lee Garner <lee@leegarner.com>
 *   @copyright  Copyright (c) 2012-2018 Lee Garner <lee@leegarner.com>
 *   @package    lglib
-*   @version    1.0.6
+*   @version    1.0.8
 *   @license    http://opensource.org/licenses/gpl-2.0.php
 *               GNU Public License v2 or later
 *   @filesource
@@ -1320,6 +1320,7 @@ function LGLIB_colorPicker($A = array())
 /**
 *   Get an array variable, first checking whether it's set
 *
+*   @since  1.0.8
 *   @param  array   $A          Array where the variable should be
 *   @param  string  $key        Name of array element
 *   @param  string  $type       Type of return value
