@@ -2,6 +2,7 @@
 
 ## 1.0.8
 Release TBD
+- Ensure that image cache directories are created before use
 - Add LGLIB_getVar() to safely get array element values
 - Error-handling fixes for html2pdf classes
 

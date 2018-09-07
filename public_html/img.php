@@ -252,6 +252,9 @@ class TimThumb
             // This creates filenames the same as LGLIB_ImageUrl()
             $tmp_filename = md5("$rnd-{$this->src}-$width-$height") . '.' .
                 $path_parts['extension'];
+            if (!is_dir($this->cacheDirectory . '/' . $tmp_filename[0])) {
+                @mkdir($this->cacheDirectory . '/' . $tmp_filename[0]);
+            }
             $this->cachefile = $this->cacheDirectory . '/' . $tmp_filename[0] . '/' .
                 $tmp_filename;
 
