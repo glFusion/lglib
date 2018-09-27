@@ -1106,6 +1106,9 @@ function LGLIB_run_jobqueue($pi = '')
     if (!empty($pi)) $sql .= " AND pi_name = '" . DB_escapeString($pi) . "'";
     $res = DB_query($sql);
     while ($A = DB_fetchArray($res, false)) {
+        // Flag the job as running so it's not picked up by another invocation
+        // of cron.php
+        LGLIB_update_job_status($A['id'], 'running');
         $status = LGLIB_invokeService($A['pi_name'], 'runjob',
                 $A, $output, $svc_msg);
         LGLIB_update_job_status($A['id'], $status);
@@ -1118,7 +1121,7 @@ function LGLIB_run_jobqueue($pi = '')
 *
 *   @see    LGLIB_run_jobqueue()
 *   @param  integer $jobid      ID of job to update
-*   @param  integer $status     Job completion status
+*   @param  mixed   $status     Job completion status
 */
 function LGLIB_update_job_status($jobid, $status)
 {
@@ -1127,12 +1130,13 @@ function LGLIB_update_job_status($jobid, $status)
     static $statuses = array(
         PLG_RET_OK => 'completed',
         PLG_RET_ERROR => 'plugin error',
+        'running' => 'running',
     );
     if (!isset($statuses[$status]))
         $statuses[$status] = 'undefined';
 
     $jobid = (int)$jobid;
-    $status = (int)$statuses[$status];
+    $status = $statuses[$status];
     DB_query("UPDATE {$_TABLES['lglib_jobqueue']}
             SET status = '{$status}'
             WHERE id = $jobid");
