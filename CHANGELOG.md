@@ -2,8 +2,9 @@
 
 ## 1.0.8
 Release TBD
+- Change session ID field in messages table to 80 characters
 - Ensure that image cache directories are created before use
-- Add LGLIB_getVar() to safely get array element values
+- Add `LGLIB_getVar()` to safely get array element values
 - Error-handling fixes for html2pdf classes
 
 ## 1.0.7

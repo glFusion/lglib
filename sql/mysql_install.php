@@ -5,7 +5,7 @@
 *   @author     Lee Garner <lee@leegarner.com>
 *   @copyright  Copyright (c) 2012-2018 Lee Garner <lee@leegarner.com>
 *   @package    lglib
-*   @version    1.0.6
+*   @version    1.0.8
 *   @license    http://opensource.org/licenses/gpl-2.0.php 
 *               GNU Public License v2 or later
 *   @filesource
@@ -16,10 +16,10 @@ global $_TABLES, $_SQL, $_UPGRADE_SQL;
 
 $_SQL['lglib_messages'] = "CREATE TABLE {$_TABLES['lglib_messages']} (
   `uid` int(11) NOT NULL DEFAULT '1',
-  `sess_id` varchar(255) NOT NULL DEFAULT '',
+  `sess_id` varchar(80) NOT NULL DEFAULT '',
   `title` varchar(255) DEFAULT NULL,
   `message` text NOT NULL,
-  `pi_code` varchar(255) DEFAULT NULL,
+  `pi_code` varchar(40) DEFAULT NULL,
   `persist` tinyint(1) unsigned DEFAULT '0',
   `dt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `expires` datetime DEFAULT NULL,
@@ -67,7 +67,11 @@ $_UPGRADE_SQL = array(
         ADD `level` tinyint(1) unsigned NOT NULL DEFAULT '1',
         ADD KEY `uid` (`uid`),
         ADD KEY `sess_id` (`sess_id`)",
-),
+    ),
+    '1.0.8' => array(
+        "ALTER TABLE {$_TABLES['lglib_messages']} CHANGE sess_id sess_id varchar(80) not null",
+        "ALTER TABLE {$_TABLES['lglib_messages']} CHANGE pi_code pi_code varchar(40)",
+    ),
 );
 
 ?>
