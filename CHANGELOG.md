@@ -1,7 +1,7 @@
 # lgLib utility plugin for glFusion
 
 ## 1.0.8
-Release TBD
+Release 2018-10-17
 - Change session ID field in messages table to 80 characters
 - Ensure that image cache directories are created before use
 - Add `LGLIB_getVar()` to safely get array element values
