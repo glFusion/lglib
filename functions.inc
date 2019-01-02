@@ -1,17 +1,17 @@
 <?php
 /**
-*   glFusion API functions for the lgLib plugin.
-*   This plugin's job is simply to load javascript and css files that are
-*   required by other plugins.
-*
-*   @author     Lee Garner <lee@leegarner.com>
-*   @copyright  Copyright (c) 2012-2018 Lee Garner <lee@leegarner.com>
-*   @package    lglib
-*   @version    1.0.8
-*   @license    http://opensource.org/licenses/gpl-2.0.php
-*               GNU Public License v2 or later
-*   @filesource
-*/
+ * glFusion API functions for the lgLib plugin.
+ * This plugin's job is simply to load javascript and css files that are
+ * required by other plugins.
+ *
+ * @author      Lee Garner <lee@leegarner.com>
+ * @copyright   Copyright (c) 2012-2018 Lee Garner <lee@leegarner.com>
+ * @package     lglib
+ * @version     v1.0.8
+ * @license     http://opensource.org/licenses/gpl-2.0.php
+ *              GNU Public License v2 or later
+ * @filesource
+ */
 
 if (!defined('GVERSION')) {
     die('This file can not be used on its own.');
@@ -86,10 +86,9 @@ if (!isset($_SYSTEM['alert_position'])) {
 $_LGLIB_CONF['_is_uikit'] = $_SYSTEM['framework'] == 'uikit' ? true : false;
 
 /**
-*   Include the plugin-specific language file, and the corresponding
-*   admin-created custom language file, if any.  Looks for the site
-*   language first, then defaults to english.php if nothing else found.
-*/
+ * Include the plugin-specific language file.
+ * Looks for the site language first, then defaults to english.php if nothing else found.
+ */
 $langpath = __DIR__ . '/language';
 if (is_file("$langpath/{$_CONF['language']}.php")) {
     $langfile = "{$_CONF['language']}.php";
@@ -141,9 +140,12 @@ spl_autoload_register(function($class)
 /** Include the PEAR Date Calc class */
 function USES_lglib_class_datecalc()
 {
-    require_once __DIR__ . '/classes/DateCalc.class.php';
+    require_once __DIR__ . '/classes/Date_Calc.class.php';
 }
 
+/**
+ * Load the nameparser class.
+ */
 function USES_lglib_class_nameparser()
 {
     // Include a shim class during the transition to namespaces.
@@ -151,6 +153,9 @@ function USES_lglib_class_nameparser()
     //require_once __DIR__ . '/classes/HumanNameParser.class.php';
 }
 
+/**
+ * Load the image-handling class.
+ */
 function USES_lglib_class_image()
 {
     require_once __DIR__ . '/classes/image.class.php';
@@ -160,10 +165,13 @@ function USES_lglib_class_image()
 function USES_lglib_class_dbbackup()
 {   require_once __DIR__ . '/classes/dbBackup.class.php';    }
 
-/** PDF generation
-*   If a derived class file is requested, e.g "PDF_HTML", then load that file.
-*   otherwise, load the base FPDF class file.
-*/
+/**
+ * Import the PDF utility class.
+ * If a derived class file is requested, e.g "PDF_HTML", then load that file.
+ * otherwise, load the base FPDF class file.
+ *
+ * @param   string  $file   Optional child class filename
+ */
 function USES_lglib_class_fpdf($file='')
 {
     if ($file != '') {
@@ -179,19 +187,25 @@ function USES_lglib_class_fpdf($file='')
     }
 }
 
+/**
+ * Import the TCPDF class.
+ */
 function USES_lglib_class_tcpdf()
 {
     require_once __DIR__ . '/classes/pdf/html2pdf/vendor/tecnickcom/tcpdf/tcpdf.php';
 }
 
+/**
+ * Import the HTML2PDF class.
+ */
 function USES_lglib_class_html2pdf()
 {   require_once __DIR__ . '/classes/pdf/html2pdf/vendor/autoload.php'; }
 
 /**
-*   Get the currently installed version.
-*
-*   @return string  version number
-*/
+ * Get the currently installed version.
+ *
+ * @return  string  version number
+ */
 function plugin_chkVersion_lglib()
 {
     global $_LGLIB_CONF;
@@ -200,12 +214,12 @@ function plugin_chkVersion_lglib()
 
 
 /**
-*   Puts an option for the plugin in the command and control block.
-*   Not used in glFusion versions > 1.6.0 since the database backup function
-*   has been updated in the main DB Backup option.
-*
-*   @return   array  Array of (plugin name, admin url, url of plugin icon)
-*/
+ * Puts an option for the plugin in the command and control block.
+ * Not used in glFusion versions > 1.6.0 since the database backup function
+ * has been updated in the main DB Backup option.
+ *
+ * @return  array  Array of (plugin name, admin url, url of plugin icon)
+ */
 function plugin_cclabel_lglib()
 {
     global $LANG_LGLIB, $_CONF;
@@ -223,23 +237,24 @@ function plugin_cclabel_lglib()
 
 
 /**
-*   When this plugin is disabled, notify other plugins.
-*/
+ * When this plugin is disabled, notify other plugins.
+ *
+ * @param   boolean $enable     True if enabling, False if disabling
+ */
 function plugin_enablestatechange_lglib($enable)
 {
     if (!$enable) {
-COM_errorLog("calling itemdeleted");
         PLG_itemDeleted('*', 'lglib');
     }
 }
 
 
 /**
-*   Adds the plugin to the Admin menu.
-*
-*   @return array   Array(pi_name, admin url, # of items) or '' for none.
-*/
-function plugin_getadminoption_lglib()
+ * Adds the plugin to the Admin menu.
+ *
+ * @return  array   Array(pi_name, admin url, # of items) or '' for none.
+ */
+ function plugin_getadminoption_lglib()
 {
     global $_CONF, $LANG_LGLIB;
 
@@ -257,10 +272,10 @@ function plugin_getadminoption_lglib()
 
 
 /**
-*   Returns the URL of the plugin's icon.
-*
-*   @return string      URL of the icon
-*/
+ * Returns the URL of the plugin's icon.
+ *
+ * @return  string      URL of the icon
+ */
 function plugin_geticon_lglib()
 {
     return LGLIB_URL . '/images/lglib.png';
@@ -268,11 +283,11 @@ function plugin_geticon_lglib()
 
 
 /**
-*   Get additional CSS into the site header.
-*   Allows for custom CSS to be placed by the site admin.
-*
-*   @return array   List of paths to CSS files
-*/
+ * Get additional CSS into the site header.
+ * Allows for custom CSS to be placed by the site admin.
+ *
+ * @return  array   List of paths to CSS files
+ */
 function plugin_getheadercss_lglib()
 {
     global $_CONF, $_LGLIB_CONF, $_SYSTEM;
@@ -321,10 +336,10 @@ function plugin_getheadercss_lglib()
 
 
 /**
-*   Gets the list of javascript files required for this plugin.
-*
-*   @return array       List of javascript files to load
-*/
+ * Gets the list of javascript files required for this plugin.
+ *
+ * @return  array       List of javascript files to load
+ */
 function plugin_getheaderjs_lglib()
 {
     global $_CONF, $_SYSTEM, $_LGLIB_CONF;
@@ -377,15 +392,15 @@ function plugin_getheaderjs_lglib()
 
 
 /**
-*   Get the link to a documentation file.
-*   Returns the URL to the file, or to the directory if no file requested.
-*
-*   @see    plugin_getconfigelementhelp_subscription()
-*   @param  string  $file       HTML file
-*   @param  string  $pi_name    Name of plugin, default "lglib"
-*   @param  string  $doclang    Documentation language, default English
-*   @return string              URL to document directory or file
-*/
+ * Get the link to a documentation file.
+ * Returns the URL to the file, or to the directory if no file requested.
+ *
+ * @see     plugin_getconfigelementhelp_lglib()
+ * @param   string  $file       HTML file
+ * @param   string  $pi_name    Name of plugin, default "lglib"
+ * @param   string  $doclang    Documentation language, default English
+ * @return  s tring              URL to document directory or file
+ */
 function LGLIB_getDocURL($file='', $pi_name='lglib', $doclang='english')
 {
     global $_CONF, $_LGLIB_CONF;
@@ -417,12 +432,12 @@ function LGLIB_getDocURL($file='', $pi_name='lglib', $doclang='english')
 
 
 /**
-*   Get the URL to the configuration help file.
-*
-*   @param  string  $option     Config option selected
-*   @param  string  $doclang    Document language
-*   @return string              URL to document
-*/
+ * Get the URL to the configuration help file.
+ *
+ * @param   string  $option     Config option selected
+ * @param   string  $doclang    Document language
+ * @return  string              URL to document
+ */
 function plugin_getconfigelementhelp_lglib($option, $doclang='english')
 {
     global $_LGLIB_CONF;
@@ -440,10 +455,10 @@ function plugin_getconfigelementhelp_lglib($option, $doclang='english')
 
 
 /**
-*   Upgrade the plugin to the currently-installed version.
-*
-*   @return boolean True if successful, False otherwise
-*/
+ * Upgrade the plugin to the currently-installed version.
+ *
+ * @return  boolean     True if successful, False otherwise
+ */
 function plugin_upgrade_lglib()
 {
     require_once __DIR__ . '/upgrade.inc.php';
@@ -452,14 +467,14 @@ function plugin_upgrade_lglib()
 
 
 /**
-*   Set template variables.
-*   Puts any messages to be displayed into the lglib_messags
-*   template variable, if used, or appends them to the info_block
-*   variable that should be part of every header.thtml template.
-*
-*   @param  string  $templatename   Name of template, e.g. 'header'
-*   @param  ref     $template       Reference to actual template
-*/
+ * Set template variables.
+ * Puts any messages to be displayed into the lglib_messags
+ * template variable, if used, or appends them to the info_block
+ * variable that should be part of every header.thtml template.
+ *
+ * @param   string  $templatename   Name of template, e.g. 'header'
+ * @param   ref     $template       Reference to actual template
+ */
 function plugin_templateSetVars_lglib($templatename, &$template)
 {
     global $_LGLIB_CONF;
@@ -498,12 +513,12 @@ function plugin_templateSetVars_lglib($templatename, &$template)
 
 
 /**
-*   Perform filtering and updating on final output before display
-*
-*   @param  string  $output     HTML output to process
-*   @param  string  $plugin     Invoking plugin
-*   @return string              Updated $output
-*/
+ * Perform filtering and updating on final output before display.
+ *
+ * @param   string  $output     HTML output to process
+ * @param   string  $plugin     Invoking plugin
+ * @return  string              Updated $output
+ */
 function plugin_outputfilter_lglib($output, $plugin='')
 {
     global $_LGLIB_CONF;
@@ -518,20 +533,33 @@ function plugin_outputfilter_lglib($output, $plugin='')
 
 
 /**
-*   Invoke a service in another plugin.
-*   This is our own version of PLG_invokeService() so the other plugins
-*   don't have to enable web services.  This is not used by this plugin,
-*   but is available for other plugins.
-*
-*   Service function names are formatted as "service_SERVICENAME_PLUGIN()"
-*
-*   @param  string  $type       Plugin name (PLUGIN)
-*   @param  string  $action     Plugin service (SERVICENAME)
-*   @param  array   $args       Array of arguments to pass to the plugin
-*   @param  mixed   &$output    Pointer to output values
-*   @param  mixed   &$svc_msg   Pointer to service message
-*   @return integer Return value, see lib-plugins.php
-*/
+ * Return true to enable service functions.
+ * Allows LGLIB_invokeService() to be deprecated in favor of
+ * PLG_invokeSerivce().
+ *
+ * @return  boolean     True to enable web services
+ */
+function plugin_wsEnabled_lglib()
+{
+    return true;
+}
+
+
+/**
+ * Invoke a service in another plugin.
+ * This is our own version of PLG_invokeService() so the other plugins
+ * don't have to enable web services.  This is not used by this plugin,
+ * but is available for other plugins.
+ *
+ * Service function names are formatted as "service_SERVICENAME_PLUGIN()"
+ *
+ * @param   string  $type       Plugin name (PLUGIN)
+ * @param   string  $action     Plugin service (SERVICENAME)
+ * @param   array   $args       Array of arguments to pass to the plugin
+ * @param   mixed   &$output    Pointer to output values
+ * @param   mixed   &$svc_msg   Pointer to service message
+ * @return  integer Return value, see lib-plugins.php
+ */
 function LGLIB_invokeService($type, $action, $args, &$output, &$svc_msg)
 {
     $retval = PLG_RET_ERROR;
@@ -551,18 +579,17 @@ function LGLIB_invokeService($type, $action, $args, &$output, &$svc_msg)
 
 
 /**
-*   Store a message in the database that can be retrieved later by
-*   another plugin. This provides a more flexible method for showing popup
-*   messages than the numbered-message method.
-*
-*   @param  mixed   $args   Message to be displayed, or argument array
-*   @param  string  $title  Optional title
-*   @param  boolean $persist    True if the message should persist onscreen
-*   @param  string  $expire SQL-formatted expiration datetime
-*   @param  string  $pi_code    Name of plugin storing the message
-*   @param  integer $uid        ID of the user to view the message
-*   @param  boolean $use_sess_id    True to use session ID to retrieve
-*/
+ * Store a message in the database that can be retrieved later by another plugin.
+ * This provides a more flexible method for showing popup messages than the numbered-message method.
+ *
+ * @param   array|string    $args   Message to be displayed, or argument array
+ * @param   string  $title      Optional title
+ * @param   boolean $persist    True if the message should persist onscreen
+ * @param   string  $expires    SQL-formatted expiration datetime
+ * @param   string  $pi_code    Name of plugin storing the message
+ * @param   integer $uid        ID of the user to view the message
+ * @param   boolean $use_sess_id    True to use session ID to retrieve
+ */
 function LGLIB_storeMessage($args, $title='', $persist=false, $expires = '',
     $pi_code = '', $uid = 0, $use_sess_id = true)
 {
@@ -572,27 +599,36 @@ function LGLIB_storeMessage($args, $title='', $persist=false, $expires = '',
     // compatibility for some time.
     $level = 'info';
     if (is_array($args)) {
-        if (isset($args['message']))
+        if (isset($args['message'])) {
             $msg = $args['message'];
-        elseif (isset($args['msg']))
+        } elseif (isset($args['msg'])) {
             $msg = $args['msg'];
-        if (isset($args['title']) && empty($title))
+        }
+        if (isset($args['title']) && empty($title)) {
             $title = $args['title'];
-        if (isset($args['persist']))
+        }
+        if (isset($args['persist'])) {
             $persist = $args['persist'] == true ? true : false;
-        if (isset($args['expires']) && empty($expires))
+        }
+        if (isset($args['expires']) && empty($expires)) {
             $expires = $args['expires'];
-        if (isset($args['pi_code']) && empty($pi_code))
+        }
+        if (isset($args['pi_code']) && empty($pi_code)) {
             $pi_code = $args['pi_code'];
-        elseif (isset($args['plugin']))
+        } elseif (isset($args['plugin'])) {
             $pi_code = $args['plugin'];
-        if (isset($args['uid']) && empty($uid))
+        }
+        if (isset($args['uid']) && empty($uid)) {
             $uid = (int)$args['uid'];
-        if (isset($args['use_sess_id']))
+        }
+        if (isset($args['use_sess_id'])) {
             $use_sess_id = $args['use_sess_id'] == true ? true : false;
-        if (isset($args['level']))
+        }
+        if (isset($args['level'])) {
             $level = $args['level'];
+        }
     } else {
+        // parameters passed in using the old format
         $msg = $args;
     }
     if (empty($msg)) return;
@@ -604,7 +640,8 @@ function LGLIB_storeMessage($args, $title='', $persist=false, $expires = '',
     case false:
     case 'alert':
     case 3:
-        $level = 3; break;
+        $level = 3;
+        break;
     case 'warn':
     case 'warning':
     case 2:
@@ -658,13 +695,13 @@ function LGLIB_storeMessage($args, $title='', $persist=false, $expires = '',
 
 
 /**
-*   Retrieve all messages for display.
-*   Gets all messages from the DB where the user ID matches for
-*   non-anonymous users, OR the session ID matches. This allows a message
-*   caused by an anonymous action to be displayed to the user after login.
-*
-*   @return array   Array of messages, title=>message
-*/
+ * Retrieve all messages for display.
+ * Gets all messages from the DB where the user ID matches for
+ * non-anonymous users, OR the session ID matches. This allows a message
+ * caused by an anonymous action to be displayed to the user after login.
+ *
+ * @return  array   Array of messages, title=>message
+ */
 function LGLIB_getAllMessages()
 {
     global $_TABLES, $_CONF, $_LGLIB_CONF, $_USER;
@@ -705,13 +742,14 @@ function LGLIB_getAllMessages()
 
 
 /**
-*   Delete all messages for a user
-*/
+ * Delete all messages for a user.
+ */
 function LGLIB_deleteAllMessages()
 {
     if (LGLIB_MSG_STORE == 'session') {
         SESS_setVar(LGLIB_MSG_VAR, array());
     } else {
+        // delete messages for the user or session that have not expired.
         global $_TABLES, $_USER;
         $uid = (int)$_USER['uid'];
         $q = array();
@@ -719,21 +757,23 @@ function LGLIB_deleteAllMessages()
         $sess_id = DB_escapeString(session_id());
         if (!empty($sess_id)) $q[] = "sess_id = '$sess_id'";
         if (empty($q)) return;
-        $query = implode(' OR ', $q);
+        $query = '(' . implode(' OR ', $q) . ')';
+        //$query .= ' AND (persist = 0 OR UNIX_TIMESTAMP(expires) < UNIX_TIMESTAMP())';
         $sql = "DELETE FROM {$_TABLES['lglib_messages']} WHERE $query";
         $result = DB_query($sql);
-         DB_delete($_TABLES['lglib_messages'], 'uid', $_USER['uid']);
+        DB_delete($_TABLES['lglib_messages'], 'uid', $_USER['uid']);
     }
 }
 
+
 /**
-*   Delete a single message
-*   Called by plugins to remove a message placed earlier. At least one of
-*   $uid or $pi_code must be present
-*
-*   @param  integer $uid    User ID, required, can be zero to ignore
-*   @param  string  $pi_code    Optional plugin code value.
-*/
+ * Delete a single message.
+ * Called by plugins to remove a message placed earlier. At least one of
+ * $uid or $pi_code must be present
+ *
+ * @param   integer $uid    User ID, required, can be zero to ignore
+ * @param   string  $pi_code    Optional plugin code value.
+ */
 function LGLIB_deleteMessage($uid, $pi_code = '')
 {
     global $_TABLES;
@@ -754,9 +794,9 @@ function LGLIB_deleteMessage($uid, $pi_code = '')
 
 
 /**
-*   Delete expired messages
-*   Only applies when using DB as the message store
-*/
+ * Delete expired messages.
+ * Only applies when using DB as the message store.
+ */
 function LGLIB_expireMessages()
 {
     if (LGLIB_MSG_STORE == 'db') {
@@ -769,13 +809,13 @@ function LGLIB_expireMessages()
 
 
 /**
-*   Display all messagse for a user's session.
-*   If $persist is true, or any $msg['persist'] == true, then the displayed
-*   message will stay on the screen. Otherwise the message fades out.
-*
-*   @param  boolean $persist    Keep the message box open? False = fade out
-*   @return string      HTML for message box
-*/
+ * Display all messagse for a user's session.
+ * If $persist is true, or any $msg['persist'] == true, then the displayed
+ * message will stay on the screen. Otherwise the message fades out.
+ *
+ * @param   boolean $persist    Keep the message box open? False = fade out
+ * @return  string      HTML for message box
+ */
 function LGLIB_showAllMessages($persist = false)
 {
     $retval = '';
@@ -822,11 +862,11 @@ function LGLIB_showAllMessages($persist = false)
 
 
 /**
-*   Strips slashes if magic_quotes_gpc is on.
-*
-*   @param  mixed   $var    Value or array of values to strip.
-*   @return mixed           Stripped value or array of values.
-*/
+ * Strips slashes if magic_quotes_gpc is on.
+ *
+ * @param   mixed   $var    Value or array of values to strip.
+ * @return  mixed           Stripped value or array of values.
+ */
 function LGLIB_stripslashes($var)
 {
 	if (get_magic_quotes_gpc()) {
@@ -841,6 +881,11 @@ function LGLIB_stripslashes($var)
 }
 
 
+/**
+ * Show a popup login form.
+ *
+ * @return  string  HTML for popup form.
+ */
 function LGLIB_loginPopup()
 {
     return '<div id="modal" style="border:3px solid black; background-color:#9999ff; padding:25px; font-size:150%; text-align:center; display:none;">' .
@@ -849,6 +894,11 @@ function LGLIB_loginPopup()
 }
 
 
+/**
+ * Create a login form.
+ *
+ * @return  string      Login form
+ */
 function LGLIB_loginform()
 {
     global $_CONF, $LANG04;
@@ -864,12 +914,12 @@ function LGLIB_loginform()
 
 
 /**
-*   A generic function to store pseudo-global variables
-*
-*   @param  string  $name   Variable name
-*   @param  mixed   $value  Value to store
-*   @param  boolean $clobber    False to avoid overwriting
-*/
+ * A generic function to store pseudo-global variables.
+ *
+ * @param   string  $name   Variable name
+ * @param   mixed   $value  Value to store
+ * @param   boolean $clobber    False to avoid overwriting
+ */
 function LGLIB_setGlobal($name, $value, $clobber=true)
 {
     global $_LGLIB_GLOBALS;
@@ -880,12 +930,12 @@ function LGLIB_setGlobal($name, $value, $clobber=true)
 
 
 /**
-*   Retrieve a pseudo-global variable.
-*
-*   @param  string  $type   Name of variable
-*   @param  boolean $remove True to unset the variable, False to leave it
-*   @return mixec           Session variable contents
-*/
+ * Retrieve a pseudo-global variable.
+ *
+ * @param   string  $name   Name of variable
+ * @param   boolean $remove True to unset the variable, False to leave it
+ * @return  mixed           Session variable contents
+ */
 function LGLIB_getGlobal($name, $remove=false)
 {
     global $_LGLIB_GLOBALS;
@@ -900,14 +950,14 @@ function LGLIB_getGlobal($name, $remove=false)
 
 
 /**
-*   A generic function to store session variables
-*
-*   @deprecated
-*   @see    SESS_setVar()
-*   @param  string  $name   Session variable name
-*   @param  string  $value  Value to store
-*   @param  boolean $clobber    False to avoid overwriting
-*/
+ * A generic function to store session variables
+ *
+ * @deprecated
+ * @see    SESS_setVar()
+ * @param  string  $name   Session variable name
+ * @param  string  $value  Value to store
+ * @param  boolean $clobber    False to avoid overwriting
+ */
 function LGLIB_setSession($name, $value, $clobber=true)
 {
     if ($clobber || !isset($_SESSION[$name])) {
@@ -917,14 +967,14 @@ function LGLIB_setSession($name, $value, $clobber=true)
 
 
 /**
-*   Retrieve a session variable.
-*
-*   @deprecated
-*   @see    SESS_getVar()
-*   @param  string  $name   Type or name of variable
-*   @param  boolean $remove True to unset the variable, False to leave it
-*   @return mixec           Session variable contents
-*/
+ * Retrieve a session variable.
+ *
+ * @deprecated
+ * @see     SESS_getVar()
+ * @param   string  $name   Type or name of variable
+ * @param   boolean $remove True to unset the variable, False to leave it
+ * @return  mixed           Session variable contents
+ */
 function LGLIB_getSession($name, $remove=false)
 {
     if (isset($_SESSION[$name])) {
@@ -938,12 +988,12 @@ function LGLIB_getSession($name, $remove=false)
 
 
 /**
-*   Log activity to a plugin-specific log file
-*   Logs will be written to /private/logs/<pi_name>.log
-*
-*   @param  string  $pi_name    Plugin name
-*   @param  string  $logentry   Text to log
-*/
+ * Log activity to a plugin-specific log file.
+ * Logs will be written to /private/logs/<pi_name>.log
+ *
+ * @param  string  $pi_name    Plugin name
+ * @param  string  $logentry   Text to log
+ */
 function LGLIB_auditLog($pi_name, $logentry = '')
 {
     global $_CONF, $_USER, $LANG01;
@@ -988,12 +1038,12 @@ function LGLIB_auditLog($pi_name, $logentry = '')
 
 
 /**
-*   Convert a string to title case, ignoring small words
-*   e.g. "a test of a title function" becomes "A Test of a Title Function"
-*
-*   @param  string  $str    String to be converted
-*   @return string          Converted title string
-*/
+ * Convert a string to title case, ignoring small words.
+ * e.g. "a test of a title function" becomes "A Test of a Title Function".
+ *
+ * @param   string  $str    String to be converted
+ * @return  string          Converted title string
+ */
 function LGLIB_titleCase($str)
 {
     global $LANG_LGLIB;
@@ -1008,19 +1058,19 @@ function LGLIB_titleCase($str)
 }
 
 /**
-*   Get the URL to an image.
-*   New version just calls service_imageurl_lglib() and returns the url
-*   for backward compatibility.
-*
-*   Sample usage:
-*       echo '<img src=" . LGLIB_ImageUrl(/some/file/path.jpg, 800, 600) . '">';
-*
-*   @param  string  $orig_path  Full path to the original image
-*   @param  integer $width      Image width
-*   @param  integer $height     Image height
-*   @param  mixed   $rnd        Optional random ID to force image recreation
-*   @return string              Full URL to the image, empty on error
-*/
+ * Get the URL to an image.
+ * New version just calls service_imageurl_lglib() and returns the url
+ * for backward compatibility.
+ *
+ * Sample usage:
+ *  `echo '<img src=" . LGLIB_ImageUrl(/some/file/path.jpg, 800, 600) . '">';`
+ *
+ * @param   string  $orig_path  Full path to the original image
+ * @param   integer $width      Image width
+ * @param   integer $height     Image height
+ * @param   mixed   $rnd        Optional random ID to force image recreation
+ * @return  string              Full URL to the image, empty on error
+ */
 function LGLIB_ImageUrl($orig_path, $width=0, $height=0, $rnd = 0)
 {
     $args = array(
@@ -1040,13 +1090,12 @@ function LGLIB_ImageUrl($orig_path, $width=0, $height=0, $rnd = 0)
 
 
 /**
-*   Obfuscate a string (e.g. email address) so it can be displayed safely.
-*   Borrowed from Dokuwiki's configuration.
-*
-*   @param  string  $str    String to obfuscate
-*   @param  string  $p2     Remainder of string after first whitespace
-*   @return string          Obfuscated email address.
-*/
+ * Obfuscate a string (e.g. email address) so it can be displayed safely.
+ * Borrowed from Dokuwiki's configuration.
+ *
+ * @param   string  $str    String to obfuscate
+ * @return  string          Obfuscated email address.
+ */
 function LGLIB_obfuscate($str)
 {
     $encode = '';
@@ -1058,16 +1107,16 @@ function LGLIB_obfuscate($str)
 
 
 /**
-*   Push a job onto the job queue
-*   Called by plugins to add a job to the queue.
-*   $pi_name and $job_name are required, $params may be a string or
-*   an array. If it's an array it is converted to JSON before storage.
-*
-*   @param  string  $pi_name    Name of plugin to execute the job
-*   @param  string  $job_name   Name of job to be run
-*   @param  mixed   $params     String or Array of parameters
-*   @return bookean     True on success, False on failure.
-*/
+ * Push a job onto the job queue.
+ * Called by plugins to add a job to the queue.
+ * $pi_name and $job_name are required, $params may be a string or
+ * an array. If it's an array it is converted to JSON before storage.
+ *
+ * @param  string  $pi_name    Name of plugin to execute the job
+ * @param  string  $job_name   Name of job to be run
+ * @param  mixed   $params     String or Array of parameters
+ * @return bookean     True on success, False on failure.
+ */
 function LGLIB_pushJob($pi_name, $job_name, $params='')
 {
     if (is_array($params)) {
@@ -1092,12 +1141,11 @@ function LGLIB_pushJob($pi_name, $job_name, $params='')
 
 
 /**
-*   Run jobs in the job queue table
-*   Uses LGLIB_invokeService() to call the "runjob" service function
-*   for plugins.
-*
-*   @param  string  $pi     Plugin name, empty for all plugins
-*/
+ * Run jobs in the job queue table.
+ * Uses LGLIB_invokeService() to call the "runjob" service function for plugins.
+ *
+ * @param   string  $pi     Plugin name, empty for all plugins
+ */
 function LGLIB_run_jobqueue($pi = '')
 {
     global $_TABLES, $_CONF;
@@ -1117,12 +1165,12 @@ function LGLIB_run_jobqueue($pi = '')
 
 
 /**
-*   Update the status of jobs in the queue.
-*
-*   @see    LGLIB_run_jobqueue()
-*   @param  integer $jobid      ID of job to update
-*   @param  mixed   $status     Job completion status
-*/
+ * Update the status of jobs in the queue.
+ *
+ * @see     LGLIB_run_jobqueue()
+ * @param   integer $jobid      ID of job to update
+ * @param   mixed   $status     Job completion status
+ */
 function LGLIB_update_job_status($jobid, $status)
 {
     global $_TABLES;
@@ -1144,17 +1192,17 @@ function LGLIB_update_job_status($jobid, $status)
 
 
 /**
-*   Get the image info for a resized image.
-*
-*   Args array is expected to ontain values for 'filepath', 'width', 'height',
-*   and an optional random number for force image regeneration.
-*
-*   @uses   lgImage::ReSize()
-*   @param  array   $args       Array of item information
-*   @param  array   &$output    Pointer to output array
-*   @param  array   &$svc_msg   Unused
-*   @return integer             Status code
-*/
+ * Get the image info for a resized image.
+ *
+ * Args array is expected to ontain values for 'filepath', 'width', 'height',
+ * and an optional random number for force image regeneration.
+ *
+ * @uses    Image::ReSize()
+ * @param   array   $args       Array of item information
+ * @param   array   &$output    Pointer to output array
+ * @param   array   &$svc_msg   Unused
+ * @return  integer             Status code
+ */
 function service_imageurl_lglib($args, &$output, &$svc_msg)
 {
     global $_LGLIB_CONF, $_CONF;
@@ -1215,10 +1263,7 @@ function service_imageurl_lglib($args, &$output, &$svc_msg)
 
     // If the file isn't found, try to create it.
     if (!is_file($disp_fullpath)) {
-        // Found an error with getting exif into in IMG_resizeImage(),
-        // use less-robust version in lgImage instead
-        USES_lglib_class_image();
-        $A = lgImage::ReSize($orig_path, $disp_fullpath, $width, $height);
+        $A = \LGLib\Image::ReSize($orig_path, $disp_fullpath, $width, $height);
         $width = $A['d_width'];
         $height = $A['d_height'];
         $mime_type = $A['mime'];
@@ -1228,7 +1273,7 @@ function service_imageurl_lglib($args, &$output, &$svc_msg)
         $width = $A[0];
         $height = $A[1];
         $mime_type = $A['mime'];
-        @touch($disp_fullpath);
+        @touch($disp_fullpath);     // update timestamp to indicate usage
     }
 
     // If the file exists, return the full url.
@@ -1252,12 +1297,12 @@ function service_imageurl_lglib($args, &$output, &$svc_msg)
 
 
 /**
-*   Get an icon from the CSS icon set, either UIkit or FontAwesome
-*
-*   @param  string  $name   Base name of icon, e.g. "edit" for "uk-icon-edit"
-*   @param  string  $style  Style name from local CSS
-*   @return string      Class names for icon
-*/
+ * Get an icon from the CSS icon set, either UIkit or FontAwesome.
+ *
+ * @param   string  $name   Base name of icon, e.g. "edit" for "uk-icon-edit"
+ * @param   string  $style  Style name from local CSS
+ * @return  string      Class names for icon
+ */
 function LGLIB_getIcon($name, $style='info')
 {
     global $_LGLIB_CONF;
@@ -1274,18 +1319,18 @@ function LGLIB_getIcon($name, $style='info')
 
 
 /**
-*   Get the colorpicker JS and CSS.
-*   There are default values for each parameter.
-*   Sample parameters: array(
-*       'fg_id'     => forground input field ID
-*       'fg_color'  => current foreground color, including '#'
-*       'bg_id'     => background input field ID
-*       'bg_color'  => current background color, including '#'
-*       'sample_id' => ID of sample display field
-*
-*   @param  array   $A  Optional array of field attributes
-*   @return string      HTML to load JS and CSS for the colorpicker
-*/
+ * Get the colorpicker JS and CSS.
+ * There are default values for each parameter.
+ * Sample parameters: array(
+ *       'fg_id'     => forground input field ID
+ *       'fg_color'  => current foreground color, including '#'
+ *       'bg_id'     => background input field ID
+ *       'bg_color'  => current background color, including '#'
+ *       'sample_id' => ID of sample display field
+ *
+ * @param  array   $A  Optional array of field attributes
+ * @return string      HTML to load JS and CSS for the colorpicker
+ */
 function LGLIB_colorPicker($A = array())
 {
     static $need_js = true;
@@ -1322,15 +1367,15 @@ function LGLIB_colorPicker($A = array())
 
 
 /**
-*   Get an array variable, first checking whether it's set
-*
-*   @since  1.0.8
-*   @param  array   $A          Array where the variable should be
-*   @param  string  $key        Name of array element
-*   @param  string  $type       Type of return value
-*   @param  mixed   $default    Default value, if key is not set
-*   @return     Array element cast to $type, or NULL if not set
-*/
+ * Get an array variable, first checking whether it's set.
+ *
+ * @since   v1.0.8
+ * @param   array   $A          Array where the variable should be
+ * @param   string  $key        Name of array element
+ * @param   string  $type       Type of return value
+ * @param   mixed   $default    Default value, if key is not set
+ * @return      Array element cast to $type, or NULL if not set
+ */
 function LGLIB_getVar($A, $key, $type = 'string', $default = NULL)
 {
     // If the key is not set, return the default
@@ -1364,6 +1409,65 @@ function LGLIB_getVar($A, $key, $type = 'string', $default = NULL)
         break;
     }
     return $val;
+}
+
+
+/**
+ * Service function to store a message for later display as a popup.
+ *
+ * @param   array   $args       Arguments defining the message
+ * @param   mixed   $output     Function output (not used)
+ * @param   mixed   $svc_msg    Service message (not used)
+ * @return  integer     Service return code
+ */
+function service_storeMessage_lglib($args, &$output='', &$svc_msg='')
+{
+    LGLIB_storeMessage($args);
+    return PLG_RET_OK;
+}
+
+
+/**
+ * Parse names using the NameParser class.
+ *
+ * @param   array   $args       Arguments
+ * @param   array   $output     Name components returned in an assoc. array
+ * @param   mixed   $svc_msg    Not used
+ * @return  integer     Service return code
+ */
+function service_parseName_lglib($args, &$output, &$svc_msg)
+{
+    // Get the name string
+    if (!isset($args['name'])) return array();
+    // Get the function, if any
+    $func = 'Parse';
+    if (isset($args['format'])) {
+        $valid_formats = array('L', 'F', 'LCF', 'LCFI', 'FL', 'FIL');
+        if (in_array($args['format'], $valid_formats)) {
+            $func = $args['format'];
+        }
+    }
+    $output = \LGLib\NameParser::$func($args['name']);
+    return PLG_RET_OK;
+}
+
+
+/**
+ * Get a name formatted according to the format string.
+ *
+ * @param   string  $name   Name to parse
+ * @param   string  $format Name of a function in the NameParser class
+ * @return  string|array    Parsed name string, or array of all components
+ */
+function plugin_parseName_lglib($name, $format = 'Parse')
+{
+    $valid_formats = array('L', 'F', 'LCF', 'LCFI', 'FL', 'FIL', 'Parse');
+    if (in_array($format, $valid_formats)) {
+        $func = $format;
+    } else {
+        $func = 'Parse';
+    }
+    return \LGLib\NameParser::$func($name);
 }
 
 ?>

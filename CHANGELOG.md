@@ -1,5 +1,10 @@
 # lgLib utility plugin for glFusion
 
+## 1.0.9
+Release TBD
+- Add service functions to call NameParser class functions.
+- Enable web services so plugins can call `PLG_invokeService()`.
+
 ## 1.0.8
 Release 2018-10-17
 - Change session ID field in messages table to 80 characters
