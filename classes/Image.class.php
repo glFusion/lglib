@@ -3,19 +3,19 @@
 *   Class to handle images
 *
 *   @author     Lee Garner <lee@leegarner.com>
-*   @copyright  Copyright (c) 2012-2017 Lee Garner <lee@leegarner.com>
+*   @copyright  Copyright (c) 2012-2018 Lee Garner <lee@leegarner.com>
 *   @package    lglib
-*   @version    1.0.5
+*   @version    1.0.9
 *   @license    http://opensource.org/licenses/gpl-2.0.php
 *               GNU Public License v2 or later
 *   @filesource
 */
-
+namespace LGLib;
 
 /**
  *  Image-handling class
  */
-class lgImage
+class Image
 {
     /**
     *   Calculate the new dimensions needed to keep the image within
@@ -104,6 +104,6 @@ class lgImage
         }
     }   // function reSize()
 
-}   // class lgImage
+}   // class Image
 
 ?>

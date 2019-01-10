@@ -1,33 +1,33 @@
 <?php
 /**
-*   Resize and cache images according to "img src" tags.
-*   Based on the SmartResizer plugin for Joomla
-*       https://extensions.joomla.org/extension/smartresizer/
-*
-*   @author     Lee Garner <lee@leegarner.com>
-*   @copyright  Copyright (c) 2017 Lee Garner <lee@leegarner.com>
-*   @package    lglib
-*   @version    1.0.5
-*   @license    http://opensource.org/licenses/gpl-2.0.php
-*               GNU Public License v2 or later
-*   @filesource
-*/
+ * Resize and cache images according to "img src" tags.
+ * Based on the SmartResizer plugin for Joomla.
+ *
+ * @see https://extensions.joomla.org/extension/smartresizer/
+ * @author     Lee Garner <lee@leegarner.com>
+ * @copyright  Copyright (c) 2017 Lee Garner <lee@leegarner.com>
+ * @package    lglib
+ * @version    1.0.5
+ * @license    http://opensource.org/licenses/gpl-2.0.php
+ *              GNU Public License v2 or later
+ * @filesource
+ */
 namespace LGLib;
 
 /**
-*   SmartResizer class.
-*/
+ * SmartResizer class.
+ */
 class SmartResizer {
 
     /**
-    *   Resize images found in a template.
-    *   Updates the template content in-place.
-    *
-    *   @uses   self::Text()
-    *   @param  object  &$template  Template Object
-    *   @param  string  $valname    Template value to update
-    *   @return void
-    */
+     * Resize images found in a template.
+     * Updates the template content in-place.
+     *
+     * @uses    self::Text()
+     * @param   object  &$template  Template Object
+     * @param   string  $valname    Template value to update
+     * @return  void
+     */
     public static function Template(&$template, $valname)
     {
         if (isset($template->varvals[$valname])) {
@@ -37,14 +37,14 @@ class SmartResizer {
 
 
     /**
-    *   Resize images found in a text string.
-    *   Updates the content in-place.
-    *
-    *   @uses   self::getDimFromTag()
-    *   @uses   lgImage::reDim()
-    *   @param  string  &$origtxt   Text string to update
-    *   @return void
-    */
+     * Resize images found in a text string.
+     * Updates the content in-place.
+     *
+     * @uses    self::getDimFromTag()
+     * @uses    Image::reDim()
+     * @param   string  &$origtxt   Text string to update
+     * @return  void
+     */
     public static function Text(&$origtxt)
     {
         global $_CONF;
@@ -121,13 +121,11 @@ class SmartResizer {
                 continue;
             }
 
-            USES_lglib_class_image();
-            //list($s_width,$s_height, $d_width, $d_height, $mime) =
-            $A = \lgImage::reDim($src_path, $d_width, $d_height);
+            $A = Image::reDim($src_path, $d_width, $d_height);
             if ($A === false) continue;
             $s_width = $A['s_width'];
             $s_height = $A['s_height'];
-            $d_width = $A['d_height'];
+            $d_width = $A['d_width'];
             $d_height = $A['d_height'];
             $mime = $A['mime'];
 
@@ -173,13 +171,13 @@ class SmartResizer {
 
 
     /**
-    *   Get the dimension parameters from the image source tag
-    *   First check for style tag, then look for width/height tags
-    *
-    *   @param  string  $type   "width" or "height"
-    *   @param  string  $content    Image tag content
-    *   @return string      Size from tag, or empty string if not found
-    */
+     * Get the dimension parameters from the image source tag.
+     * First check for style tag, then look for width/height tags.
+     *
+     * @param   string  $type   "width" or "height"
+     * @param   string  $content    Image tag content
+     * @return  string      Size from tag, or empty string if not found
+     */
     private static function getDimFromTag($type, $content)
     {
         $size = array();
