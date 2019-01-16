@@ -7,7 +7,7 @@
  * @author      Lee Garner <lee@leegarner.com>
  * @copyright   Copyright (c) 2012-2018 Lee Garner <lee@leegarner.com>
  * @package     lglib
- * @version     v1.0.8
+ * @version     v1.0.9
  * @license     http://opensource.org/licenses/gpl-2.0.php
  *              GNU Public License v2 or later
  * @filesource
@@ -1157,8 +1157,13 @@ function LGLIB_run_jobqueue($pi = '')
         // Flag the job as running so it's not picked up by another invocation
         // of cron.php
         LGLIB_update_job_status($A['id'], 'running');
-        $status = LGLIB_invokeService($A['pi_name'], 'runjob',
-                $A, $output, $svc_msg);
+        $status = LGLIB_invokeService(
+            $A['pi_name'],
+            $A['jobname'],
+            $A,
+            $output,
+            $svc_msg
+        );
         LGLIB_update_job_status($A['id'], $status);
     }
 }
@@ -1175,16 +1180,22 @@ function LGLIB_update_job_status($jobid, $status)
 {
     global $_TABLES;
 
-    static $statuses = array(
-        PLG_RET_OK => 'completed',
-        PLG_RET_ERROR => 'plugin error',
-        'running' => 'running',
-    );
-    if (!isset($statuses[$status]))
-        $statuses[$status] = 'undefined';
+    switch ($status) {
+    case PLG_RET_OK:
+        $status = 'completed';
+        break;
+    case PLG_RET_ERROR:
+        $status = 'plugin_error';
+        break;
+    case 'running':
+        // verbatim status text supplied
+        break;
+    default:
+        $status = 'unknown';
+        break;
+    }
 
     $jobid = (int)$jobid;
-    $status = $statuses[$status];
     DB_query("UPDATE {$_TABLES['lglib_jobqueue']}
             SET status = '{$status}'
             WHERE id = $jobid");
