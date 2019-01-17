@@ -2,6 +2,7 @@
 
 ## 1.0.9
 Release TBD
+- Fix SmartResizer to ignore images that are already in a link.
 - Update job queue runner to use job name supplied by the plugins.
 - Add service functions to call NameParser class functions.
 - Enable web services so plugins can call `PLG_invokeService()`.
