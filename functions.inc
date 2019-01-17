@@ -503,10 +503,10 @@ function plugin_templateSetVars_lglib($templatename, &$template)
     if (GVERSION < '1.7.0' && $_LGLIB_CONF['enable_smartresizer']) {
        require_once __DIR__ . '/classes/SmartResizer.class.php';
        if ($templatename == 'article') {
-            LGLib\SmartResizer::Template($template, 'story_introtext');
-            LGLib\SmartResizer::Template($template, 'story_introtext_only');
-            LGLib\SmartResizer::Template($template, 'story_bodytext_only');
-            LGLib\SmartResizer::Template($template, 'story_text_no_br');
+            \LGLib\SmartResizer::Template($template, 'story_introtext');
+            \LGLib\SmartResizer::Template($template, 'story_introtext_only');
+            \LGLib\SmartResizer::Template($template, 'story_bodytext_only');
+            \LGLib\SmartResizer::Template($template, 'story_text_no_br');
         }
     }
 }
@@ -526,7 +526,7 @@ function plugin_outputfilter_lglib($output, $plugin='')
     // Resize images referenced in the templates if so configured
     if ($_LGLIB_CONF['enable_smartresizer']) {
        //require_once __DIR__ . '/classes/SmartResizer.class.php';
-       LGLib\SmartResizer::Text($output);
+       \LGLib\SmartResizer::Text($output);
     }
     return $output;
 }
