@@ -1,23 +1,22 @@
 <?php
 /**
-*   Allows scheduled tasks to be run outside of glFusion.
-*
-*   This can be used two ways:
-*   1. from a cron job, like so:
-*       php -q cron.php <optional_security_key>
-*   2. via a url, say from a monitoring system:
-*       http://yoursite.com/lglib/cron.php?key=<optional_security_key>
-*
-*   The use of a security key is optional but recommended to avoid abuse.
-*
-*   @author     Lee Garner <lee@leegarner.com>
-*   @copyright  Copyright (c) 2010-2014 Lee Garner
-*   @package    subscription
-*   @version    0.0.5
-*   @license    http://opensource.org/licenses/gpl-2.0.php 
-*               GNU Public License v2 or later
-*   @filesource
-*/
+ * Allows scheduled tasks to be run outside of glFusion.
+ *
+ * This can be used two ways:
+ * - from a cron job, like so: `php -q cron.php <optional_security_key>`
+ * - via a url, say from a monitoring system:
+ *      `http://yoursite.com/lglib/cron.php?key=<optional_security_key>`
+ *
+ * The use of a security key is optional but recommended to avoid abuse.
+ *
+ * @author     Lee Garner <lee@leegarner.com>
+ * @copyright  Copyright (c) 2010-2014 Lee Garner
+ * @package    subscription
+ * @version    0.0.5
+ * @license    http://opensource.org/licenses/gpl-2.0.php
+ *              GNU Public License v2 or later
+ * @filesource
+ */
 
 require_once(dirname(__FILE__) . '/../lib-common.php');
 
@@ -63,6 +62,9 @@ if ($force || $_LGLIB_CONF['cron_schedule_interval'] > 0) {
 }
 echo "SUCCESS\n";
 
+/**
+ * Back up the database according to a scheduled interval.
+ */
 function LGLIB_backup_database()
 {
     global $_VARS, $_TABLES;
@@ -78,7 +80,6 @@ function LGLIB_backup_database()
             $backup->cron_backup();
         }
     }
-        
 }
 
 ?>

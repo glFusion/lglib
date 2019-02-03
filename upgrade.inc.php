@@ -1,15 +1,15 @@
 <?php
 /**
-*   Upgrade routines for the lgLib plugin
-*
-*   @author     Lee Garner <lee@leegarner.com>
-*   @copyright  Copyright (c) 2013-2018 Lee Garner <lee@leegarner.com>
-*   @package    lglib
-*   @version    1.0.6
-*   @license    http://opensource.org/licenses/gpl-2.0.php
-*               GNU Public License v2 or later
-*   @filesource
-*/
+ * Upgrade routines for the lgLib plugin.
+ *
+ * @author      Lee Garner <lee@leegarner.com>
+ * @copyright   Copyright (c) 2013-2018 Lee Garner <lee@leegarner.com>
+ * @package     lglib
+ * @version     v1.0.6
+ * @license     http://opensource.org/licenses/gpl-2.0.php
+ *              GNU Public License v2 or later
+ * @filesource
+ */
 
 // Required to get the config values
 global $_CONF, $_LGLIB_CONF, $_DB_dbms;
@@ -18,14 +18,13 @@ global $_CONF, $_LGLIB_CONF, $_DB_dbms;
 require_once __DIR__ . '/install_defaults.php';
 
 /** Include the table creation strings */
-require_once __DIR__ . "/sql/{$_DB_dbms}_install.php";
+require_once __DIR__ . "/sql/mysql_install.php";
 
 /**
-*   Perform the upgrade starting at the current version.
-*
-*   @param  string  $current_ver    Current installed version to be upgraded
-*   @return integer                 Error code, 0 for success
-*/
+ * Perform the upgrade starting at the current version.
+ *
+ * @return  boolean     True on success, False on failure
+ */
 function LGLIB_do_upgrade()
 {
     global $_LGLIB_DEFAULTS, $_LGLIB_CONF, $_PLUGIN_INFO, $_CONF;
@@ -150,11 +149,11 @@ function LGLIB_do_upgrade()
 
 
 /**
-*   Actually perform any sql updates.
-*
-*   @param  string  $version    Version being upgraded TO
-*   @return boolean         True on success, False on failure
-*/
+ * Actually perform any sql updates.
+ *
+ * @param   string  $version    Version being upgraded TO
+ * @return  boolean         True on success, False on failure
+ */
 function LGLIB_do_upgrade_sql($version)
 {
     global $_TABLES, $_LGLIB_CONF, $_UPGRADE_SQL;
@@ -179,13 +178,13 @@ function LGLIB_do_upgrade_sql($version)
 
 
 /**
-*   Update the plugin version number in the database.
-*   Called at each version upgrade to keep up to date with
-*   successful upgrades.
-*
-*   @param  string  $ver    New version to set
-*   @return boolean         True on success, False on failure
-*/
+ * Update the plugin version number in the database.
+ * Called at each version upgrade to keep up to date with
+ * successful upgrades.
+ *
+ * @param   string  $ver    New version to set
+ * @return  boolean         True on success, False on failure
+ */
 function LGLIB_do_set_version($ver)
 {
     global $_TABLES, $_LGLIB_CONF;
@@ -208,8 +207,8 @@ function LGLIB_do_set_version($ver)
 
 
 /**
-*   Remove deprecated files
-*/
+ * Remove deprecated files.
+ */
 function LGLIB_remove_old_files()
 {
     global $_CONF;

@@ -1,13 +1,12 @@
 lglib
 =====
 
-This plugin provides some javascript and css files that are used by other
-plugins:
+This plugin provides some javascript and css files that are used by other plugins:
 
-- a Jquery-based datetime picker (http://trentrichardson.com/examples/timepicker)
 - a DHTML popup calendar (c) Milhai Bazon, dynarch.com 2002-2005
   - see https://www.leegarner.com/jscalendar-1.0 for documentation
 - The new Jquery datetime picker (c) 2016 Trent Richardson; Licensed MIT (to replace the DHTML claendar)
+  - see http://trentrichardson.com/examples/timepicker
 - image resizing and url creation for static image URLs
 - PDF libraries
   * FPDF, by Olivier PLATHEY
