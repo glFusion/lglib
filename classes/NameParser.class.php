@@ -1,46 +1,46 @@
 <?php
 /**
-*   Functions to parse names into components.
-*   Supports full names, with or without prefixes, initials or suffixes
-*   Based on php-name-parser <http://code.google.com/p/php-name-parser/>
-*   by Josh Fraser.
-*
-*   @author     Lee Garner <lee@leegarner.com>
-*   @author     Josh Fraser <joshfraz@gmail.com>
-*   @copyright  Copyright (c) 2012 <joshfraz@gmail.com>
-*   @package    lglib
-*   @version    0.0.1
-*   @license    http://opensource.org/licenses/Apache-2.0
-*               Apache License, Version 2.0
-*   @filesource
-*/
+ * Functions to parse names into components.
+ * Supports full names, with or without prefixes, initials or suffixes
+ * Based on php-name-parser <http://code.google.com/p/php-name-parser/>
+ * by Josh Fraser.
+ *
+ * @author      Lee Garner <lee@leegarner.com>
+ * @author      Josh Fraser <joshfraz@gmail.com>
+ * @copyright   Copyright (c) 2012 <joshfraz@gmail.com>
+ * @package     lglib
+ * @version     v0.0.1
+ * @license     http://opensource.org/licenses/Apache-2.0
+ *              Apache License, Version 2.0
+ * @filesource
+ */
 namespace LGLib;
 if (!defined('NAME_TRIM_STR')) {
     define('NAME_TRIM_STR', " (),\t\n\r\0\x0B");
 }
 
 /**
-*   Class to parse names into componentes.
-*   @package lglib
-*/
+ * Class to parse names into components.
+ * @package lglib
+ */
 class NameParser
 {
     /**
-    *   Split full names into the following parts:
-    *       prefix / salutation  (Mr., Mrs., etc)
-    *       given name / first name
-    *       middle initial
-    *       surname / last name
-    *       suffix (II, Phd, Jr, etc)
-    *
-    *   @uses   self::isSalutation()
-    *   @uses   self::isSuffix()
-    *   @uses   self::isCompoundLName()
-    *   @uses   self::isInitial()
-    *   @uses   self::FixCase()
-    *   @param  string  $full_name  Full name to check
-    *   @return array   Array of name components
-    */
+     * Split full names into parts.
+     * - prefix / salutation (Mr., Mrs., etc)
+     * - given name / first name
+     * - middle initial
+     * - surname / last name
+     * - suffix (II, Phd, Jr, etc)
+     *
+     * @uses   self::isSalutation()
+     * @uses   self::isSuffix()
+     * @uses   self::isCompoundLName()
+     * @uses   self::isInitial()
+     * @uses   self::FixCase()
+     * @param  string  $full_name  Full name to check
+     * @return array   Array of name components
+     */
     public static function Parse($full_name)
     {
         static $name = array();
@@ -102,7 +102,7 @@ class NameParser
             // is it a middle initial or part of their first name?
             // if we start off with an initial, we'll call it the first name
             if (self::isInitial($word)) {
-                // is the initial the first word?  
+                // is the initial the first word?
                 if ($i == $start) {
                     // If so, do a look-ahead to see if they go by their
                     // middle name. For ex: "R. Jason Smith" => "Jason Smith"
@@ -118,7 +118,7 @@ class NameParser
                         //$initials .= ' ' . strtoupper($word);
                         $fname .= ' ' . strtoupper($word) . ' ' .
                                 $name_parts[$i+1];
-                        $i++;   
+                        $i++;
                     }
 
                 } else {
@@ -127,7 +127,7 @@ class NameParser
                 }
             } else {
                 $fname .= ' ' . self::FixCase($word);
-            }  
+            }
         }
         // check that we have more than 1 word in our string
         if (($end - $start) > 1) {
@@ -152,12 +152,13 @@ class NameParser
         return $name[$array_idx];
     }
 
+
     /**
-    *   Detect and format standard salutations
-    *
-    *   @param  string  $word   Word to check
-    *   @return mixed   Salutation, or False if $word is not a salutation
-    */
+     * Detect and format standard salutations.
+     *
+     * @param   string  $word   Word to check
+     * @return  mixed   Salutation, or False if $word is not a salutation
+     */
     private static function isSalutation($word)
     {
         // ignore periods
@@ -190,12 +191,13 @@ class NameParser
         return $val;
     }
 
+
     /**
-    *   Detect and format common suffixes
-    *
-    *   @param  string  $word   Word to check
-    *   @return mixed   Suffix, or False if $word is not a suffix
-    */
+     * Detect and format common suffixes.
+     *
+     * @param   string  $word   Word to check
+     * @return  mixed   Suffix, or False if $word is not a suffix
+     */
     private static function isSuffix($word)
     {
         global $LANG_LGLIB;
@@ -209,12 +211,13 @@ class NameParser
         return false;
     }
 
+
     /**
-    *   Detect compound last names like "Von Fange"
-    *
-    *   @param  string  $word   Word to check (Von, Van, etc.)
-    *   @return mixed   False if $word is not compound, nonzero if it is
-    */
+     * Detect compound last names like "Von Fange".
+     *
+     * @param   string  $word   Word to check (Von, Van, etc.)
+     * @return  mixed   False if $word is not compound, nonzero if it is
+     */
     private static function isCompoundLName($word)
     {
         global $LANG_LGLIB;
@@ -225,39 +228,41 @@ class NameParser
 
 
     /**
-    *   Detect single letter, possibly followed by a period
-    *
-    *   @param  string  $word   Word to check
-    *   @return boolean     True if $word is an initial, False if not
-    */
+     * Detect single letter, possibly followed by a period.
+     *
+     * @param   string  $word   Word to check
+     * @return  boolean     True if $word is an initial, False if not
+     */
     private static function isInitial($word)
     {
         return ((strlen($word) == 1) ||
             (strlen($word) == 2 && $word{1} == '.'));
     }
 
-    /**
-    *   Detect mixed case words like "McDonald"
-    *
-    *   @param  string  $word   Word to check   
-    *   @return boolean False if the string is all one case, True if mixed
-    */
-    private static function isCamelCase($word)
-    {
-        if (preg_match("|[A-Z]+|s", $word) && preg_match("|[a-z]+|s", $word))
-            return true;
-        else 
-            return false;
-    }
 
     /**
-    *   Upper-case first words split by dashes or periods, 
-    *   but leave camelcase words alone
-    *
-    *   @uses   self::SafeUCFirst()
-    *   @param  string  $word   Word to be modified
-    *   @return string  Converted word
-    */
+     * Detect mixed case words like "McDonald".
+     *
+     * @param   string  $word   Word to check
+     * @return  boolean False if the string is all one case, True if mixed
+     */
+    private static function isCamelCase($word)
+    {
+        if (preg_match("|[A-Z]+|s", $word) && preg_match("|[a-z]+|s", $word)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+    /**
+     * Upper-case first words split by dashes or periods, but leave camelcase words alone.
+     *
+     * @uses    self::SafeUCFirst()
+     * @param   string  $word   Word to be modified
+     * @return  string  Converted word
+     */
     private static function FixCase($word)
     {
         // uppercase words split by dashes, like "Kimura-Fay"
@@ -269,15 +274,17 @@ class NameParser
         return $word;
     }
 
+
     /**
-    *   Helper function for FixCase.
-    *   Convert words to proper case, handling words separated by a character.
-    *   Do not convert CamelCase words
-    *
-    *   @uses   self::isCamelCase()
-    *   @param  string  $word   Word to be converted
-    *   @return string  Converted word
-    */
+     * Helper function for FixCase.
+     * Convert words to proper case, handling words separated by a character.
+     * Do not convert CamelCase words.
+     *
+     * @uses    self::isCamelCase()
+     * @param   string  $separator  Word separator character
+     * @param   string  $word   Word to be converted
+     * @return  string  Converted word
+     */
     private static function SafeUCFirst($separator, $word)
     {
         // Split the words by the separator and upper-case each one if not
@@ -293,14 +300,14 @@ class NameParser
 
 
     /**
-    *   Get "lastname, firstname" for a given full name.
-    *
-    *   @author Lee Garner <lee@leegarner.com>
-    *   @uses   self::Parse
-    *   @param  string  $full_name  Full name to parse
-    *   @param  boolean $initial    True to append the initial, False to omit
-    *   @return string      Lastname, Firstname (or just Firstname)
-    */
+     * Get "lastname, firstname" for a given full name.
+     *
+     * @author  Lee Garner <lee@leegarner.com>
+     * @uses    self::Parse
+     * @param   string  $full_name  Full name to parse
+     * @param   boolean $initial    True to append the initial, False to omit
+     * @return  string      Lastname, Firstname (or just Firstname)
+     */
     public static function LCF($full_name, $initial = false)
     {
         $retval = '';
@@ -321,57 +328,61 @@ class NameParser
         return $retval;
     }
 
+
     /**
-    *   Get "Lastname, Firstname Initial", e.g. "Public, John Q."
-    *
-    *   @author Lee Garner <lee@leegarner.com>
-    *   @uses   self::LCF()
-    *   @param  string  $full_name  Full name to parse
-    *   @return string  Formatted full name
-    */
+     * Get "Lastname, Firstname Initial", e.g. "Public, John Q."
+     *
+     * @author  Lee Garner <lee@leegarner.com>
+     * @uses    self::LCF()
+     * @param   string  $full_name  Full name to parse
+     * @return  string  Formatted full name
+     */
     public static function LCFI($full_name)
     {
         return self::LCF($full_name, true);
     }
 
+
     /**
-    *   Get just the first name.
-    *
-    *   @author Lee Garner <lee@leegarner.com>
-    *   @uses   self::Parse
-    *   @param  string  $full_name  Full name to parse
-    *   @return string              First name
-    */
+     * Get just the first name.
+     *
+     * @author  Lee Garner <lee@leegarner.com>
+     * @uses    self::Parse
+     * @param   string  $full_name  Full name to parse
+     * @return  string              First name
+     */
     public static function F($full_name)
     {
         $parts = self::Parse($full_name);
         return $parts['fname'];
     }
 
+
     /**
-    *   Get just the last name.
-    *   Returns an empty string if this is a single-name person ("Cher")
-    *
-    *   @author Lee Garner <lee@leegarner.com>
-    *   @uses   self::Parse
-    *   @param  string  $full_name  Full name to parse
-    *   @return string              Last name
-    */
+     * Get just the last name.
+     * Returns an empty string if this is a single-name person ("Cher")
+     *
+     * @author  Lee Garner <lee@leegarner.com>
+     * @uses    self::Parse()
+     * @param   string  $full_name  Full name to parse
+     * @return  string              Last name
+     */
     public static function L($full_name)
     {
         $parts = self::Parse($full_name);
         return $parts['lname'];
     }
 
+
     /**
-    *   Get the first and last name, e.g. "John Public" for "John Q. Public"
-    *
-    *   @author Lee Garner <lee@leegarner.com>
-    *   @uses   self::Parse
-    *   @param  string  $full_name  Full name to parse
-    *   @param  boolean $initial    True to append the initial, False to omit
-    *   @return string              First and Last name
-    */
+     * Get the first and last name, e.g. "John Public" for "John Q. Public".
+     *
+     * @author  Lee Garner <lee@leegarner.com>
+     * @uses    self::Parse
+     * @param   string  $full_name  Full name to parse
+     * @param   boolean $initial    True to append the initial, False to omit
+     * @return  string              First and Last name
+     */
     public static function FL($full_name, $initial=false)
     {
         $parts = self::Parse($full_name);
@@ -382,18 +393,20 @@ class NameParser
         return $retval;
     }
 
+
     /**
-    *   Get the firstname, initial, lastname
-    *
-    *   @author Lee Garner <lee@leegarner.com>
-    *   @uses   self::FL()
-    *   @param  string  $full_name  Full name to parse
-    *   @return string      "firstname initial lastname"
-    */
+     * Get the firstname, initial, lastname.
+     *
+     * @author  Lee Garner <lee@leegarner.com>
+     * @uses    self::FL()
+     * @param   string  $full_name  Full name to parse
+     * @return  string      "firstname initial lastname"
+     */
     public static function FIL($full_name)
     {
         return self::FL($full_name, true);
     }
 
 }
+
 ?>
