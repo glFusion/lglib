@@ -137,10 +137,12 @@ spl_autoload_register(function($class)
 });
 
 
-/** Include the PEAR Date Calc class */
+/**
+ * Include the PEAR Date Calc class in the root namespace.
+ */
 function USES_lglib_class_datecalc()
 {
-    require_once __DIR__ . '/classes/Date_Calc.class.php';
+    require_once __DIR__ . '/classes/DateCalc.class.php';
 }
 
 /**
