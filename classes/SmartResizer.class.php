@@ -99,6 +99,8 @@ class SmartResizer
                 $attribs = explode(';', $img->getAttribute('style'));
                 foreach ($attribs as $attr) {
                     $parts = explode(':', $attr);
+                    $parts[0] = trim($parts[0]);
+                    $parts[1] = trim($parts[1]);
                     if ($parts[0] == 'width') {
                         $d_width = (int)$parts[1];
                     } elseif ($parts[0] == 'height') {
@@ -116,34 +118,30 @@ class SmartResizer
             if ($d_height== 0) {
                 $val = $img->getAttribute('height');
                 if (!empty($val)) {
-                    $d_height = $val;
+                    $d_height = (int)$val;
                 }
             }
-            // If there isn't at least one, then give up, no resizing to do
             if (empty($d_width) && empty($d_height)) {
+                // No dimension attributes specified, don't do anything
                 continue;
+            } elseif (empty($d_width) || empty($d_height)) {
+                // One dimension provided, use reDim to get the other
+                $A = Image::reDim($src_path, $d_width, $d_height);
+                if ($A === false) continue;
+                $s_width = $A['s_width'];
+                $s_height = $A['s_height'];
+                $d_width = $A['d_width'];
+                $d_height = $A['d_height'];
             }
+            // Else, use the provided $d_height and $d_width dimensions
 
-            // Determine the new width and height that will fit within the specified
-            // tags while preservint the aspect ratio.
-            // Have to do this here since Image::ReSize() won't be called if the
-            // thumbnail exists, but we still need the correct image dimensions.
-            $A = Image::reDim($src_path, $d_width, $d_height);
-            if ($A === false) continue;
-            $s_width = $A['s_width'];
-            $s_height = $A['s_height'];
-            $d_width = $A['d_width'];
-            $d_height = $A['d_height'];
-            $mime = $A['mime'];
-
-            if ($s_width < $d_width && $s_height < $d_height) {
-                // Don't scale the image up, just use the original.
-                continue;
-            }
             // Create the thumbnail url, relative, and from it create the path
             $thumb_url = $fparts['dirname'] . '/thumbs/' . $fparts['filename'] . "_{$d_width}_{$d_height}." . $fparts['extension'];
-            $thumb_path = str_replace('/', DIRECTORY_SEPARATOR,
-                     $_CONF['path_html'] . $thumb_url);
+            $thumb_path = str_replace(
+                '/',
+                DIRECTORY_SEPARATOR,
+                $_CONF['path_html'] . $thumb_url
+            );
             if (!file_exists($thumb_path)) {
                 // Thumb doesn't already exist, create it
                 $res = Image::ReSize($src_path, $thumb_path, $d_width, $d_height);
@@ -172,7 +170,6 @@ class SmartResizer
 
                 $a->setAttribute('href', $src);
                 $a->setAttribute('data-uk-lightbox', "{group:'article'}");
-                $a->setAttribute('style', 'width:' . $A['s_width'] . 'px;height:' . $A['s_height'] . 'px');
                 $a->appendChild($img->cloneNode());
 
                 // replace img with the wrapper that is holding the <img>
