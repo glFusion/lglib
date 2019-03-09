@@ -31,13 +31,14 @@ $_IMG_CONF = array(
     'cache_max_age' => 604800,
     'cache_suffix'  => '.txt',
     'cache_prefix'  => 'timthumb_tmp',
-    'cache_dir'     => './cache',
+    'cache_dir'     => __DIR__ . '/data/imgcache',
     'file_max_size' => 10485760,
     'browser_cache_age' => 864000,
     'browser_cache_disable' => false,
     'img_max_width' => 1500,
     'img_max_height' => 1500,
-    'not_found_image' => 'notavailable.png',
+    // notavailable is prefixed with "a" to use an existing cache dir.
+    'not_found_image' => __DIR__ . '/images/a_notavailable.png',
     'error_image'   => '',
     'image_lib'     => 'gdlib',
     'path_to_mogrify' => '/usr/bin',
@@ -177,6 +178,7 @@ class TimThumb
             $this->error("No image specified");
             return false;
         }
+
         if (BLOCK_EXTERNAL_LEECHERS &&
             array_key_exists('HTTP_REFERER', $_SERVER) &&
             (!preg_match('/^https?:\/\/(?:www\.)?' . $this->myHost . '(?:$|\/)/i', $_SERVER['HTTP_REFERER']))) {
@@ -696,6 +698,7 @@ class TimThumb
             $this->debug(3, "Found file as $filePath");
             return $filePath;
         } else {
+            $this->debug(3, __FUNCTION__ . " could not find file as $filePath");
             return false;
         }
     }
