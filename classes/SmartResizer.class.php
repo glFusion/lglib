@@ -50,7 +50,7 @@ class SmartResizer
         global $_CONF;
 
         $dom= new \DOMDocument();
-        $dom->loadHTML($origtxt);
+        $dom->loadHTML($origtxt, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
         $xpath = new \DOMXPath($dom);
         $images = $xpath->query("//img");
         foreach ($images as $img) {
