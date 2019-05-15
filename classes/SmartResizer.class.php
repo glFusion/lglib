@@ -40,7 +40,6 @@ class SmartResizer
      * Resize images found in a text string.
      * Updates the content in-place.
      *
-     * @uses    self::getDimFromTag()
      * @uses    Image::reDim()
      * @param   string  &$origtxt   Text string to update
      * @return  void
@@ -49,10 +48,32 @@ class SmartResizer
     {
         global $_CONF;
 
+        libxml_use_internal_errors(true);
         $dom= new \DOMDocument();
-        $dom->loadHTML($origtxt, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
-        $xpath = new \DOMXPath($dom);
-        $images = $xpath->query("//img");
+        $status = $dom->loadHTML(
+            $origtxt,
+            LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD
+        );
+        // Check that the document was loaded and there were no errors
+        if ($status === false || count(libxml_get_errors() > 0)) {
+            // Couldn't load the document, return without changing
+            return;
+        }
+
+        $images = $dom->getElementsByTagName('img');
+        if (count($images) < 1) {
+            // No images, nothing to do
+            return;
+        }
+
+        // Get the site hostname to compare with image urls.
+        // If the scheme or host differs then treat as a remote image
+        // and do not process.
+        $site_url_parts = parse_url($_CONF['site_url']);
+        $site_host = $site_url_parts['host'];
+        $site_scheme = $site_url_parts['scheme'];
+        $have_changes = false;
+
         foreach ($images as $img) {
             // save the entire tag <img src="..." class=... />
             $tag = $img->ownerDocument->saveXML($img);
@@ -74,7 +95,14 @@ class SmartResizer
             $src = $img->getAttribute('src');
             $url_parts = parse_url($src);
             if (isset($url_parts['host'])) {
-                continue;  // don't handle remote images
+                if (
+                    $url_parts['host'] != $site_host ||
+                    $url_parts['scheme'] != $site_scheme
+                ) {
+                    continue;  // don't handle remote images
+                } else {
+                    $src = str_replace($_CONF['site_url'], '', $src);
+                }
             }
 
             // Split up the path to extract the filename and extension
@@ -82,8 +110,12 @@ class SmartResizer
             $extension = $fparts['extension'];
 
             // Create the thumbnail path in "/thumbs" under the original dir
-            $thumb_path = str_replace('/', DIRECTORY_SEPARATOR,
-                $_CONF['path_html'] . $fparts['dirname'] . '/thumbs');
+            $thumb_path = str_replace(
+                '/',
+                DIRECTORY_SEPARATOR,
+                $_CONF['path_html'] . $fparts['dirname'] . '/thumbs'
+            );
+
             $src_path = $_CONF['path_html'] . $src;
             if (!is_dir($thumb_path)) {
                 COM_errorLog("Resizer: Attempting to create $thumb_path");
@@ -92,7 +124,8 @@ class SmartResizer
 
             // Get the height and width parameters, if supplied.
             // If one is missing, reDim() will resize based on the supplied one.
-            // If both are missing, then continue since there's no resizing to do.
+            // If both are missing, then continue since there's no resizing
+            // to do.
             $d_width = 0;
             $d_height = 0;
             if ($img->hasAttribute('style')) {
@@ -175,10 +208,13 @@ class SmartResizer
                 // replace img with the wrapper that is holding the <img>
                 $img->parentNode->replaceChild($a, $img);
             }
+            $have_changes = true;   // Note that a change was made
         }
 
         // Finally, save the new document into the original text
-        $origtxt = $dom->saveHTML();
+        if ($have_changes) {
+            $origtxt = $dom->saveHTML();
+        }
     }
 
 }

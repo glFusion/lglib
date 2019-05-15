@@ -527,7 +527,6 @@ function plugin_outputfilter_lglib($output, $plugin='')
 
     // Resize images referenced in the templates if so configured
     if ($_LGLIB_CONF['enable_smartresizer']) {
-       //require_once __DIR__ . '/classes/SmartResizer.class.php';
        \LGLib\SmartResizer::Text($output);
     }
     return $output;
@@ -1443,7 +1442,7 @@ function service_storeMessage_lglib($args, &$output='', &$svc_msg='')
 /**
  * Parse names using the NameParser class.
  *
- * @param   array   $args       Arguments
+ * @param   array   $args       Arguments: name and format
  * @param   array   $output     Name components returned in an assoc. array
  * @param   mixed   $svc_msg    Not used
  * @return  integer     Service return code
