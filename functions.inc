@@ -194,7 +194,7 @@ function USES_lglib_class_fpdf($file='')
  */
 function USES_lglib_class_tcpdf()
 {
-    require_once __DIR__ . '/classes/pdf/html2pdf/vendor/tecnickcom/tcpdf/tcpdf.php';
+    require_once __DIR__ . '/vendor/autoload.php';
 }
 
 /**
@@ -1130,8 +1130,8 @@ function LGLIB_pushJob($pi_name, $job_name, $params='')
     $pi_name = DB_escapeString($pi_name);
     $job_name = DB_escapeString($job_name);
     $params = DB_escapeString($json_params);
-    $sql = "INSERT INTO gl_lglib_jobqueue (pi_name, jobname, params)
-            VALUES ('$pi_name', '$job_name', '$params')";
+    $sql = "INSERT INTO gl_lglib_jobqueue (pi_name, submitted, jobname, params)
+            VALUES ('$pi_name', UNIX_TIMESTAMP(), '$job_name', '$params')";
     DB_query($sql, false);
     if (DB_error()) {
         return false;
@@ -1179,11 +1179,14 @@ function LGLIB_run_jobqueue($pi = '')
  */
 function LGLIB_update_job_status($jobid, $status)
 {
-    global $_TABLES;
+    global $_TABLES, $_CONF;
 
+    $sql = '';
+    $jobid = (int)$jobid;
     switch ($status) {
     case PLG_RET_OK:
         $status = 'completed';
+        $sql = ", completed = UNIX_TIMESTAMP()";
         break;
     case PLG_RET_ERROR:
         $status = 'plugin_error';
@@ -1198,7 +1201,7 @@ function LGLIB_update_job_status($jobid, $status)
 
     $jobid = (int)$jobid;
     DB_query("UPDATE {$_TABLES['lglib_jobqueue']}
-            SET status = '{$status}'
+            SET status = '{$status}' $sql
             WHERE id = $jobid");
 }
 
@@ -1302,6 +1305,10 @@ function service_imageurl_lglib($args, &$output, &$svc_msg)
     } else {
         $output = array(
             'url'   => '',
+            'width' => 0,
+            'height' => 0,
+            'mime'  => '',
+            'path'  => '',
         );
         return PLG_RET_ERROR;
     }
