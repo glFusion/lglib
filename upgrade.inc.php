@@ -3,9 +3,9 @@
  * Upgrade routines for the lgLib plugin.
  *
  * @author      Lee Garner <lee@leegarner.com>
- * @copyright   Copyright (c) 2013-2018 Lee Garner <lee@leegarner.com>
+ * @copyright   Copyright (c) 2013-2019 Lee Garner <lee@leegarner.com>
  * @package     lglib
- * @version     v1.0.6
+ * @version     v1.0.9
  * @license     http://opensource.org/licenses/gpl-2.0.php
  *              GNU Public License v2 or later
  * @filesource
@@ -25,7 +25,7 @@ require_once __DIR__ . "/sql/mysql_install.php";
  *
  * @return  boolean     True on success, False on failure
  */
-function LGLIB_do_upgrade()
+function LGLIB_do_upgrade($dvlp=false)
 {
     global $_LGLIB_DEFAULTS, $_LGLIB_CONF, $_PLUGIN_INFO, $_CONF;
 
@@ -136,6 +136,23 @@ function LGLIB_do_upgrade()
         $current_ver = '1.0.6';
         COM_errorLog("Updating Plugin to $current_ver");
         if (!LGLIB_do_upgrade_sql($current_ver)) return false;
+        if (!LGLIB_do_set_version($current_ver)) return false;
+    }
+
+    if (!COM_checkVersion($current_ver, '1.0.8')) {
+        // upgrade to 1.0.8
+        $current_ver = '1.0.8';
+        COM_errorLog("Updating Plugin to $current_ver");
+        if (!LGLIB_do_upgrade_sql($current_ver, $dvlp)) return false;
+        if (!LGLIB_do_set_version($current_ver)) return false;
+    }
+
+    if (!COM_checkVersion($current_ver, '1.0.9')) {
+        // upgrade to 1.0.9
+        $current_ver = '1.0.9';
+        COM_errorLog("Updating Plugin to $current_ver");
+        if (!LGLIB_do_upgrade_sql($current_ver, $dvlp)) return false;
+        if (!LGLIB_do_set_version($current_ver)) return false;
     }
 
     // Final version update to catch updates that don't go through
@@ -154,23 +171,28 @@ function LGLIB_do_upgrade()
  * @param   string  $version    Version being upgraded TO
  * @return  boolean         True on success, False on failure
  */
-function LGLIB_do_upgrade_sql($version)
+function LGLIB_do_upgrade_sql($version, $dvlp=false)
 {
     global $_TABLES, $_LGLIB_CONF, $_UPGRADE_SQL;
 
     // If no sql statements passed in, return success
-    if (!isset($_UPGRADE_SQL[$version]) ||
-            !is_array($_UPGRADE_SQL[$version]))
+    if (
+        !isset($_UPGRADE_SQL[$version]) ||
+        !is_array($_UPGRADE_SQL[$version])
+    ) {
         return true;
+    }
 
     // Execute SQL now to perform the upgrade
-    COM_errorLOG("--Updating lgLib to version $version");
+    COM_errorLog("--Updating lgLib to version $version");
     foreach ($_UPGRADE_SQL[$version] as $q) {
-        COM_errorLOG("lgLib Plugin $version update: Executing SQL => $q");
+        COM_errorLog("lgLib Plugin $version update: Executing SQL => $q");
         DB_query($q, '1');
         if (DB_error()) {
             COM_errorLog("SQL Error during lgLib plugin update: $q",1);
-            return false;
+            if (!$dvlp) {
+                return false;
+            }
         }
     }
     return true;

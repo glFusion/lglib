@@ -30,12 +30,14 @@ $_SQL['lglib_messages'] = "CREATE TABLE {$_TABLES['lglib_messages']} (
 
 $_SQL['lglib_jobqueue'] = "CREATE TABLE `{$_TABLES['lglib_jobqueue']}` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `submitted` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `submitted` int(11) unsigned,
+  `completed` int(11) unsigned,
   `pi_name` varchar(20) DEFAULT NULL,
   `jobname` varchar(40) DEFAULT NULL,
   `status` varchar(20) NOT NULL DEFAULT 'ready',
   `params` text,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `idx_status` (`status`)
 ) ENGINE=MyISAM";
 
 $_UPGRADE_SQL = array(
@@ -68,10 +70,16 @@ $_UPGRADE_SQL = array(
         ADD KEY `uid` (`uid`),
         ADD KEY `sess_id` (`sess_id`)",
     ),
-    '1.0.8' => array(
-        "ALTER TABLE {$_TABLES['lglib_messages']} CHANGE sess_id sess_id varchar(80) not null",
-        "ALTER TABLE {$_TABLES['lglib_messages']} CHANGE pi_code pi_code varchar(40)",
+'1.0.8' => array(
+    "ALTER TABLE {$_TABLES['lglib_messages']} CHANGE sess_id sess_id varchar(80) not null",
+    "ALTER TABLE {$_TABLES['lglib_messages']} CHANGE pi_code pi_code varchar(40)",
     ),
+'1.0.9' => array(
+    "TRUNCATE {$_TABLES['lglib_jobqueue']}",
+    "ALTER TABLE {$_TABLES['lglib_jobqueue']} CHANGE submitted submitted int(11) unsigned",
+    "ALTER TABLE {$_TABLES['lglib_jobqueue']} ADD completed int(11) unsigned AFTER submitted",
+    "ALTER TABLE {$_TABLES['lglib_jobqueue']} ADD key `idx_status` (status)",
+),
 );
 
 ?>
