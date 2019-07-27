@@ -2,6 +2,8 @@
 
 ## 1.0.9
 Release TBD
+  * Trim fonts included with PDF classes to reduct download size.
+  * Remove `plugin_outputfilter` function that doesn't work with DOMDocument.
   * Fix SmartResizer to ignore images that are already in a link.
   * Update job queue runner to use job name supplied by the plugins.
   * Add service functions to call NameParser class functions.
