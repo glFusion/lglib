@@ -168,6 +168,15 @@ function USES_lglib_class_dbbackup()
 {   require_once __DIR__ . '/classes/dbBackup.class.php';    }
 
 /**
+ * Import PDF and other classes.
+ */
+function USES_lglib_classes()
+{
+    require_once __DIR__ . '/vendor/autoload.php';
+}
+
+
+/**
  * Import the PDF utility class.
  * If a derived class file is requested, e.g "PDF_HTML", then load that file.
  * otherwise, load the base FPDF class file.
@@ -189,19 +198,29 @@ function USES_lglib_class_fpdf($file='')
     }
 }
 
+
 /**
  * Import the TCPDF class.
+ * Kept for backward compatibility.
+ * @deprecated v1.0.9
  */
 function USES_lglib_class_tcpdf()
 {
-    require_once __DIR__ . '/vendor/autoload.php';
+    USES_lglib_classes();
 }
+
 
 /**
  * Import the HTML2PDF class.
+ * Kept for backward compatibility.
+ * Class is now in vendor/spipu/html2pdf
+ * @deprecated v1.0.9
  */
 function USES_lglib_class_html2pdf()
-{   require_once __DIR__ . '/classes/pdf/html2pdf/vendor/autoload.php'; }
+{
+    USES_lglib_classes();
+}
+
 
 /**
  * Get the currently installed version.
