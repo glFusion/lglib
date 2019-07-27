@@ -30,8 +30,10 @@ class SmartResizer
      */
     public static function Template(&$template, $valname)
     {
-        if (isset($template->varvals[$valname])) {
-            self::Text($template->varvals[$valname]);
+        $var = $template->get_var($valname);
+        if (!empty($var)) {
+            self::Text($var);
+            $template->set_var($valname, $var);
         }
     }
 
@@ -55,7 +57,8 @@ class SmartResizer
             LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD
         );
         // Check that the document was loaded and there were no errors
-        if ($status === false || count(libxml_get_errors() > 0)) {
+        $x = libxml_get_errors();
+        if ($status === false || count($x) > 0) {
             // Couldn't load the document, return without changing
             return;
         }
@@ -73,7 +76,6 @@ class SmartResizer
         $site_host = $site_url_parts['host'];
         $site_scheme = $site_url_parts['scheme'];
         $have_changes = false;
-
         foreach ($images as $img) {
             // save the entire tag <img src="..." class=... />
             $tag = $img->ownerDocument->saveXML($img);
