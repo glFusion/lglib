@@ -521,26 +521,26 @@ function plugin_templateSetVars_lglib($templatename, &$template)
 
     // Resize images referenced in the templates if so configured
     // For glFusion 1.7.0 and up see plugin_outputfilter_lglib
-    if (GVERSION < '1.7.0' && $_LGLIB_CONF['enable_smartresizer']) {
-       require_once __DIR__ . '/classes/SmartResizer.class.php';
-       if ($templatename == 'article') {
+    //if (GVERSION < '1.7.0' && $_LGLIB_CONF['enable_smartresizer']) {
+        if ($templatename == 'article') {
             \LGLib\SmartResizer::Template($template, 'story_introtext');
             \LGLib\SmartResizer::Template($template, 'story_introtext_only');
             \LGLib\SmartResizer::Template($template, 'story_bodytext_only');
             \LGLib\SmartResizer::Template($template, 'story_text_no_br');
         }
-    }
+    //}
 }
 
 
 /**
  * Perform filtering and updating on final output before display.
+ * Disabled because PHP DomDocument doesn't work with HTML5 tags.
  *
  * @param   string  $output     HTML output to process
  * @param   string  $plugin     Invoking plugin
  * @return  string              Updated $output
  */
-function plugin_outputfilter_lglib($output, $plugin='')
+function Xplugin_outputfilter_lglib($output, $plugin='')
 {
     global $_LGLIB_CONF;
 
