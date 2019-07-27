@@ -23,6 +23,7 @@ require_once __DIR__ . "/sql/mysql_install.php";
 /**
  * Perform the upgrade starting at the current version.
  *
+ * @param   boolean $dvlp   True if this is a development update
  * @return  boolean     True on success, False on failure
  */
 function LGLIB_do_upgrade($dvlp=false)
@@ -169,6 +170,7 @@ function LGLIB_do_upgrade($dvlp=false)
  * Actually perform any sql updates.
  *
  * @param   string  $version    Version being upgraded TO
+ * @param   boolean $dvlp   True if this is a development update
  * @return  boolean         True on success, False on failure
  */
 function LGLIB_do_upgrade_sql($version, $dvlp=false)
@@ -238,7 +240,7 @@ function LGLIB_remove_old_files()
     $paths = array(
         // private/plugins/lglib
         __DIR__ => array(
-            //'classes/NameParser_tmp.class.php',   // 1.0.7
+            'classes/NameParser_tmp.class.php',   // 1.0.7
             //'classes/DateCalc.class.php',
         ),
         // public_html/lglib
