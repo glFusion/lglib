@@ -1,8 +1,8 @@
 # lgLib utility plugin for glFusion
 
 ## 1.0.9
-Release TBD
-  * Trim fonts included with PDF classes to reduct download size.
+Release  2019-07-28
+  * Update PDF classes, trim included fonts to reduce download size.
   * Remove `plugin_outputfilter` function that doesn't work with DOMDocument.
   * Fix SmartResizer to ignore images that are already in a link.
   * Update job queue runner to use job name supplied by the plugins.

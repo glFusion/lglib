@@ -12,7 +12,7 @@ This plugin provides some javascript and css files that are used by other plugin
   * FPDF, by Olivier PLATHEY
   * HTML2PDF, by Laurent MINGUET
 - Message storage and retrieval for inter-plugin messaging
-- Automatically resize images (Experimental!). Enable the smartresizer
+- Automatically resize images in articles (Experimental!). Enable the smartresizer
 in the plugin configuration to test this feature.
 - A color picker by Brian Grinstead (https://github.com/bgrins/spectrum)
 - Name Parser class (c) Josh Fraser
