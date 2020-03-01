@@ -1,5 +1,9 @@
 # lgLib utility plugin for glFusion
 
+## 1.0.10
+Release TBD
+  * Fix Smart Resizer which was breaking initial tags in the HTML.
+
 ## 1.0.9
 Release  2019-07-28
   * Update PDF classes, trim included fonts to reduce download size.

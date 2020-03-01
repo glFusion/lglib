@@ -4,9 +4,9 @@
  * Ignore images that are already part of an existing link.
  *
  * @author      Lee Garner <lee@leegarner.com>
- * @copyright   Copyright (c) 2017-2019 Lee Garner <lee@leegarner.com>
+ * @copyright   Copyright (c) 2017-2020 Lee Garner <lee@leegarner.com>
  * @package     lglib
- * @version     v1.0.9
+ * @version     v1.0.10
  * @license     http://opensource.org/licenses/gpl-2.0.php
  *              GNU Public License v2 or later
  * @filesource
@@ -52,8 +52,10 @@ class SmartResizer
 
         libxml_use_internal_errors(true);
         $dom= new \DOMDocument();
+        // Load html with opening and closing tags to prevent DOM from breaking
+        // any initial tags. The html tags will be removed at the end.
         $status = $dom->loadHTML(
-            $origtxt,
+            '<html>' . $origtxt . '</html>',
             LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD
         );
         // Check that the document was loaded and there were no errors
@@ -213,9 +215,15 @@ class SmartResizer
             $have_changes = true;   // Note that a change was made
         }
 
-        // Finally, save the new document into the original text
+        // Finally, save the new document into the original text.
+        // Strip the bogus html tags that were added earlier to keep DOM
+        // from breaking.
         if ($have_changes) {
-            $origtxt = $dom->saveHTML();
+            $origtxt = str_replace(
+                array('<html>','</html>') ,
+                '' ,
+                $dom->saveHTML()
+            );
         }
     }
 
