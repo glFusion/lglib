@@ -874,7 +874,7 @@ function LGLIB_showAllMessages($persist = false)
     if (empty($title)) $title = $LANG_LGLIB['system_message'];
     $leveltxt = isset($levels[$level]) ? $levels[$level] : 'info';
     if ($persist) {
-        return '<span class="' . $leveltxt . ' lglmessage">' . $message . '</span>' . LB;
+        return '<div class="uk-alert uk-alert-' . $leveltxt . ' lglmessage">' . $message . '</div>' . LB;
     } else {
         return COM_showMessageText($message, $title, $persist, $leveltxt);
     }
@@ -1253,8 +1253,9 @@ function service_imageurl_lglib($args, &$output, &$svc_msg)
 
     // If original image doesn't exist, return empty url,
     // don't bother continuing.
-    if (empty($orig_path) || !is_file($orig_path))
+    if (empty($orig_path) || !is_file($orig_path)) {
         return PLG_RET_ERROR;
+    }
 
     // Separate the path and create a MD5 hash of its path and size
     $path_parts = pathinfo($orig_path);
