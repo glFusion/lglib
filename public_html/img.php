@@ -187,8 +187,11 @@ class TimThumb
             $imgData = base64_decode("R0lGODlhUAAMAIAAAP8AAP///yH5BAAHAP8ALAAAAABQAAwAAAJpjI+py+0Po5y0OgAMjjv01YUZ\nOGplhWXfNa6JCLnWkXplrcBmW+spbwvaVr/cDyg7IoFC2KbYVC2NQ5MQ4ZNao9Ynzjl9ScNYpneb\nDULB3RP6JuPuaGfuuV4fumf8PuvqFyhYtjdoeFgAADs=");
             header('Content-Type: image/gif');
             header('Content-Length: ' . sizeof($imgData));
-            header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');            header("Pragma: no-cache");            header('Expires: ' . gmdate ('D, d M Y H:i:s', time()));
-            echo $imgData;            return false;
+            header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+            header("Pragma: no-cache");
+            header('Expires: ' . gmdate ('D, d M Y H:i:s', time()));
+            echo $imgData;
+            return false;
             exit(0);
         }
         if (preg_match('/^https?:\/\/[^\/]+/i', $this->src)) {
