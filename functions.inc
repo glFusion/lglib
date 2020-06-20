@@ -172,8 +172,8 @@ function USES_lglib_class_dbbackup()
  */
 function USES_lglib_classes()
 {
-    require_once __DIR__ . '/vendor/autoload.php';
 }
+require_once __DIR__ . '/vendor/autoload.php';
 
 
 /**
@@ -523,10 +523,10 @@ function plugin_templateSetVars_lglib($templatename, &$template)
     // For glFusion 1.7.0 and up see plugin_outputfilter_lglib
     //if (GVERSION < '1.7.0' && $_LGLIB_CONF['enable_smartresizer']) {
         if ($templatename == 'article') {
-            \LGLib\SmartResizer::Template($template, 'story_introtext');
-            \LGLib\SmartResizer::Template($template, 'story_introtext_only');
-            \LGLib\SmartResizer::Template($template, 'story_bodytext_only');
-            \LGLib\SmartResizer::Template($template, 'story_text_no_br');
+            LGLib\SmartResizer::Template($template, 'story_introtext');
+            LGLib\SmartResizer::Template($template, 'story_introtext_only');
+            LGLib\SmartResizer::Template($template, 'story_bodytext_only');
+            LGLib\SmartResizer::Template($template, 'story_text_no_br');
         }
     //}
 }
@@ -546,7 +546,7 @@ function Xplugin_outputfilter_lglib($output, $plugin='')
 
     // Resize images referenced in the templates if so configured
     if ($_LGLIB_CONF['enable_smartresizer']) {
-       \LGLib\SmartResizer::Text($output);
+       LGLib\SmartResizer::Text($output);
     }
     return $output;
 }
@@ -882,26 +882,6 @@ function LGLIB_showAllMessages($persist = false)
 
 
 /**
- * Strips slashes if magic_quotes_gpc is on.
- *
- * @param   mixed   $var    Value or array of values to strip.
- * @return  mixed           Stripped value or array of values.
- */
-function LGLIB_stripslashes($var)
-{
-	if (get_magic_quotes_gpc()) {
-		if (is_array($var)) {
-			return array_map('LGLIB_stripslashes', $var);
-		} else {
-			return stripslashes($var);
-		}
-	} else {
-		return $var;
-	}
-}
-
-
-/**
  * Show a popup login form.
  *
  * @return  string  HTML for popup form.
@@ -962,44 +942,6 @@ function LGLIB_getGlobal($name, $remove=false)
     if (isset($_LGLIB_GLOBALS[$name])) {
         $retval = $_LGLIB_GLOBALS[$name];
         if ($remove) unset($_LGLIB_GLOBALS[$name]);
-    } else {
-        $retval = NULL;
-    }
-    return $retval;
-}
-
-
-/**
- * A generic function to store session variables
- *
- * @deprecated
- * @see    SESS_setVar()
- * @param  string  $name   Session variable name
- * @param  string  $value  Value to store
- * @param  boolean $clobber    False to avoid overwriting
- */
-function LGLIB_setSession($name, $value, $clobber=true)
-{
-    if ($clobber || !isset($_SESSION[$name])) {
-        $_SESSION[$name] = $value;
-    }
-}
-
-
-/**
- * Retrieve a session variable.
- *
- * @deprecated
- * @see     SESS_getVar()
- * @param   string  $name   Type or name of variable
- * @param   boolean $remove True to unset the variable, False to leave it
- * @return  mixed           Session variable contents
- */
-function LGLIB_getSession($name, $remove=false)
-{
-    if (isset($_SESSION[$name])) {
-        $retval = $_SESSION[$name];
-        if ($remove) unset($_SESSION[$name]);
     } else {
         $retval = NULL;
     }
@@ -1076,6 +1018,7 @@ function LGLIB_titleCase($str)
     }
     return implode(' ', $words);
 }
+
 
 /**
  * Get the URL to an image.
@@ -1250,6 +1193,7 @@ function service_imageurl_lglib($args, &$output, &$svc_msg)
     $height = isset($args['height']) ? (int)$args['height'] : 0;
     $rnd = isset($args['rnd']) ? (int)$args['rnd'] : 0;
     $orig_path = isset($args['filepath']) ? $args['filepath'] : '';
+    $expand = isset($args['expand']) ? (int)$args['expand'] : 0;
 
     // If original image doesn't exist, return empty url,
     // don't bother continuing.
@@ -1297,8 +1241,8 @@ function service_imageurl_lglib($args, &$output, &$svc_msg)
     }
 
     // If the file isn't found, try to create it.
-    if (!is_file($disp_fullpath)) {
-        $A = \LGLib\Image::ReSize($orig_path, $disp_fullpath, $width, $height);
+    if (!is_file($disp_fullpath.'x')) {
+        $A = LGLib\Image::ReSize($orig_path, $disp_fullpath, $width, $height, $expand);
         $width = $A['d_width'];
         $height = $A['d_height'];
         $mime_type = $A['mime'];
@@ -1486,7 +1430,7 @@ function service_parseName_lglib($args, &$output, &$svc_msg)
             $func = $args['format'];
         }
     }
-    $output = \LGLib\NameParser::$func($args['name']);
+    $output = LGLib\NameParser::$func($args['name']);
     return PLG_RET_OK;
 }
 
@@ -1506,7 +1450,7 @@ function plugin_parseName_lglib($name, $format = 'Parse')
     } else {
         $func = 'Parse';
     }
-    return \LGLib\NameParser::$func($name);
+    return LGLib\NameParser::$func($name);
 }
 
 ?>
