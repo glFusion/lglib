@@ -136,6 +136,10 @@ class SmartResizer
                 $attribs = explode(';', $img->getAttribute('style'));
                 foreach ($attribs as $attr) {
                     $parts = explode(':', $attr);
+                    if (empty($parts[0]) || !isset($parts[1])) {
+                        // May happen if there's a trailing `;` in the style
+                        continue;
+                    }
                     $parts[0] = trim($parts[0]);
                     $parts[1] = trim($parts[1]);
                     if ($parts[0] == 'width') {
