@@ -15,7 +15,7 @@
 global $_LGLIB_CONF;
 $_LGLIB_CONF['pi_version'] = '1.0.10';
 $_LGLIB_CONF['pi_name'] = 'lglib';
-$_LGLIB_CONF['gl_version'] = '1.7.0';
+$_LGLIB_CONF['gl_version'] = '1.7.8';
 $_LGLIB_CONF['pi_url'] = 'http://www.leegarner.com';
 $_LGLIB_CONF['pi_display_name'] = 'lgLib';
 
