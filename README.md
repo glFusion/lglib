@@ -9,8 +9,9 @@ This plugin provides some javascript and css files that are used by other plugin
   - see http://trentrichardson.com/examples/timepicker
 - image resizing and url creation for static image URLs
 - PDF libraries
-  * FPDF, by Olivier PLATHEY
-  * HTML2PDF, by Laurent MINGUET
+  * FPDF, by Olivier PLATHEY http://www.fpdf.org/
+  * HTML2PDF, by Laurent MINGUET https://github.com/spipu/html2pdf/
+  * TCPDF https://tcpdf.org/
 - Message storage and retrieval for inter-plugin messaging
 - Automatically resize images in articles (Experimental!). Enable the smartresizer
 in the plugin configuration to test this feature.

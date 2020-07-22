@@ -358,7 +358,7 @@ class TCPDF_COLORS {
 				$color_code = self::$webcolor[$color];
 			} else {
 				// spot color
-				$returncolor = self::getSpotColor($color, $spotc);
+				$returncolor = self::getSpotColor($hcolor, $spotc);
 				if ($returncolor === false) {
 					$returncolor = $defcol;
 				}
@@ -380,7 +380,7 @@ class TCPDF_COLORS {
 				$returncolor['B'] = max(0, min(255, hexdec($b.$b)));
 				break;
 			}
-			case 6: {
+                        case 6: {
 				// 6-digit RGB hexadecimal representation
 				$returncolor = array();
 				$returncolor['R'] = max(0, min(255, hexdec(substr($color_code, 0, 2))));
