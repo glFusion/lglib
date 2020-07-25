@@ -50,12 +50,16 @@ class SmartResizer
     {
         global $_CONF;
 
+        // Convert the utf-8 characters to HTML entities to avoid
+        // tripping up the DOM functions.
+        $page = mb_convert_encoding($origtxt, 'HTML-ENTITIES', 'UTF-8');
+
         libxml_use_internal_errors(true);
         $dom= new \DOMDocument();
         // Load html with opening and closing tags to prevent DOM from breaking
         // any initial tags. The html tags will be removed at the end.
         $status = $dom->loadHTML(
-            '<html>' . $origtxt . '</html>',
+            '<html>' . $page. '</html>',
             LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD
         );
         // Check that the document was loaded and there were no errors

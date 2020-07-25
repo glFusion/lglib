@@ -2,7 +2,12 @@
 
 ## 1.0.10
 Release 2020-07-13
-  * Fix Smart Resizer which was breaking initial tags in the HTML.
+  * Fix SmartResizer which was breaking initial tags in the HTML.
+  * Fix SmartResizer injecting HTML entities into UTF-8 pages.
+  * Update PDF creation libraries for PHP 7.4
+    * HTML2PDF: v5.2.2
+    * FPDF: v1.8.2
+    * TCPDF: v6.3.5
 
 ## 1.0.9
 Release  2019-07-28
