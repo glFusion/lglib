@@ -1,9 +1,12 @@
 # lgLib utility plugin for glFusion
 
+## 1.0.11
+Release TBD
+  * Fix SmartResizer injecting HTML entities into UTF-8 pages.
+
 ## 1.0.10
 Release 2020-07-13
   * Fix SmartResizer which was breaking initial tags in the HTML.
-  * Fix SmartResizer injecting HTML entities into UTF-8 pages.
   * Update PDF creation libraries for PHP 7.4
     * HTML2PDF: v5.2.2
     * FPDF: v1.8.2
