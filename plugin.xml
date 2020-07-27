@@ -2,7 +2,7 @@
     <id>lglib</id>
     <name>lgLib</name>
     <description>Provides core javascript, css and functions for other plugins.</description>
-    <version>1.0.11</version>
+    <version>1.0.12</version>
     <glfusionversion>1.7.8</glfusionversion>
     <phpversion>7.3.0</phpversion>
     <url>http://www.leegarner.com</url>
