@@ -1241,11 +1241,13 @@ function service_imageurl_lglib($args, &$output, &$svc_msg)
     }
 
     // If the file isn't found, try to create it.
-    if (!is_file($disp_fullpath.'x')) {
+    if (!is_file($disp_fullpath)) {
         $A = LGLib\Image::ReSize($orig_path, $disp_fullpath, $width, $height, $expand);
-        $width = $A['d_width'];
-        $height = $A['d_height'];
-        $mime_type = $A['mime'];
+        if ($A) {
+            $width = $A['d_width'];
+            $height = $A['d_height'];
+            $mime_type = $A['mime'];
+        }
     } else {
         // Have an existing file, need to get the dimensions
         $A = getimagesize($disp_fullpath);
