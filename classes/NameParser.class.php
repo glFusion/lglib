@@ -236,7 +236,7 @@ class NameParser
     private static function isInitial($word)
     {
         return (
-            strlen($word) == 1) ||
+            strlen($word) == 1 ||
             (strlen($word) == 2 && $word[1] == '.')
         );
     }
