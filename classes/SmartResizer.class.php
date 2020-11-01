@@ -62,9 +62,10 @@ class SmartResizer
             '<html>' . $page. '</html>',
             LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD
         );
+
         // Check that the document was loaded and there were no errors
-        $x = libxml_get_errors();
-        if ($status === false || count($x) > 0) {
+        //$x = libxml_get_errors();
+        if ($status === false) {// || count($x) > 0) {
             // Couldn't load the document, return without changing
             return;
         }
