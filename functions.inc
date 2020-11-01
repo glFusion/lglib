@@ -522,7 +522,7 @@ function plugin_templateSetVars_lglib($templatename, &$template)
     // Resize images referenced in the templates if so configured
     // For glFusion 1.7.0 and up see plugin_outputfilter_lglib
     //if (GVERSION < '1.7.0' && $_LGLIB_CONF['enable_smartresizer']) {
-        if ($templatename == 'article') {
+        if ($templatename == 'article' || $templatename == 'featuredarticle') {
             LGLib\SmartResizer::Template($template, 'story_introtext');
             LGLib\SmartResizer::Template($template, 'story_introtext_only');
             LGLib\SmartResizer::Template($template, 'story_bodytext_only');
