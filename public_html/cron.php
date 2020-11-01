@@ -57,7 +57,7 @@ if ($force || $_LGLIB_CONF['cron_schedule_interval'] > 0) {
             }
             LGLIB_backup_database();
         }
-        LGLIB_run_jobqueue($pi);
+        LGLib\JobQueue::run($pi);
     }
 }
 echo "SUCCESS\n";

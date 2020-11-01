@@ -506,7 +506,7 @@ function plugin_templateSetVars_lglib($templatename, &$template)
     // This can be called more than once per page display, so load
     // the messages only once.
     if ($messages === NULL) {
-        $messages = LGLIB_showAllMessages();
+        $messages = LGLib\Message::showAll();
     }
     if ($messages != '') {
         if ($_LGLIB_CONF['use_lglib_messages']) {
@@ -651,233 +651,36 @@ function LGLIB_storeMessage($args, $title='', $persist=false, $expires = '',
         // parameters passed in using the old format
         $msg = $args;
     }
-    if (empty($msg)) return;
-    if ($title == '') $title = $LANG_LGLIB['system_message'];
-    if ($persist != false) $persist = true;
-    switch ($level) {
-    case 'error':
-    case 'err':
-    case false:
-    case 'alert':
-    case 3:
-        $level = 3;
-        break;
-    case 'warn':
-    case 'warning':
-    case 2:
-        $level = 2;
-        break;
-    case 'info':
-    case true;
-    case 1:
-    default:
-        $level = 1;
-        break;
-    }
-    //if ($_LGLIB_CONF['msg_store'] == 'db') {
-    if (LGLIB_MSG_STORE == 'db') {
-        global $_TABLES;
-
-        $uid = $uid == 0 ? (int)$_USER['uid'] : (int)$uid;
-        $sess_id = $use_sess_id ? session_id() : '';
-        $persist = $persist ? 1 : 0;
-        if (empty($expires)) {
-            if ($uid < 2) {
-                // Anonymous messages expire in 4 hours
-                $expires = 'DATE_ADD(NOW(), INTERVAL 4 HOUR)';
-            } else {
-                // Member messages exist until viewed
-                $expires = "'2037-12-31'";  // non-expiring
-            }
-        } else {
-            $expires = "'".DB_escapeString($expires)."'";
-        }
-        $msg = DB_escapeString($msg);
-        if ($title != '') $title = DB_escapeString($title);
-        if ($pi_code != '') $pi_code = DB_escapeString($pi_code);
-        $sql = "INSERT INTO {$_TABLES['lglib_messages']}
-            (uid, sess_id, title, message, persist, expires, pi_code, level)
-            VALUES ('$uid', '$sess_id', '$title', '$msg', $persist,
-                $expires, '$pi_code', $level)";
-        DB_query($sql, 1);
-        if (DB_error()) COM_errorLog("lglib: storeMessage SQL error: $sql");
-    } else {
-        // Session-based messages can't be saved for another user.
-        if ($uid > 0 && $uid != $_USER['uid']) return;
-        // Make sure the session variable is available.
-        if (!isset($_SESSION[LGLIB_MSG_VAR]))
-            $_SESSION[LGLIB_MSG_VAR] = array();
-        $_SESSION[LGLIB_MSG_VAR][] = array(
-            'title' => $title, 'message' => $msg, 'persist' => $persist
-        );
-    }
+    (new LGLib\Message())
+        ->withTitle($title)
+        ->withMessage($msg)
+        ->withLevel($level)
+        ->withUid($uid)
+        ->withPersists($persist)
+        ->withSessId($use_sess_id)
+        ->withPiCode($pi_code)
+        ->withExpires($expires)
+        ->store();
 }
 
 
 /**
- * Retrieve all messages for display.
- * Gets all messages from the DB where the user ID matches for
- * non-anonymous users, OR the session ID matches. This allows a message
- * caused by an anonymous action to be displayed to the user after login.
+ * Check if a specific message exists.
+ * Looks for the user ID, session ID and plugin code.
  *
- * @return  array   Array of messages, title=>message
+ * @param   integer $uid        Target User Id
+ * @param   string  $sess_id    Session ID
+ * @param   string  $pi_code    Plugin name & code value
+ * @return  string      Message text, empty if not found
  */
-function LGLIB_getAllMessages()
-{
-    global $_TABLES, $_CONF, $_LGLIB_CONF, $_USER;
-
-    $messages = array();
-
-    if (LGLIB_MSG_STORE == 'db') {
-        $uid = (int)$_USER['uid'];
-        $q = array();
-        if ($uid > 1) $q[] = "uid = $uid";
-        // Get the session ID for messages to anon users. If a message was
-        // stored before the user was logged in this will allow them to see it.
-        $sess_id = DB_escapeString(session_id());
-        if (!empty($sess_id)) $q[] = "sess_id = '$sess_id'";
-        if (empty($q)) return $messages;
-        $query = implode(' OR ', $q);
-        $sql = "SELECT title, message, persist, level
-                FROM {$_TABLES['lglib_messages']}
-                WHERE $query
-                ORDER BY dt DESC";
-        $result = DB_query($sql, 1);
-        if ($result) {
-            while ($A = DB_fetchArray($result, false)) {
-                $messages[] = array(
-                    'title'     => $A['title'],
-                    'message'   => $A['message'],
-                    'persist'   => $A['persist'] ? true : false,
-                    'level'     => $A['level'],
-                );
-            }
-        }
-    } else {
-        $messages = SESS_getVar(LGLIB_MSG_VAR);
-        if ($messages == 0) $messages = array();
-    }
-    return $messages;
-}
-
-
-/**
- * Delete all messages for a user.
- */
-function LGLIB_deleteAllMessages()
-{
-    if (LGLIB_MSG_STORE == 'session') {
-        SESS_setVar(LGLIB_MSG_VAR, array());
-    } else {
-        // delete messages for the user or session that have not expired.
-        global $_TABLES, $_USER;
-        $uid = (int)$_USER['uid'];
-        $q = array();
-        if ($uid > 1) $q[] = "uid = $uid";
-        $sess_id = DB_escapeString(session_id());
-        if (!empty($sess_id)) $q[] = "sess_id = '$sess_id'";
-        if (empty($q)) return;
-        $query = '(' . implode(' OR ', $q) . ')';
-        //$query .= ' AND (persist = 0 OR UNIX_TIMESTAMP(expires) < UNIX_TIMESTAMP())';
-        $sql = "DELETE FROM {$_TABLES['lglib_messages']} WHERE $query";
-        $result = DB_query($sql);
-        DB_delete($_TABLES['lglib_messages'], 'uid', $_USER['uid']);
-    }
-}
-
-
-/**
- * Delete a single message.
- * Called by plugins to remove a message placed earlier. At least one of
- * $uid or $pi_code must be present
- *
- * @param   integer $uid    User ID, required, can be zero to ignore
- * @param   string  $pi_code    Optional plugin code value.
- */
-function LGLIB_deleteMessage($uid, $pi_code = '')
+function LGLIB_messageExists($uid, $pi_code='')
 {
     global $_TABLES;
 
-    $fields = array();
-    $values = array();
-    if ($uid > 0) {
-        $fields[] = 'uid';
-        $values[] = $uid;
-    }
-    if ($pi_code != '') {
-        $fields[] = 'pi_code';
-        $values[] = $pi_code;
-    }
-    if (empty($fields)) return; // this function only deletes specific messages
-    DB_delete($_TABLES['lglib_messages'], $fields, $values);
-}
-
-
-/**
- * Delete expired messages.
- * Only applies when using DB as the message store.
- */
-function LGLIB_expireMessages()
-{
-    if (LGLIB_MSG_STORE == 'db') {
-        global $_TABLES;
-        $sql = "DELETE FROM {$_TABLES['lglib_messages']}
-                WHERE expires < NOW()";
-        DB_query($sql, 1);
-    }
-}
-
-
-/**
- * Display all messagse for a user's session.
- * If $persist is true, or any $msg['persist'] == true, then the displayed
- * message will stay on the screen. Otherwise the message fades out.
- *
- * @param   boolean $persist    Keep the message box open? False = fade out
- * @return  string      HTML for message box
- */
-function LGLIB_showAllMessages($persist = false)
-{
-    $retval = '';
-
-    LGLIB_expireMessages();
-
-    $msgs = LGLIB_getAllMessages();
-    // Include a zero element if level is undefined
-    $levels = array('info', 'info', 'warning', 'error');
-
-    if (empty($msgs)) return '';
-    if (count($msgs) == 1) {
-        $message = $msgs[0]['message'];
-        $title = $msgs[0]['title'];
-        $level = $msgs[0]['level'];
-        if ($msgs[0]['persist']) $persist = true;
-    } else {
-        $message = '';
-        $title = '';
-        $level = 1;     // Default to "info"
-        foreach ($msgs as $msg) {
-            $message .= '<li class="lglmessage">' .
-                    $msg['message'] .
-                    '</li>';
-            // If any message requests "persist", then all persist
-            if ($msg['persist']) $persist = true;
-            // Set to the highest (worst) error level
-            if ($msg['level'] > $level) $level = $msg['level'];
-            // First title found in a message gets used instead of default
-            if (empty($title) && !empty($msg['title'])) $title = $msg['title'];
-        }
-        $message = '<ul class="lglmessage">' . $message . '</ul>';
-    }
-    LGLIB_deleteAllMessages();
-    // Revert to the system message title if no other title found
-    if (empty($title)) $title = $LANG_LGLIB['system_message'];
-    $leveltxt = isset($levels[$level]) ? $levels[$level] : 'info';
-    if ($persist) {
-        return '<div class="uk-alert uk-alert-' . $leveltxt . ' lglmessage">' . $message . '</div>' . LB;
-    } else {
-        return COM_showMessageText($message, $title, $persist, $leveltxt);
-    }
+    return (new LGLib\Message)
+        ->withUid($uid)
+        ->withPlugin($pi_code)
+        ->exists();
 }
 
 
@@ -1082,6 +885,8 @@ function LGLIB_obfuscate($str)
  */
 function LGLIB_pushJob($pi_name, $job_name, $params='')
 {
+    return LGLib\JobQueue::push($pi_name, $job_name, $params);
+
     if (is_array($params)) {
         $json_params = json_encode($params);
         if ($json_params === false) return false;
@@ -1100,71 +905,6 @@ function LGLIB_pushJob($pi_name, $job_name, $params='')
     } else {
         return true;
     }
-}
-
-
-/**
- * Run jobs in the job queue table.
- * Uses LGLIB_invokeService() to call the "runjob" service function for plugins.
- *
- * @param   string  $pi     Plugin name, empty for all plugins
- */
-function LGLIB_run_jobqueue($pi = '')
-{
-    global $_TABLES, $_CONF;
-
-    $sql = "SELECT * FROM {$_TABLES['lglib_jobqueue']} WHERE status = 'ready'";
-    if (!empty($pi)) $sql .= " AND pi_name = '" . DB_escapeString($pi) . "'";
-    $res = DB_query($sql);
-    while ($A = DB_fetchArray($res, false)) {
-        // Flag the job as running so it's not picked up by another invocation
-        // of cron.php
-        LGLIB_update_job_status($A['id'], 'running');
-        $status = LGLIB_invokeService(
-            $A['pi_name'],
-            $A['jobname'],
-            $A,
-            $output,
-            $svc_msg
-        );
-        LGLIB_update_job_status($A['id'], $status);
-    }
-}
-
-
-/**
- * Update the status of jobs in the queue.
- *
- * @see     LGLIB_run_jobqueue()
- * @param   integer $jobid      ID of job to update
- * @param   mixed   $status     Job completion status
- */
-function LGLIB_update_job_status($jobid, $status)
-{
-    global $_TABLES, $_CONF;
-
-    $sql = '';
-    $jobid = (int)$jobid;
-    switch ($status) {
-    case PLG_RET_OK:
-        $status = 'completed';
-        $sql = ", completed = UNIX_TIMESTAMP()";
-        break;
-    case PLG_RET_ERROR:
-        $status = 'plugin_error';
-        break;
-    case 'running':
-        // verbatim status text supplied
-        break;
-    default:
-        $status = 'unknown';
-        break;
-    }
-
-    $jobid = (int)$jobid;
-    DB_query("UPDATE {$_TABLES['lglib_jobqueue']}
-            SET status = '{$status}' $sql
-            WHERE id = $jobid");
 }
 
 
