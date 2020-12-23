@@ -1,5 +1,9 @@
 # lgLib utility plugin for glFusion
 
+## 1.0.12
+Release TBD
+  * Move Message and JobQueue functions into classes.
+
 ## 1.0.11
 Release 2020-07-27
   * Fix SmartResizer injecting HTML entities into UTF-8 pages.

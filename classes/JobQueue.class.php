@@ -5,7 +5,8 @@
  * @author      Lee Garner <lee@leegarner.com>
  * @copyright   Copyright (c) 2020 <lee@leegarner.com>
  * @package     lglib
- * @version     v1.1.0
+ * @version     v1.0.12
+ * @since       v1.0.12
  * @license     http://opensource.org/licenses/gpl-2.0.php
  *              GNU Public License v2 or later
  * @filesource

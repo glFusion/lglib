@@ -7,7 +7,8 @@
  * @author      Lee Garner <lee@leegarner.com>
  * @copyright   Copyright (c) 2020 <lee@leegarner.com>
  * @package     lglib
- * @version     v1.1.0
+ * @version     v1.0.12
+ * @since       v1.0.12
  * @license     http://opensource.org/licenses/gpl-2.0.php
  *              GNU Public License v2 or later
  * @filesource
@@ -119,8 +120,8 @@ class Message
 
             $sql = "INSERT INTO {$_TABLES['lglib_messages']} SET
                 uid = '{$this->uid}',
-                sess_id = '" . DB_escapeString($sess_id) . "',
-                title = '" . DB_escapeString($title) . "',
+                sess_id = '" . DB_escapeString(session_id()) . "',
+                title = '" . DB_escapeString($this->title) . "',
                 message = '" . DB_escapeString($this->message) . "',
                 persist = '{$this->persist}',
                 expires = " . $this->getExpiresDB() . ",
@@ -362,6 +363,11 @@ class Message
      */
     public function withUid($uid)
     {
+        global $_USER;
+
+        if ($uid == 0) {
+            $uid = $_USER['uid'];
+        }
         $this->uid = (int)$uid;
         return $this;
     }
@@ -455,7 +461,7 @@ class Message
     public function getExpiresDB()
     {
         if (empty($this->expires)) {
-            if ($uid < 2) {
+            if ($this->uid < 2) {
                 // Anonymous messages expire in 4 hours
                 $expires = 'DATE_ADD(NOW(), INTERVAL 4 HOUR)';
             } else {

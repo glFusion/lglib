@@ -665,6 +665,18 @@ function LGLIB_storeMessage($args, $title='', $persist=false, $expires = '',
 
 
 /**
+ * Delete a message from the message queue.
+ *
+ * @param   integer $uid    Target user ID
+ * @param   string  $pi_code    Plugin-supplied message identifier
+ */
+function LGLIB_deleteMessage($uid, $pi_code)
+{
+    LGLib\Message::deleteOne($uid, $pi_code);
+}
+
+
+/**
  * Check if a specific message exists.
  * Looks for the user ID, session ID and plugin code.
  *
