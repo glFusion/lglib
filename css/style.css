@@ -12,7 +12,7 @@
 { }
 
 .lgButton {
-    padding: 3px 6px;
+    padding: 5px 6px;
     display: inline;
     background-color: #777777;
     border: none;
@@ -28,6 +28,7 @@
 
 .lgButton:hover {
     background-position: 0 center;
+    text-decoration: none;
 }
 
 .lgButton:active {
