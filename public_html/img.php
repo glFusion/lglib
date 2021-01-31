@@ -1087,7 +1087,7 @@ class TimThumb
 
         $newdim = $dImageWidth . 'x' . $dImageHeight;
         $gm_cmd = '"' . $this->path_to_mogrify . '/gm" convert' .
-                " -flatten -quality {$this->JpegQuality} -size $newdim $srcImage -geometry $newdim $destImage";
+                " -flatten -quality {$this->JpegQuality} -size $newdim \"$srcImage\" -geometry $newdim \"$destImage\"";
         list($results, $status) = $this->execCmd($gm_cmd);
         if ($status == 0) {
             @rename($destImage, $destImage);
@@ -1120,7 +1120,7 @@ class TimThumb
 
         $newdim = $dImageWidth . 'x' . $dImageHeight;
         $im_cmd = '"' . $this->path_to_mogrify . "/convert" . '"' .
-                " -flatten -quality {$this->JpegQuality} -size $newdim $srcImage -geometry $newdim $destImage";
+                " -flatten -quality {$this->JpegQuality} -size $newdim \"$srcImage\" -geometry $newdim \"$destImage\"";
         list($results, $status) = $this->execCmd($im_cmd);
         if ($status == 0) {
             @rename($destImage, $destImage);
