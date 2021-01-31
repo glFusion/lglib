@@ -926,7 +926,7 @@ function LGLIB_pushJob($pi_name, $job_name, $params='')
  * Args array is expected to ontain values for 'filepath', 'width', 'height',
  * and an optional random number for force image regeneration.
  *
- * @uses    Image::ReSize()
+ * @uses    Image::reSize()
  * @param   array   $args       Array of item information
  * @param   array   &$output    Pointer to output array
  * @param   array   &$svc_msg   Unused
@@ -994,7 +994,7 @@ function service_imageurl_lglib($args, &$output, &$svc_msg)
 
     // If the file isn't found, try to create it.
     if (!is_file($disp_fullpath)) {
-        $A = LGLib\Image::ReSize($orig_path, $disp_fullpath, $width, $height, $expand);
+        $A = LGLib\Image::reSize($orig_path, $disp_fullpath, $width, $height, $expand);
         if ($A) {
             $width = $A['d_width'];
             $height = $A['d_height'];
@@ -1183,6 +1183,8 @@ function service_parseName_lglib($args, &$output, &$svc_msg)
         if (in_array($args['format'], $valid_formats)) {
             $func = $args['format'];
         }
+    } else {
+        $func = 'Parse';
     }
     $output = LGLib\NameParser::$func($args['name']);
     return PLG_RET_OK;

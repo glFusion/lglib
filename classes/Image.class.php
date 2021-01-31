@@ -75,7 +75,7 @@ class Image
      * @param   boolean $expand     True to allow expanding the image
      * @return  mixed   Array of new width,height if successful, false if failed
      */
-    public static function ReSize($src, $dst, $newWidth=0, $newHeight=0, $expand=false)
+    public static function reSize($src, $dst, $newWidth=0, $newHeight=0, $expand=false)
     {
         global $_LGLIB_CONF;
 
@@ -105,8 +105,6 @@ class Image
         } else {
             return $A;
         }
-    }   // function reSize()
+    }
 
-}   // class Image
-
-?>
+}
