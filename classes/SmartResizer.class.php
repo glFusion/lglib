@@ -1,12 +1,13 @@
 <?php
 /**
  * Resize and cache images according to "img src" tags.
- * Ignore images that are already part of an existing link.
+ * Optionally add a link to a lightbox view of the original image,
+ * unless the image is already part of an existing link.
  *
  * @author      Lee Garner <lee@leegarner.com>
  * @copyright   Copyright (c) 2017-2020 Lee Garner <lee@leegarner.com>
  * @package     lglib
- * @version     v1.0.11
+ * @version     v1.0.12
  * @license     http://opensource.org/licenses/gpl-2.0.php
  *              GNU Public License v2 or later
  * @filesource
@@ -19,6 +20,21 @@ namespace LGLib;
  */
 class SmartResizer
 {
+    /** Flag to indicate if a lightbox link to the original shouold be added.
+     * @var boolean */
+    private $add_lightbox = 1;
+
+    /** Site url value to add into the relative image urls.
+     * Needed if the page will be hosted elsewhere, e.g. email messages.
+     * @var string */
+    private $site_url = '';
+
+    /** Full path to the resized image file.
+     * May be used later if needed.
+     * @var string */
+    private $tn_path = '';
+
+
     /**
      * Resize images found in a template.
      * Updates the template content in-place.
@@ -32,7 +48,8 @@ class SmartResizer
     {
         $var = $template->get_var($valname);
         if (!empty($var)) {
-            self::Text($var);
+            self::create()->convert($var);
+            //self::Text($var);
             $template->set_var($valname, $var);
         }
     }
@@ -47,6 +64,20 @@ class SmartResizer
      * @return  void
      */
     public static function Text(&$origtxt)
+    {
+        self::create()->convert($origtxt);
+    }
+
+
+    /**
+     * Resize images found in a text string.
+     * Updates the content in-place.
+     *
+     * @uses    Image::reDim()
+     * @param   string  &$origtxt   Text string to update
+     * @return  void
+     */
+    public function convert(&$origtxt)
     {
         global $_CONF;
 
@@ -182,29 +213,31 @@ class SmartResizer
             // Else, use the provided $d_height and $d_width dimensions
 
             // Create the thumbnail url, relative, and from it create the path
-            $thumb_url = $fparts['dirname'] . '/thumbs/' . $fparts['filename'] . "_{$d_width}_{$d_height}." . $fparts['extension'];
-            $thumb_path = str_replace(
+            $thumb_url = $fparts['dirname'] . '/thumbs/' . $fparts['filename']
+                . "_{$d_width}_{$d_height}." . $fparts['extension'];
+            $this->tn_path = str_replace(
                 '/',
                 DIRECTORY_SEPARATOR,
                 $_CONF['path_html'] . $thumb_url
             );
-            if (!file_exists($thumb_path)) {
+            if (!file_exists($this->tn_path)) {
                 // Thumb doesn't already exist, create it
-                $res = Image::ReSize($src_path, $thumb_path, $d_width, $d_height);
+                $res = Image::reSize($src_path, $this->tn_path, $d_width, $d_height);
             }
 
-            if (!file_exists($thumb_path)) {
+            if (!file_exists($this->tn_path)) {
                 // Something went wrong if the thumb file still doesn't exist.
                 continue;
             }
 
             // Set the new image source to the thumbnail URL.
             // This is the only thing changed in the img tag.
-            $img->setAttribute('src', $thumb_url);
+            $img->setAttribute('src', $this->site_url . $thumb_url);
 
-            // Now, create a link to the original image, but only if the image
-            // isn't already part of a link tag.
-            if (!$is_linked) {
+            // Now, create a lightbox link to the original image,
+            // but only if the image isn't already part of a link tag and
+            // the add_lightbox flag is set (default).
+            if (!$is_linked && $this->add_lightbox) {
                 // Create a "a" element for the link
                 $a = $dom->createElement('a');
 
@@ -214,13 +247,13 @@ class SmartResizer
                     $a->setAttribute('title', $title);
                 }
 
-                $a->setAttribute('href', $src);
+                $a->setAttribute('href', $this->site_url . $src);
                 $a->setAttribute('data-uk-lightbox', "{group:'article'}");
                 $a->appendChild($img->cloneNode());
-
                 // replace img with the wrapper that is holding the <img>
                 $img->parentNode->replaceChild($a, $img);
             }
+
             $have_changes = true;   // Note that a change was made
         }
 
@@ -236,6 +269,43 @@ class SmartResizer
         }
     }
 
-}
 
-?>
+    /**
+     * Enable or disable lightbox links.
+     *
+     * @param   boolean $flag   True to link to lightbox, False otherwise
+     * @return  object  $this
+     */
+    public function withLightbox($flag)
+    {
+        $this->add_lightbox = $flag ? 1 : 0;
+        return $this;
+    }
+
+
+    /**
+     * Set whether to include full url, including host, im image tags.
+     *
+     * @param   boolean $flag   True to use full URL, False to not
+     * @return  object  $this
+     */
+    public function withFullUrl($flag)
+    {
+        global $_CONF;
+
+        $this->site_url = $flag ? $_CONF['site_url'] : '';
+        return $this;
+    }
+
+
+    /**
+     * Factory method to create a SmartResizer instance.
+     *
+     * @return  object  $this
+     */
+    public static function create()
+    {
+        return new self;
+    }
+
+}
