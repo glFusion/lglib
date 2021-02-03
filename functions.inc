@@ -106,12 +106,24 @@ if (is_file("$langpath/custom/$langfile")) {
 if (is_file(__DIR__ . '/config.php')) {
     include_once __DIR__ . '/config.php';
 }
+require_once __DIR__ . '/vendor/autoload.php';
 
 spl_autoload_register(function($class)
 {
-    if (strpos($class, 'LGLib\\') === 0) {
-        $class = str_replace('LGLib\\', '', $class);
-        $path = __DIR__ . '/classes/' . $class . '.class.php';
+    $prefix = 'LGLib\\';
+    if (strpos($class, $prefix) === 0) {
+        // does the class use the namespace prefix?
+        $len = strlen($prefix);
+        // base directory for the namespace prefix
+        $base_dir = __DIR__ . '/classes/';
+
+        // get the relative class name, following the prefix.
+        $relative_class = substr($class, $len);
+
+        // replace the namespace prefix with the base directory, replace namespace
+        // separators with directory separators in the relative class name, append
+        // with .php
+        $path = $base_dir . str_replace('\\', '/', $relative_class) . '.class.php';
         if (file_exists($path)) {
             include $path;
         }
@@ -380,12 +392,6 @@ function plugin_getheaderjs_lglib()
         "$js_dir/calendar/lang/calendar-{$iso_lang}.js",
         "$js_dir/calendar/calendar-setup.js",
         "$js_dir/datetime1/jquery-ui-timepicker-addon.js",
-
-        // modal popups
-        //"$js_dir/popup.js",
-
-        // ajax library
-        //"$js_dir/ajax.js",
     );
 
     // Either jQuery or Mootools
@@ -396,9 +402,6 @@ function plugin_getheaderjs_lglib()
     }*/
 
     if (!isset($_SYSTEM['disable_jquery_slimbox']) || $_SYSTEM['disable_jquery_slimbox'] == false) {
-        if (GVERSION < '1.6.0') {
-            $files[] = "$js_dir/slimbox2.js";
-        }
         if ($_LGLIB_CONF['slimbox_autoactivation']) {
             // no 'rel="slimbox"' tags needed
             $files[] = "$js_dir/autoactivation.js";
@@ -1208,5 +1211,3 @@ function plugin_parseName_lglib($name, $format = 'Parse')
     }
     return LGLib\NameParser::$func($name);
 }
-
-?>
