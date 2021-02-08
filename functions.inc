@@ -522,16 +522,25 @@ function plugin_templateSetVars_lglib($templatename, &$template)
         }
     }
 
-    // Resize images referenced in the templates if so configured
-    // For glFusion 1.7.0 and up see plugin_outputfilter_lglib
-    //if (GVERSION < '1.7.0' && $_LGLIB_CONF['enable_smartresizer']) {
-        if ($templatename == 'article' || $templatename == 'featuredarticle') {
-            LGLib\SmartResizer::Template($template, 'story_introtext');
-            LGLib\SmartResizer::Template($template, 'story_introtext_only');
-            LGLib\SmartResizer::Template($template, 'story_bodytext_only');
-            LGLib\SmartResizer::Template($template, 'story_text_no_br');
+    // Resize images referenced in the templates if so configured.
+    if ($_LGLIB_CONF['enable_smartresizer']) {
+        $varnames = LGLib\SmartResizer::getTemplateVars($templatename);
+        foreach ($varnames as $varname) {
+            LGLib\SmartResizer::Template($template, $varname);
         }
-    //}
+    }
+}
+
+
+/**
+ * Register a template name and one or more variables for SmartResizer.
+ *
+ * @param   string  $tpl_name   Template name
+ * @param   string|array    $varnames   One or an array of variable names
+ */
+function plugin_registerSmartResizer_lglib($tpl_name, $varnames)
+{
+    LGLib\SmartResizer::registerTemplate($tpl_name, $varnames);
 }
 
 

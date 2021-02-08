@@ -5,6 +5,8 @@ Release TBD
   * Move Message and JobQueue functions into classes.
   * Enable SmartResizer to return full image urls and skip lightbox tags.
   * Lower PHP requirement to 7.2.0.
+  * Allow plugins to register templates to be used by SmartResizer.
+  * Standardize on `nosmartresize` to avoid smart resizing.
 
 ## 1.0.11
 Release 2020-07-27

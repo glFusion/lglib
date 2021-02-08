@@ -34,6 +34,23 @@ class SmartResizer
      * @var string */
     private $tn_path = '';
 
+    /** Templates registered with the smart resizer.
+     * @var array */
+    private static $_templates = array(
+        'article' => array(
+            'story_introtext',
+            'story_introtext_only',
+            'story_bodytext_only',
+            'story_text_no_br',
+        ),
+        'featuredarticle' => array(
+            'story_introtext',
+            'story_introtext_only',
+            'story_bodytext_only',
+            'story_text_no_br',
+        ),
+    );
+
 
     /**
      * Resize images found in a template.
@@ -117,7 +134,7 @@ class SmartResizer
         foreach ($images as $img) {
             // save the entire tag <img src="..." class=... />
             $tag = $img->ownerDocument->saveXML($img);
-            if (strpos($tag, 'noresize') > 0) {
+            if (strpos($tag, 'nosmartresize') > 0) {
                 continue;
             }
 
@@ -306,6 +323,50 @@ class SmartResizer
     public static function create()
     {
         return new self;
+    }
+
+
+    /**
+     * Register a template name with the smart resizer.
+     *
+     * @param   string  $tpl_name   Template name
+     * @param   string|array    $varnames   One or an array of variable names
+     */
+    public static function registerTemplate($tpl_name, $varnames)
+    {
+        if (!is_array($varnames)) {
+            $varnames = array($varnames);
+        }
+
+        if (isset(self::$_templates[$tpl_name])) {
+            self::$_templates[$tpl_name] = array_unique(
+                array_merge(
+                    self::$_templates[$tpl_name],
+                    $varnames
+                )
+            );
+        } else {
+            self::$_templates[$tpl_name] = $varnames;
+        }
+    }
+
+
+    /**
+     * Get the template variable names that should have images resized.
+     *
+     * @param   string  $tpl_name   Registered template name
+     * @return  array       Array of template variable names
+     */
+    public static function getTemplateVars($tpl_name)
+    {
+        if (
+            isset(self::$_templates[$tpl_name]) &&
+            is_array(self::$_templates[$tpl_name])
+        ) {
+            return self::$_templates[$tpl_name];
+        } else {
+            return array();
+        }
     }
 
 }
