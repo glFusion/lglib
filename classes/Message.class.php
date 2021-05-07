@@ -166,9 +166,13 @@ class Message
 
         $msgs = self::getAll();
         // Include a zero element if level is undefined
-        $levels = array('info', 'info', 'warning', 'error');
+        $levels = array('info', 'success', 'info', 'warning', 'error');
+        $persist = false;
 
-        if (empty($msgs)) return '';
+        if (empty($msgs)) {
+            return '';
+        }
+
         if (count($msgs) == 1) {
             $message = $msgs[0]['message'];
             $title = $msgs[0]['title'];
@@ -196,7 +200,14 @@ class Message
         if (empty($title)) $title = $LANG_LGLIB['system_message'];
         $leveltxt = isset($levels[$level]) ? $levels[$level] : 'info';
         if ($persist) {
-            return '<div class="uk-alert uk-alert-' . $leveltxt . ' lglmessage">' . $message . '</div>' . LB;
+            $T = new \Template(__DIR__ . '/../templates');
+            $T->set_file('msg', 'sysmessage.thtml');
+            $T->set_var(array(
+                'leveltxt' => $leveltxt,
+                'message' => $message,
+            ) );
+            $T->parse('output', 'msg');
+            return $T->finish($T->get_var('output'));
         } else {
             return COM_showMessageText($message, $title, $persist, $leveltxt);
         }
@@ -336,18 +347,22 @@ class Message
         case 'err':
         case false:
         case 'alert':
-        case 3:
-            $this->level = 3;
+        case 4:
+            $this->level = 4;
             break;
         case 'warn':
         case 'warning':
-        case 2:
-            $this->level = 2;
+        case 3:
+            $this->level = 3;
             break;
         case 'info':
         case true;
-        case 1:
+        case 2:
         default:
+            $this->level = 2;
+            break;
+        case 'success':
+        case 1:
             $this->level = 1;
             break;
         }
@@ -395,7 +410,7 @@ class Message
      */
     public function withPersists($persist)
     {
-        $this->persists = $persist ? 1 : 0;
+        $this->persist = $persist ? 1 : 0;
         return $this;
     }
 
