@@ -1,7 +1,7 @@
 # lgLib utility plugin for glFusion
 
 ## 1.0.12
-Release TBD
+Release 2021-05-09
   * SmartResizer: do not create thumbnail directory until needed.
   * Move Message and JobQueue functions into classes.
   * Enable SmartResizer to return full image urls and skip lightbox tags.
