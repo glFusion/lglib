@@ -523,12 +523,12 @@ function plugin_templateSetVars_lglib($templatename, &$template)
     }
 
     // Resize images referenced in the templates if so configured.
-    if ($_LGLIB_CONF['enable_smartresizer']) {
+    /*if ($_LGLIB_CONF['enable_smartresizer']) {
         $varnames = LGLib\SmartResizer::getTemplateVars($templatename);
         foreach ($varnames as $varname) {
             LGLib\SmartResizer::Template($template, $varname);
         }
-    }
+    }*/
 }
 
 
@@ -552,7 +552,7 @@ function plugin_registerSmartResizer_lglib($tpl_name, $varnames)
  * @param   string  $plugin     Invoking plugin
  * @return  string              Updated $output
  */
-function Xplugin_outputfilter_lglib($output, $plugin='')
+function plugin_outputfilter_lglib($output, $plugin='')
 {
     global $_LGLIB_CONF;
 
@@ -630,6 +630,12 @@ function LGLIB_storeMessage($args, $title='', $persist=false, $expires = '',
     // Convert to a single "args" array argument, but maintain backward
     // compatibility for some time.
     $level = 'info';
+    $persist = false;
+    $msg = '';
+    $title = '';
+    $expires = '';
+    $pi_code = '';
+    $uid = '';
     if (is_array($args)) {
         if (isset($args['message'])) {
             $msg = $args['message'];

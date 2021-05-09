@@ -5,7 +5,7 @@
  * unless the image is already part of an existing link.
  *
  * @author      Lee Garner <lee@leegarner.com>
- * @copyright   Copyright (c) 2017-2020 Lee Garner <lee@leegarner.com>
+ * @copyright   Copyright (c) 2017-2021 Lee Garner <lee@leegarner.com>
  * @package     lglib
  * @version     v1.0.12
  * @license     http://opensource.org/licenses/gpl-2.0.php
@@ -161,23 +161,11 @@ class SmartResizer
                     $src = str_replace($_CONF['site_url'], '', $src);
                 }
             }
+            $src_path = $_CONF['path_html'] . $src;
 
             // Split up the path to extract the filename and extension
             $fparts = pathinfo($url_parts['path']);
             $extension = $fparts['extension'];
-
-            // Create the thumbnail path in "/thumbs" under the original dir
-            $thumb_path = str_replace(
-                '/',
-                DIRECTORY_SEPARATOR,
-                $_CONF['path_html'] . $fparts['dirname'] . '/thumbs'
-            );
-
-            $src_path = $_CONF['path_html'] . $src;
-            if (!is_dir($thumb_path)) {
-                COM_errorLog("Resizer: Attempting to create $thumb_path");
-                @mkdir($thumb_path);
-            }
 
             // Get the height and width parameters, if supplied.
             // If one is missing, reDim() will resize based on the supplied one.
@@ -229,6 +217,17 @@ class SmartResizer
             }
             // Else, use the provided $d_height and $d_width dimensions
 
+            // Now we know that the image is to be resized.
+            // Create the thumbnail path in "/thumbs" under the original dir
+            $thumb_path = str_replace(
+                '/',
+                DIRECTORY_SEPARATOR,
+                $_CONF['path_html'] . $fparts['dirname'] . '/thumbs'
+            );
+            if (!is_dir($thumb_path)) {
+                @mkdir($thumb_path);
+            }
+
             // Create the thumbnail url, relative, and from it create the path
             $thumb_url = $fparts['dirname'] . '/thumbs/' . $fparts['filename']
                 . "_{$d_width}_{$d_height}." . $fparts['extension'];
@@ -244,6 +243,7 @@ class SmartResizer
 
             if (!file_exists($this->tn_path)) {
                 // Something went wrong if the thumb file still doesn't exist.
+                COM_errorLog("LGLIb\SmartResizer: could not create {$this->tn_path}");
                 continue;
             }
 
@@ -255,6 +255,8 @@ class SmartResizer
             // but only if the image isn't already part of a link tag and
             // the add_lightbox flag is set (default).
             if (!$is_linked && $this->add_lightbox) {
+                $div = $dom->createElement('div');
+                $div->setAttribute('uk-lightbox', '');
                 // Create a "a" element for the link
                 $a = $dom->createElement('a');
 
@@ -268,9 +270,9 @@ class SmartResizer
                 $a->setAttribute('data-uk-lightbox', "{group:'article'}");
                 $a->appendChild($img->cloneNode());
                 // replace img with the wrapper that is holding the <img>
-                $img->parentNode->replaceChild($a, $img);
+                $div->appendChild($a);
+                $img->parentNode->replaceChild($div, $img);
             }
-
             $have_changes = true;   // Note that a change was made
         }
 
@@ -348,6 +350,7 @@ class SmartResizer
         } else {
             self::$_templates[$tpl_name] = $varnames;
         }
+        return true;
     }
 
 
