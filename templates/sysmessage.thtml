@@ -1,0 +1,5 @@
+{# begin {templatelocation} #}
+<div class="uk-alert uk-alert-{leveltxt} lglmessage">
+	{message}
+</div>
+{# end {templatelocation} #}
