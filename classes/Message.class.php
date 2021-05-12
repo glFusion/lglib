@@ -5,9 +5,9 @@
  * at a later time.
  *
  * @author      Lee Garner <lee@leegarner.com>
- * @copyright   Copyright (c) 2020 <lee@leegarner.com>
+ * @copyright   Copyright (c) 2020-2021 <lee@leegarner.com>
  * @package     lglib
- * @version     v1.0.12
+ * @version     v1.0.13
  * @since       v1.0.12
  * @license     http://opensource.org/licenses/gpl-2.0.php
  *              GNU Public License v2 or later
@@ -58,6 +58,10 @@ class Message
      * @var string */
     private $expires = '';
 
+    /** Session ID, set for anonymous users.
+     * @var string */
+    private $sess_id = '';
+
 
     /**
      * Set default values.
@@ -66,6 +70,7 @@ class Message
     {
         global $LANG_LGLIB;
         $this->title = $LANG_LGLIB['system_message'];
+        $this->withUid(1);
     }
 
 
@@ -117,10 +122,9 @@ class Message
 
         if (self::MSG_STORE == 'db') {
             global $_TABLES;
-
             $sql = "INSERT INTO {$_TABLES['lglib_messages']} SET
                 uid = '{$this->uid}',
-                sess_id = '" . DB_escapeString(session_id()) . "',
+                sess_id = '" . DB_escapeString($this->sess_id) . "',
                 title = '" . DB_escapeString($this->title) . "',
                 message = '" . DB_escapeString($this->message) . "',
                 persist = '{$this->persist}',
@@ -165,13 +169,13 @@ class Message
         self::expire();
 
         $msgs = self::getAll();
-        // Include a zero element if level is undefined
-        $levels = array('info', 'success', 'info', 'warning', 'error');
-        $persist = false;
-
         if (empty($msgs)) {
             return '';
         }
+
+        // Include a zero element in case level is undefined
+        $levels = array('info', 'success', 'info', 'warning', 'error');
+        $persist = false;
 
         if (count($msgs) == 1) {
             $message = $msgs[0]['message'];
@@ -181,7 +185,7 @@ class Message
         } else {
             $message = '';
             $title = '';
-            $level = 1;     // Default to "info"
+            $level = 1;     // Start at the "best" level
             foreach ($msgs as $msg) {
                 $message .= '<li class="lglmessage">' .
                     $msg['message'] .
@@ -305,6 +309,8 @@ class Message
 
     /**
      * Delete all messages for a user.
+     * Checks for messages where the session ID matches the current session,
+     * or the user ID matches for logged-in users.
      */
     public static function deleteUser()
     {
@@ -316,12 +322,11 @@ class Message
             // delete messages for the user or session that have not expired.
             global $_TABLES, $_USER;
             $uid = (int)$_USER['uid'];
-            $q = array();
+            $q = array(
+                "sess_id = '" . DB_escapeString(session_id()) . "'",
+            );
             if ($uid > 1) {
                 $q[] = "uid = $uid";
-            } else {
-                $sess_id = DB_escapeString(session_id());
-                if (!empty($sess_id)) $q[] = "sess_id = '$sess_id'";
             }
             if (!empty($q)) {
                 $query = '(' . implode(' OR ', $q) . ')';
@@ -356,7 +361,6 @@ class Message
             $this->level = 3;
             break;
         case 'info':
-        case true;
         case 2:
         default:
             $this->level = 2;
@@ -384,6 +388,7 @@ class Message
             $uid = $_USER['uid'];
         }
         $this->uid = (int)$uid;
+        $this->withSessId($this->uid < 2);
         return $this;
     }
 

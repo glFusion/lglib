@@ -5,9 +5,9 @@
  * required by other plugins.
  *
  * @author      Lee Garner <lee@leegarner.com>
- * @copyright   Copyright (c) 2012-2018 Lee Garner <lee@leegarner.com>
+ * @copyright   Copyright (c) 2012-2021 Lee Garner <lee@leegarner.com>
  * @package     lglib
- * @version     v1.0.9
+ * @version     v1.0.13
  * @license     http://opensource.org/licenses/gpl-2.0.php
  *              GNU Public License v2 or later
  * @filesource
@@ -675,7 +675,6 @@ function LGLIB_storeMessage($args, $title='', $persist=false, $expires = '',
         ->withLevel($level)
         ->withUid($uid)
         ->withPersists($persist)
-        ->withSessId($use_sess_id)
         ->withPiCode($pi_code)
         ->withExpires($expires)
         ->store();

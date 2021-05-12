@@ -1,5 +1,9 @@
 # lgLib utility plugin for glFusion
 
+## 1.0.13
+Release TBD
+  * Only use session ID in message table for anonymous recipients.
+
 ## 1.0.12
 Release 2021-05-09
   * SmartResizer: do not create thumbnail directory until needed.
