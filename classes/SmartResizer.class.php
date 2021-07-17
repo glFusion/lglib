@@ -165,6 +165,9 @@ class SmartResizer
 
             // Split up the path to extract the filename and extension
             $fparts = pathinfo($url_parts['path']);
+            if (!isset($fparts['extension'])) {
+                continue;
+            }
             $extension = $fparts['extension'];
 
             // Get the height and width parameters, if supplied.
