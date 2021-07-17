@@ -1225,3 +1225,18 @@ function plugin_parseName_lglib($name, $format = 'Parse')
     }
     return LGLib\NameParser::$func($name);
 }
+
+
+/**
+ * Push a job onto the job queue.
+ * Callable via PLG_callFunctionForOnePlugin()
+ *
+ * @param   string  $pi_name    Calling plugin name
+ * @param   string  $job_name   Job name
+ * @param   string  $param      Job parameters
+ * @return  integer     Status from queue push function
+ */
+function plugin_pushjob_lglib($pi_name, $job_name, $params='')
+{
+    return LGLib\JobQueue::push($pi_name, $job_name, $params);
+}
