@@ -1,8 +1,10 @@
 # lgLib utility plugin for glFusion
 
 ## 1.0.13
-Release TBD
+Release 2021-07-17
   * Only use session ID in message table for anonymous recipients.
+  * Check for missing image file extension in SmartResizer.
+  * Remove deprecated database backup, now bundled with glFusion.
 
 ## 1.0.12
 Release 2021-05-09
