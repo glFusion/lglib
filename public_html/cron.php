@@ -49,13 +49,13 @@ if (!isset($_VARS['last_scheduled_run'])) {
 if ($force || $_LGLIB_CONF['cron_schedule_interval'] > 0) {
     if ($force || ($_VARS['last_scheduled_run'] + $_LGLIB_CONF['cron_schedule_interval']) <= time()) {
         DB_query("UPDATE {$_TABLES['vars']} SET value=UNIX_TIMESTAMP() WHERE name='last_scheduled_run'" );
-        if ($pi !== NULL) {
+        if ($pi === NULL) {
             if ($_CONF['cron_schedule_interval'] == 0) {
                 // Only call regular tasks if system cron interval is unset,
                 // otherwise leave it to the system cron
                 PLG_runScheduledTask();
             }
-            LGLIB_backup_database();
+            //LGLIB_backup_database();
         }
         LGLib\JobQueue::run($pi);
     }
