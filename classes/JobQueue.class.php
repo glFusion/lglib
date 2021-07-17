@@ -20,6 +20,7 @@ namespace LGLib;
  */
 class JobQueue
 {
+    const RUNNING = 99;
 
     /**
      * Push a job onto the job queue.
@@ -63,7 +64,7 @@ class JobQueue
      */
     public static function run($pi = '')
     {
-        global $_TABLES, $_CONF;
+        global $_TABLES;
 
         $sql = "SELECT * FROM {$_TABLES['lglib_jobqueue']} WHERE status = 'ready'";
         if (!empty($pi)) {
@@ -73,7 +74,7 @@ class JobQueue
         while ($A = DB_fetchArray($res, false)) {
             // Flag the job as running so it's not picked up by another invocation
             // of cron.php
-            self::updateJobStatus($A['id'], 'running');
+            self::updateJobStatus($A['id'], self::RUNNING);
             $status = LGLIB_invokeService(
                 $A['pi_name'],
                 $A['jobname'],
@@ -81,7 +82,7 @@ class JobQueue
                 $output,
                 $svc_msg
             );
-            // Set the final job running status
+            // Set the final job completion status
             self::updateJobStatus($A['id'], $status);
         }
     }
@@ -96,11 +97,14 @@ class JobQueue
      */
     public static function updateJobStatus($jobid, $status)
     {
-        global $_TABLES, $_CONF;
+        global $_TABLES;
 
         $sql = '';
         $jobid = (int)$jobid;
         switch ($status) {
+        case self::RUNNING:
+            $status = 'running';
+            break;
         case PLG_RET_OK:
             $status = 'completed';
             $sql = ", completed = UNIX_TIMESTAMP()";
@@ -108,20 +112,15 @@ class JobQueue
         case PLG_RET_ERROR:
             $status = 'plugin_error';
             break;
-        case 'running':
-            // verbatim status text supplied
-            break;
         default:
             $status = 'unknown';
             break;
         }
 
-        $jobid = (int)$jobid;
-        DB_query(
-            "UPDATE {$_TABLES['lglib_jobqueue']}
+        $sql = "UPDATE {$_TABLES['lglib_jobqueue']}
             SET status = '{$status}' $sql
-            WHERE id = $jobid"
-        );
+            WHERE id = $jobid";
+        DB_query($sql);
     }
 
 }
