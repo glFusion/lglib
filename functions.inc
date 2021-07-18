@@ -87,13 +87,13 @@ $_LGLIB_CONF['_is_uikit'] = $_SYSTEM['framework'] == 'uikit' ? true : false;
 
 /**
  * Include the plugin-specific language file.
- * Looks for the site language first, then defaults to english.php if nothing else found.
+ * Looks for the site language first, then defaults to english if nothing else found.
  */
 $langpath = __DIR__ . '/language';
 if (is_file("$langpath/{$_CONF['language']}.php")) {
     $langfile = "{$_CONF['language']}.php";
 } else {
-    $langfile = 'english.php';
+    $langfile = 'english_utf-8.php';
 }
 require_once "$langpath/$langfile";
 
@@ -257,7 +257,7 @@ function plugin_cclabel_lglib()
 {
     global $LANG_LGLIB, $_CONF;
 
-    if (SEC_inGroup('Root') && GVERSION < '1.6.1' && $_CONF['allow_mysql_dump']) {
+    if (SEC_inGroup('Root')) {
         return array(
             $LANG_LGLIB['menu_label'],
             LGLIB_ADMIN_URL . '/index.php',
@@ -291,7 +291,7 @@ function plugin_enablestatechange_lglib($enable)
 {
     global $_CONF, $LANG_LGLIB;
 
-    if (SEC_inGroup('Root') && GVERSION < '1.6.1' && $_CONF['allow_mysql_dump']) {
+    if (SEC_inGroup('Root')) {
         $retval = array(
             $LANG_LGLIB['menu_label'],
             LGLIB_ADMIN_URL . '/index.php',
@@ -392,14 +392,13 @@ function plugin_getheaderjs_lglib()
         "$js_dir/calendar/lang/calendar-{$iso_lang}.js",
         "$js_dir/calendar/calendar-setup.js",
         "$js_dir/datetime1/jquery-ui-timepicker-addon.js",
+        "$js_dir/util.js",
     );
 
     // Either jQuery or Mootools
     if (!isset($_SYSTEM['disable_mootools']) || $_SYSTEM['disable_mootools'] == false) {
         $files[] = "$js_dir/slimbox.js";
-    } /*else {
-        $files[] = "$js_dir/lglib_misc.js";
-    }*/
+    }
 
     if (!isset($_SYSTEM['disable_jquery_slimbox']) || $_SYSTEM['disable_jquery_slimbox'] == false) {
         if ($_LGLIB_CONF['slimbox_autoactivation']) {
@@ -433,19 +432,13 @@ function LGLIB_getDocURL($file='', $pi_name='lglib', $doclang='english')
     $doc_url = '';
 
     if ($file != '') {
-        // Split out any .html extension to insert ".legacy" if needed
-        $fparts = pathinfo($file);
-        $file = $fparts['filename'];
-        if (version_compare(GVERSION, '1.6.0', '<')) {
-            $file .= '.legacy';
-        }
         $file .= '.html';
-
         if (!is_file($doc_path . $file)) {
             $doclang = 'english';
         }
         $doc_url = "{$_CONF['site_url']}/$pi_name/docs/$doclang/$file";
     } else {
+        // just getting the config document directory
         if (!is_dir($doc_path)) {
             $doclang = 'english';
         }
@@ -1239,4 +1232,18 @@ function plugin_parseName_lglib($name, $format = 'Parse')
 function plugin_pushjob_lglib($pi_name, $job_name, $params='')
 {
     return LGLib\JobQueue::push($pi_name, $job_name, $params);
+}
+
+
+/**
+ * Run internal scheduled tasks.
+ * - purge completed jobs after an interval
+ */
+function plugin_runScheduledTask_lglib()
+{
+    global $_SHOP_CONF;
+
+    if ($_SHOP_CONF['queue_purge_completed'] > -1) {
+        LGLib\JobQueue::purgCompleted((int)$_SHOP_CONF['queue_purge_completed']);
+    }
 }

@@ -39,6 +39,9 @@ $LANG_LGLIB = array(
     'more' => 'More',
     'less' => 'Less',
     'choose' => 'Chose',
+    'manage_queue' => 'Manage Queue',
+    'msg_updated' => 'Item have been updated.',
+    'msg_nochange' => 'Item is unchanged.',
 );
 
 // Messages for the plugin upgrade
@@ -61,6 +64,7 @@ $LANG_confignames['lglib'] = array(
     'slimbox_autoactivation' => 'Auto-Activate Slimbox?',
     'use_lglib_messages' => 'Use lglib_messages template var?',
     'enable_smartresizer' => 'Enable Smart Image Resizer?',
+    'queue_purge_completed' => 'Days to keep completed jobs in queue',
 );
 
 $LANG_configsubgroups['lglib'] = array(

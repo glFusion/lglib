@@ -1,20 +1,20 @@
 <?php
 /**
-*   Default English Language file for the lgLib plugin.
-*
-*   @author     Lee Garner <lee@leegarner.com>
-*   @copyright  Copyright (c) 2012-2018 Lee Garner
-*   @package    lglib
-*   @version    1.0.7
-*   @license    http://opensource.org/licenses/gpl-2.0.php 
-*               GNU Public License v2 or later
-*   @filesource
-*/
+ * Default English Language file for the lgLib plugin.
+ *
+ * @author      Lee Garner <lee@leegarner.com>
+ * @copyright   Copyright (c) 2012-2021 Lee Garner
+ * @package     lglib
+ * @version     v1.1.0
+ * @license     http://opensource.org/licenses/gpl-2.0.php 
+ *              GNU Public License v2 or later
+ * @filesource
+ */
 
 /**
-*   The plugin's lang array
-*   @global array $LANG_LGLIB
-*/
+ * The plugin's lang array.
+ * @global array $LANG_LGLIB
+ */
 $LANG_LGLIB = array(
     'list_backups' => 'List Backups',
     'instr_db_bkup_config' => 'Only database tables which exist and are actually used by glFusion are displayed.  To remove tables from the backup, move them into the right pane.',
@@ -40,6 +40,9 @@ $LANG_LGLIB = array(
     'more' => 'More',
     'less' => 'Less',
     'choose' => 'Chose',
+    'manage_queue' => 'Manage Queue',
+    'msg_updated' => 'Item have been updated.',
+    'msg_nochange' => 'Item is unchanged.',
 );
 
 // Messages for the plugin upgrade
@@ -62,6 +65,7 @@ $LANG_confignames['lglib'] = array(
     'slimbox_autoactivation' => 'Auto-Activate Slimbox?',
     'use_lglib_messages' => 'Use lglib_messages template var?',
     'enable_smartresizer' => 'Enable Smart Image Resizer?',
+    'queue_purge_completed' => 'Days to keep completed jobs in queue',
 );
 
 $LANG_configsubgroups['lglib'] = array(

@@ -1,15 +1,15 @@
 <?php
 /**
-*   Table definitions for the lgLib plugin
-*
-*   @author     Lee Garner <lee@leegarner.com>
-*   @copyright  Copyright (c) 2012-2018 Lee Garner <lee@leegarner.com>
-*   @package    lglib
-*   @version    1.0.8
-*   @license    http://opensource.org/licenses/gpl-2.0.php 
-*               GNU Public License v2 or later
-*   @filesource
-*/
+ * Table definitions for the lgLib plugin.
+ *
+ * @author      Lee Garner <lee@leegarner.com>
+ * @copyright   Copyright (c) 2012-2021 Lee Garner <lee@leegarner.com>
+ * @package     lglib
+ * @version     v1.1.0
+ * @license     http://opensource.org/licenses/gpl-2.0.php
+ *              GNU Public License v2 or later
+ * @filesource
+ */
 
 /** @global array $_TABLES */
 global $_TABLES, $_SQL, $_UPGRADE_SQL;
@@ -75,11 +75,11 @@ $_UPGRADE_SQL = array(
     "ALTER TABLE {$_TABLES['lglib_messages']} CHANGE pi_code pi_code varchar(40)",
     ),
 '1.0.9' => array(
-    "TRUNCATE {$_TABLES['lglib_jobqueue']}",
     "ALTER TABLE {$_TABLES['lglib_jobqueue']} CHANGE submitted submitted int(11) unsigned",
     "ALTER TABLE {$_TABLES['lglib_jobqueue']} ADD completed int(11) unsigned AFTER submitted",
     "ALTER TABLE {$_TABLES['lglib_jobqueue']} ADD key `idx_status` (status)",
 ),
+'1.1.0' => array(
+    "ALTER TABLE {$_TABLES['lglib_jobqueue']} ADD started int(11) unsigned AFTER submitted",
+),
 );
-
-?>

@@ -161,6 +161,14 @@ function LGLIB_do_upgrade($dvlp=false)
     if (!COM_checkVersion($current_ver, $installed_ver)) {
         if (!LGLIB_do_set_version($installed_ver)) return false;
     }
+
+    // Update the configuration items
+    global $lglibConfigData;
+    USES_lib_install();
+    require_once __DIR__ . '/install_defaults.php';
+    _update_config('lglib', $lglibConfigData);
+
+    // Remove deprecated files
     LGLIB_remove_old_files();
     return true;
 }
@@ -240,11 +248,16 @@ function LGLIB_remove_old_files()
     $paths = array(
         // private/plugins/lglib
         __DIR__ => array(
-            'classes/NameParser_tmp.class.php',   // 1.0.7
-            //'classes/DateCalc.class.php',
+            // 1.0.7
+            'classes/NameParser_tmp.class.php',
+            // 1.0.14
+            'language/english.php',
+            'language/polish.php',
         ),
         // public_html/lglib
         $_CONF['path_html'] . 'lglib' => array(
+            // 1.0.14
+            'docs/english/config.legacy.html',
         ),
     );
 
@@ -254,5 +267,3 @@ function LGLIB_remove_old_files()
         }
     }
 }
-
-?>

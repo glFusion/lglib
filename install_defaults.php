@@ -24,23 +24,142 @@ if (!isset($_LGLIB_CONF) || empty($_LGLIB_CONF)) {
     require_once dirname(__FILE__) . '/lglib.php';
 }
 
-/** Utility plugin default configurations
-*   @global array */
-global $_LGLIB_DEFAULTS;
-$_LGLIB_DEFAULTS = array(
-    'cal_style' => 'blue',
-    // Relative path to display images. Used to construct both the absolute
-    // path under $_CONF['path_html']/lglib and URL as
-    // $_CONF['site_url']/lglib/...
-    'img_disp_relpath' => 'data/imgcache',
-    'cron_schedule_interval' => 0,
-    'cron_key' => md5(time() . rand()),
-    'img_cache_maxage' => 90,       // max cache file age, in days
-    'img_cache_interval' => 120,    // cache cleaning interval, in minutes
-    'slimbox_autoactivation' => 0,  // default, no autoactiviation .js loaded
-    // Use the lglib_messages template var? False to append messages to info_block
-    'use_lglib_messages' => 0,
-    'enable_smartresizer' => 0,
+
+/** @var global config data */
+global $lglibConfigData;
+$lglibConfigData = array(
+    array(
+        'name' => 'sg_main',
+        'default_value' => NULL,
+        'type' => 'subgroup',
+        'subgroup' => 0,
+        'fieldset' => 0,
+        'selection_array' => NULL,
+        'sort' => 0,
+        'set' => true,
+        'group' => 'lglib',
+    ),
+    array(
+        'name' => 'fs_main',
+        'default_value' => NULL,
+        'type' => 'fieldset',
+        'subgroup' => 0,
+        'fieldset' => 0,
+        'selection_array' => NULL,
+        'sort' => 0,
+        'set' => true,
+        'group' => 'lglib',
+    ),
+    array(
+        'name' => 'cal_style',
+        'default_value' => 'blue',
+        'type' => 'select',
+        'subgroup' => 0,
+        'fieldset' => 0,
+        'selection_array' => 14,
+        'sort' => 10,
+        'set' => true,
+        'group' => 'lglib',
+    ),
+    array(
+        'name' => 'img_disp_relpath',
+        'default_value' => 'data/imgcache',
+        'type' => 'text',
+        'subgroup' => 0,
+        'fieldset' => 0,
+        'selection_array' => NULL,
+        'sort' => 20,
+        'set' => true,
+        'group' => 'lglib',
+    ),
+    array(
+        'name' => 'cron_schedule_interval',
+        'default_value' => '0',
+        'type' => 'text',
+        'subgroup' => 0,
+        'fieldset' => 0,
+        'selection_array' => NULL,
+        'sort' => 30,
+        'set' => true,
+        'group' => 'lglib',
+    ),
+    array(
+        'name' => 'cron_key',
+        'default_value' => md5(time() . rand()),
+        'type' => 'text',
+        'subgroup' => 0,
+        'fieldset' => 0,
+        'selection_array' => NULL,
+        'sort' => 40,
+        'set' => true,
+        'group' => 'lglib',
+    ),
+    array(
+        'name' => 'img_cache_maxage',
+        'default_value' => '90',
+        'type' => 'text',
+        'subgroup' => 0,
+        'fieldset' => 0,
+        'selection_array' => NULL,
+        'sort' => 50,
+        'set' => true,
+        'group' => 'lglib',
+    ),
+    array(
+        'name' => 'img_cache_interval',
+        'default_value' => '120',
+        'type' => 'text',
+        'subgroup' => 0,
+        'fieldset' => 0,
+        'selection_array' => NULL,
+        'sort' => 60,
+        'set' => true,
+        'group' => 'lglib',
+    ),
+    array(
+        'name' => 'slimbox_autoactivation',
+        'default_value' => '0',
+        'type' => 'select',
+        'subgroup' => 0,
+        'fieldset' => 0,
+        'selection_array' => 3,
+        'sort' => 70,
+        'set' => true,
+        'group' => 'lglib',
+    ),
+    array(
+        'name' => 'use_lglib_messages',
+        'default_value' => '0',
+        'type' => 'select',
+        'subgroup' => 0,
+        'fieldset' => 0,
+        'selection_array' => 3,
+        'sort' => 80,
+        'set' => true,
+        'group' => 'lglib',
+    ),
+    array(
+        'name' => 'enable_smartresizer',
+        'default_value' => '0',
+        'type' => 'select',
+        'subgroup' => 0,
+        'fieldset' => 0,
+        'selection_array' => 3,
+        'sort' => 90,
+        'set' => true,
+        'group' => 'lglib',
+    ),
+    array(
+        'name' => 'queue_purge_completed',
+        'default_value' => '30',
+        'type' => 'text',
+        'subgroup' => 0,
+        'fieldset' => 0,
+        'selection_array' => NULL,
+        'sort' => 100,
+        'set' => true,
+        'group' => 'lglib',
+    ),
 );
 
 /**
@@ -50,38 +169,16 @@ $_LGLIB_DEFAULTS = array(
 */
 function plugin_initconfig_lglib()
 {
-    global $_CONF, $_LGLIB_CONF, $_LGLIB_DEFAULTS;
+    global $lglibConfigData;
 
     $c = config::get_instance();
-
-    if (!$c->group_exists($_LGLIB_CONF['pi_name'])) {
-
-        $c->add('sg_main', NULL, 'subgroup', 0, 0, NULL, 0, true, 
-                $_LGLIB_CONF['pi_name']);
-        $c->add('fs_main', NULL, 'fieldset', 0, 0, NULL, 0, true, 
-                $_LGLIB_CONF['pi_name']);
-
-        $c->add('cal_style', $_LGLIB_DEFAULTS['cal_style'],
-                'select', 0, 0, 14, 10, true, $_LGLIB_CONF['pi_name']);
-        $c->add('img_disp_relpath', $_LGLIB_DEFAULTS['img_disp_relpath'],
-                'text', 0, 0, 15, 20, true, $_LGLIB_CONF['pi_name']);
-        $c->add('cron_schedule_interval', $_LGLIB_DEFAULTS['cron_schedule_interval'],
-                'text', 0, 0, 15, 30, true, $_LGLIB_CONF['pi_name']);
-        $c->add('cron_key', $_LGLIB_DEFAULTS['cron_key'],
-                'text', 0, 0, 15, 40, true, $_LGLIB_CONF['pi_name']);
-        $c->add('img_cache_interval', $_LGLIB_DEFAULTS['img_cache_interval'],
-                'text', 0, 0, 15, 50, true, $_LGLIB_CONF['pi_name']);
-        $c->add('img_cache_maxage', $_LGLIB_DEFAULTS['img_cache_maxage'],
-                'text', 0, 0, 15, 60, true, $_LGLIB_CONF['pi_name']);
-        $c->add('slimbox_autoactivation', $_LGLIB_DEFAULTS['slimbox_autoactivation'],
-                'select', 0, 0, 3, 70, true, $_LGLIB_CONF['pi_name']);
-        $c->add('use_lglib_messages', $_LGLIB_DEFAULTS['use_lglib_messages'],
-                'select', 0, 0, 3, 80, true, $_LGLIB_CONF['pi_name']);
-        $c->add('enable_smartresizer', $_LGLIB_DEFAULTS['enable_smartresizer'],
-                'select', 0, 0, 3, 90, true, $_LGLIB_CONF['pi_name']);
-     }
-
-     return true;
+    if (!$c->group_exists('lglib')) {
+        USES_lib_install();
+        foreach ($lglibConfigData AS $cfgItem) {
+            _addConfigItem($cfgItem);
+        }
+    } else {
+        COM_errorLog('initconfig error: LGLib config group already exists');
+    }
+    return true;
 }
-
-?>
