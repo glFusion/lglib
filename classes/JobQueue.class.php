@@ -298,8 +298,11 @@ class JobQueue
         case 'submitted':
         case 'started':
         case 'completed':
-            $dt = new \Date($fieldvalue, $_CONF['timezone']);
-            $retval = $dt->toMySQL(true);
+            if (!empty($fieldvalue)) {
+                // show the date/time only if not null
+                $dt = new \Date($fieldvalue, $_CONF['timezone']);
+                $retval = $dt->toMySQL(true);
+            }
             break;
         case 'status':
             $retval = FieldList::select(array(
