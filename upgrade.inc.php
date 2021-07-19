@@ -156,6 +156,14 @@ function LGLIB_do_upgrade($dvlp=false)
         if (!LGLIB_do_set_version($current_ver)) return false;
     }
 
+    if (!COM_checkVersion($current_ver, '1.1.0')) {
+        // upgrade to 1.1.0
+        $current_ver = '1.1.0';
+        COM_errorLog("Updating Plugin to $current_ver");
+        if (!LGLIB_do_upgrade_sql($current_ver, $dvlp)) return false;
+        if (!LGLIB_do_set_version($current_ver)) return false;
+    }
+
     // Final version update to catch updates that don't go through
     // any of the update functions, e.g. code-only updates
     if (!COM_checkVersion($current_ver, $installed_ver)) {
