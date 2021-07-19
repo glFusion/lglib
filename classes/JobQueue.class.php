@@ -61,30 +61,77 @@ class JobQueue
      * Uses LGLIB_invokeService() to call the "runjob" service function for plugins.
      *
      * @param   string  $pi     Plugin name, empty for all plugins
+     * @return  integer     Number of jobs encountering an error
      */
     public static function run($pi = '')
     {
         global $_TABLES;
 
+        $errors = 0;
         $sql = "SELECT * FROM {$_TABLES['lglib_jobqueue']} WHERE status = 'ready'";
         if (!empty($pi)) {
             $sql .= " AND pi_name = '" . DB_escapeString($pi) . "'";
         }
         $res = DB_query($sql);
         while ($A = DB_fetchArray($res, false)) {
-            // Flag the job as running so it's not picked up by another invocation
-            // of cron.php
-            self::updateJobStatus($A['id'], self::RUNNING);
-            $status = LGLIB_invokeService(
-                $A['pi_name'],
-                $A['jobname'],
-                $A,
-                $output,
-                $svc_msg
-            );
-            // Set the final job completion status
-            self::updateJobStatus($A['id'], $status);
+            $status = self::_runJob($A);
+            if ($status != PLG_RET_OK) {
+                $errors++;
+            }
         }
+        return $errors;
+    }
+
+
+    /**
+     * Run a collection of jobs by job ID.
+     *
+     * @param   array|integer   One or more job IDs
+     * @return  integer     Number of plugin errors encounterd
+     */
+    public static function runById($ids)
+    {
+        global $_TABLES;
+
+        $errors = 0;
+        if (!is_array($ids)) {
+            $ids = array($ids);
+        }
+        $ids = implode(',', $ids);
+        $sql = "SELECT * FROM {$_TABLES['lglib_jobqueue']} WHERE status = 'ready'
+            AND id IN ($ids)";
+        $res = DB_query($sql);
+        while ($A = DB_fetchArray($res, false)) {
+            $status = self::_runJob($A);
+            if ($status != PLG_RET_OK) {
+                $errors++;
+            }
+        }
+        return $errors;
+    }
+
+
+    /**
+     * Run a single job from the DB record.
+     *
+     * @param   array   $A      Single database record.
+     * @return  integer     Plugin result code
+     */
+    private static function _runJob($A)
+    {
+        // Flag the job as running so it's not picked up by another invocation
+        // of cron.php
+        self::updateJobStatus($A['id'], self::RUNNING);
+        $status = LGLIB_invokeService(
+            $A['pi_name'],
+            $A['jobname'],
+            $A,
+            $output,
+            $svc_msg
+        );
+        // Set the final job completion status
+        self::updateJobStatus($A['id'], $status);
+        return $status;
     }
 
 
@@ -194,11 +241,18 @@ class JobQueue
             'query_fields' => array('pi_name', 'jobname'),
             'default_filter' => 'WHERE 1=1',
         );
+
+        $chkactions = '<button type="submit" class="uk-button uk-button-mini uk-button-success" ' .
+            'href="' . LGLIB_ADMIN_URL . '/index.php" name="runjobs">' .
+            $LANG_LGLIB['run'] . '</button>';
+        $chkactions .= '&nbsp;<button type="submit" class="uk-button uk-button-mini uk-button-danger" ' .
+            'href="' . LGLIB_ADMIN_URL . '/index.php" name="delbutton_x">' .
+            $LANG_ADMIN['delete'] . '</button>';
         $options = array(
             'chkdelete' => 'true',
             'chkfield' => 'id',
             'chkname' => 'id',
-            //'chkactions' => $chkactions,
+            'chkactions' => $chkactions,
         );
 
         $text_arr = array(
@@ -209,15 +263,19 @@ class JobQueue
         $outputHandle = \outputHandler::getInstance();
         $outputHandle->addLinkScript(LGLIB_URL . '/js/admin.js');
 
-        $display .= '<a class="uk-button uk-button-danger" href="' .
-            LGLIB_ADMIN_URL . '/index.php?purgecomplete' . '">Purge Completed</a>';
-        $display .= ADMIN_list(
-            'shop_jobqueue_list',
-            array(__CLASS__,  'getAdminField'),
-            $header_arr, $text_arr, $query_arr, $defsort_arr,
-            '', '', $options, ''
+        $T = new \Template(LGLIB_PI_PATH . '/templates/admin/');
+        $T->set_file('queuelist', 'queue_list.thtml');
+        $T->set_var(
+            'queue_list',
+            ADMIN_list(
+                'shop_jobqueue_list',
+                array(__CLASS__,  'getAdminField'),
+                $header_arr, $text_arr, $query_arr, $defsort_arr,
+                '', '', $options, ''
+            )
         );
-        return $display;
+        $T->parse('output', 'queuelist');
+        return $T->finish($T->get_var('output'));//$display;
     }
 
 

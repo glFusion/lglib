@@ -42,6 +42,9 @@ $LANG_LGLIB = array(
     'manage_queue' => 'Manage Queue',
     'msg_updated' => 'Item have been updated.',
     'msg_nochange' => 'Item is unchanged.',
+    'flushqueue' => 'Run All Jobs',
+    'purgequeue' => 'Purge Completed Jobs',
+    'run' => 'Run',
 );
 
 // Messages for the plugin upgrade

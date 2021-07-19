@@ -27,10 +27,10 @@ if (!SEC_inGroup('Root')) {
 }
 
 $content = '';
-$action = '';
+$action = 'jobqueue';
 $expected = array(
     // Actions to perform
-    'delbutton_x', 'purgecomplete', 'deljob',
+    'runjobs', 'delbutton_x', 'purgecomplete', 'deljob', 'flushqueue',
     // Views to display
     'jobqueue',
 );
@@ -48,8 +48,25 @@ foreach($expected as $provided) {
 }
 
 switch ($action) {
+case 'flushqueue':
+    $errors = LGLib\JobQueue::run();
+    $msg = 'Completed';
+    $msg_status = 'info';
+    if ($errors > 0) {
+        $msg .= sprintf(' - with %d errors', $errors);
+        $msg_status = 'error';
+    }
+    COM_setMsg($msg, $msg_status);
+    COM_refresh(LGLIB_ADMIN_URL . '/index.php?jobqueue');
+    break;
+    
 case 'purgecomplete':
     LGLib\JobQueue::purgeCompleted();
+    COM_refresh(LGLIB_ADMIN_URL . '/index.php?jobqueue');
+    break;
+
+case 'runjobs':
+    LGLib\JobQueue::runById($_POST['id']);
     COM_refresh(LGLIB_ADMIN_URL . '/index.php?jobqueue');
     break;
 
