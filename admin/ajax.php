@@ -14,6 +14,7 @@
 
 /** Include required glFusion common functions */
 require_once '../../../lib-common.php';
+use LGLib\MO;
 
 // This is for administrators only.  It's called by Javascript,
 // so don't try to display a message
@@ -21,7 +22,7 @@ if (!SEC_inGroup('Root')) {
     COM_accessLog("User {$_USER['username']} tried to illegally access the lglib admin ajax function.");
     $retval = array(
         'status' => false,
-        'statusMessage' => $LANG_LGLIB['access_denied'],
+        'statusMessage' => MO::_('Access Denied'),
     );
     header('Content-Type: application/json');
     header("Cache-Control: no-cache, must-revalidate");

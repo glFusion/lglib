@@ -179,7 +179,7 @@ class JobQueue
      */
     public static function adminList()
     {
-        global $_CONF, $_TABLES, $LANG_LGLIB, $_USER, $LANG_ADMIN, $LANG_LGLIB_HELP;
+        global $_CONF, $_TABLES, $_USER, $LANG_ADMIN;
 
         USES_lib_admin();
 
@@ -244,7 +244,7 @@ class JobQueue
 
         $chkactions = '<button type="submit" class="uk-button uk-button-mini uk-button-success" ' .
             'href="' . Config::get('admin_url') . '/index.php" name="runjobs">' .
-            $LANG_LGLIB['run'] . '</button>';
+            MO::_('Run') . '</button>';
         $chkactions .= '&nbsp;<button type="submit" class="uk-button uk-button-mini uk-button-danger" ' .
             'href="' . Config::get('admin_url') . '/index.php" name="delbutton_x">' .
             $LANG_ADMIN['delete'] . '</button>';
@@ -265,15 +265,16 @@ class JobQueue
 
         $T = new \Template(Config::get('path') . '/templates/admin/');
         $T->set_file('queuelist', 'queue_list.thtml');
-        $T->set_var(
-            'queue_list',
-            ADMIN_list(
+        $T->set_var(array(
+            'queue_list' => ADMIN_list(
                 'shop_jobqueue_list',
                 array(__CLASS__,  'getAdminField'),
                 $header_arr, $text_arr, $query_arr, $defsort_arr,
                 '', '', $options, ''
-            )
-        );
+            ),
+            'lang_flushqueue' => MO::_('Run All Jobs'),
+            'lang_purgequeue' => MO::_('Purge Completed Jobs'),
+        ) );
         $T->parse('output', 'queuelist');
         return $T->finish($T->get_var('output'));//$display;
     }

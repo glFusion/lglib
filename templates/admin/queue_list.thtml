@@ -1,10 +1,10 @@
 {# begin {templatelocation} #}
 <div uk-grid class="uk-grid uk-child-width-1-2 uk-grid-width-1-2">
 	<div>
-		<a class="uk-button uk-button-success" href="{site_admin_url}/plugins/lglib/index.php?flushqueue">{$LANG_LGLIB['flushqueue']}</a>
+		<a class="uk-button uk-button-success" href="{site_admin_url}/plugins/lglib/index.php?flushqueue">{lang_flushqueue}</a>
 	</div>
 	<div style="text-align:right;">
-		<a class="uk-button uk-button-danger" href="{site_admin_url}/plugins/lglib/index.php?purgecomplete">{$LANG_LGLIB['purgequeue']}</a>
+		<a class="uk-button uk-button-danger" href="{site_admin_url}/plugins/lglib/index.php?purgecomplete">{lang_purgequeue}</a>
 	</div>
 </div>
 <div>

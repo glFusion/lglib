@@ -68,8 +68,7 @@ class Message
      */
     public function __construct()
     {
-        global $LANG_LGLIB;
-        $this->title = $LANG_LGLIB['system_message'];
+        $this->title = MO::_('System Message');
         $this->withUid(1);
     }
 
@@ -163,7 +162,6 @@ class Message
      */
     public static function showAll($persist = false)
     {
-        global $LANG_LGLIB;
         $retval = '';
 
         self::expire();
@@ -201,7 +199,9 @@ class Message
         }
         self::deleteUser();
         // Revert to the system message title if no other title found
-        if (empty($title)) $title = $LANG_LGLIB['system_message'];
+        if (empty($title)) {
+            $title = MO::_('System Message');
+        }
         $leveltxt = isset($levels[$level]) ? $levels[$level] : 'info';
         if ($persist) {
             $T = new \Template(__DIR__ . '/../templates');

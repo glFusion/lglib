@@ -28,7 +28,7 @@ class Menu
      */
     public static function Admin($view='')
     {
-        global $_CONF, $LANG_ADMIN, $LANG_LGLIB;
+        global $_CONF, $LANG_ADMIN;
 
         USES_lib_admin();
 
@@ -36,7 +36,7 @@ class Menu
         $menu_arr = array(
             array(
                 'url' => Config::get('admin_url') . '/index.php?jobqueue',
-                'text' => $LANG_LGLIB['manage_queue'],
+                'text' => MO::_('Manage Queue'),
                 'active' => $view == 'jobqueue' ? true : false,
             ),
             array(

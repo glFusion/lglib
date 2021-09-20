@@ -117,29 +117,12 @@ if (!isset($_SYSTEM['alert_position'])) {
 }
 
 
-/**
- * Include the plugin-specific language file.
- * Looks for the site language first, then defaults to english if nothing else found.
- */
-$langpath = __DIR__ . '/language';
-if (is_file("$langpath/{$_CONF['language']}.php")) {
-    $langfile = "{$_CONF['language']}.php";
-} else {
-    $langfile = 'english_utf-8.php';
-}
-require_once "$langpath/$langfile";
-
-if (is_file("$langpath/custom/$langfile")) {
-    /** Include any custom language file, if found */
-    include_once "$langpath/custom/$langfile";
-}
-
 /** Include the user-supplied configuration file, if any */
 if (is_file(__DIR__ . '/config.php')) {
     include_once __DIR__ . '/config.php';
 }
+// For PDF and other classes
 require_once __DIR__ . '/vendor/autoload.php';
-
 
 
 /**
@@ -600,7 +583,7 @@ function LGLIB_invokeService($type, $action, $args, &$output, &$svc_msg)
 function LGLIB_storeMessage($args, $title='', $persist=false, $expires = '',
     $pi_code = '', $uid = 0, $use_sess_id = true)
 {
-    global $LANG_LGLIB, $_CONF, $_USER;
+    global $_CONF, $_USER;
 
     // Convert to a single "args" array argument, but maintain backward
     // compatibility for some time.
@@ -815,11 +798,16 @@ function LGLIB_auditLog($pi_name, $logentry = '')
  */
 function LGLIB_titleCase($str)
 {
-    global $LANG_LGLIB;
+    // small words not to be converted
+    $smallwords = array(
+        'of', 'a', 'the', 'and', 'an', 'or', 'nor', 'but', 'is', 'if', 'then',
+        'else', 'when', 'at', 'from', 'by', 'on', 'off', 'for', 'in', 'out',
+        'over', 'to', 'into', 'with',
+    );
 
     $words = explode(' ', $str);
     foreach ($words as $key => $word) {
-        if ($key == 0 or (!in_array($word, $LANG_LGLIB['smallwords']))) {
+        if ($key == 0 || (!in_array($word, $smallwords))) {
             $words[$key] = ucwords($word);
         }
     }
@@ -1086,6 +1074,10 @@ function LGLIB_colorPicker($A = array())
         'bg_color' => isset($A['bg_color']) ? $A['bg_color'] : '#FFFFFF',
         'sample_id' => isset($A['sample_id']) ? $A['sample_id'] : 'sample',
         'include_js' => $need_js,
+        'lang_more' => MO::_('More'),
+        'lang_less' => MO::_('Less'),
+        'lang_choose' => MO::_('Choose'),
+        'lang_cancel' => MO::_('Cancel'),
     ) );
     $T->parse('output', 'picker');
     $need_js = false;

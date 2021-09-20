@@ -200,11 +200,15 @@ class NameParser
      */
     private static function isSuffix($word)
     {
-        global $LANG_LGLIB;
+        $suffixes = array(
+            'I', 'II', 'III', 'IV', 'V',
+            'Senior', 'Junior', 'Jr', 'Sr',
+            'PhD', 'APR', 'RPh', 'PE', 'MD', 'MA', 'DMD', 'CME', 'CPA',
+        );
 
         // ignore periods
         $word = strtolower(str_replace('.', '', $word));
-        foreach ($LANG_LGLIB['nameparser_suffixes'] as $suffix) {
+        foreach ($suffixes as $suffix) {
             if (strtolower($suffix) == $word)
                 return $suffix;
         }
@@ -220,10 +224,12 @@ class NameParser
      */
     private static function isCompoundLName($word)
     {
-        global $LANG_LGLIB;
-
+        $compounds = array(
+            'vere', 'von', 'van', 'de', 'del', 'della', 'di', 'da',
+            'pietro', 'vanden', 'du', 'st.', 'st', 'la', 'ter',
+        );
         $word = strtolower($word);
-        return array_search($word, $LANG_LGLIB['nameparser_compound']);
+        return array_search($word, $compounds);
     }
 
 
