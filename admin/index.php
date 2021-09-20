@@ -58,29 +58,29 @@ case 'flushqueue':
         $msg_status = 'error';
     }
     COM_setMsg($msg, $msg_status);
-    COM_refresh(LGLIB_ADMIN_URL . '/index.php?jobqueue');
+    COM_refresh(Config::get('admin_url') . '/index.php?jobqueue');
     break;
     
 case 'purgecomplete':
     LGLib\JobQueue::purgeCompleted();
-    COM_refresh(LGLIB_ADMIN_URL . '/index.php?jobqueue');
+    COM_refresh(Config::get('admin_url') . '/index.php?jobqueue');
     break;
 
 case 'runjobs':
     LGLib\JobQueue::runById($_POST['id']);
-    COM_refresh(LGLIB_ADMIN_URL . '/index.php?jobqueue');
+    COM_refresh(Config::get('admin_url') . '/index.php?jobqueue');
     break;
 
 case 'deljob':
     LGLib\JobQueue::deleteJobs($actionval);
-    COM_refresh(LGLIB_ADMIN_URL . '/index.php?jobqueue');
+    COM_refresh(Config::get('admin_url') . '/index.php?jobqueue');
     break;
 
 case 'delbutton_x':
     if (isset($_POST['id']) && is_array($_POST['id'])) {
         LGLib\JobQueue::deleteJobs($_POST['id']);
     }
-    COM_refresh(LGLIB_ADMIN_URL . '/index.php?jobqueue');
+    COM_refresh(Config::get('admin_url') . '/index.php?jobqueue');
     break;
 
 case 'jobqueue':

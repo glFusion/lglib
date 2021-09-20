@@ -23,7 +23,7 @@ class FieldList //extends \glFusion\FieldList
         static $t = NULL;
 
         if ($t === NULL) {
-            $t = new \Template(LGLIB_PI_PATH . '/templates/');
+            $t = new \Template(Config::get('path') . '/templates/');
             $t->set_file('field', 'fieldlist.thtml');
         } else {
             $t->unset_var('output');

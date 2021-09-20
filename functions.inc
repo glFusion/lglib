@@ -60,9 +60,6 @@ use LGLib\Config;
 
 /** Additional config items and table definitions are added here */
 require_once __DIR__ . '/lglib.php';
-define('LGLIB_PI_PATH', __DIR__);
-define('LGLIB_URL', $_CONF['site_url'] . '/' . Config::PI_NAME);
-define('LGLIB_ADMIN_URL', $_CONF['site_admin_url'] . '/plugins/' . Config::PI_NAME);
 
 // Define the global flags here, before any functions are called.
 // This will force any older plugins that don't require this plugin to NOT load

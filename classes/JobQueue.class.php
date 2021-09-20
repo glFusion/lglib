@@ -243,10 +243,10 @@ class JobQueue
         );
 
         $chkactions = '<button type="submit" class="uk-button uk-button-mini uk-button-success" ' .
-            'href="' . LGLIB_ADMIN_URL . '/index.php" name="runjobs">' .
+            'href="' . Config::get('admin_url') . '/index.php" name="runjobs">' .
             $LANG_LGLIB['run'] . '</button>';
         $chkactions .= '&nbsp;<button type="submit" class="uk-button uk-button-mini uk-button-danger" ' .
-            'href="' . LGLIB_ADMIN_URL . '/index.php" name="delbutton_x">' .
+            'href="' . Config::get('admin_url') . '/index.php" name="delbutton_x">' .
             $LANG_ADMIN['delete'] . '</button>';
         $options = array(
             'chkdelete' => 'true',
@@ -257,13 +257,13 @@ class JobQueue
 
         $text_arr = array(
             'has_extras' => true,
-            'form_url' => LGLIB_ADMIN_URL . '/index.php?jobqueue',
+            'form_url' => Config::get('admin_url') . '/index.php?jobqueue',
         );
 
         $outputHandle = \outputHandler::getInstance();
-        $outputHandle->addLinkScript(LGLIB_URL . '/js/admin.js');
+        $outputHandle->addLinkScript(Config::get('url') . '/js/admin.js');
 
-        $T = new \Template(LGLIB_PI_PATH . '/templates/admin/');
+        $T = new \Template(Config::get('path') . '/templates/admin/');
         $T->set_file('queuelist', 'queue_list.thtml');
         $T->set_var(
             'queue_list',
@@ -331,12 +331,12 @@ class JobQueue
 
         case 'delete':
             $retval = FieldList::delete(array(
-                'delete_url' => LGLIB_ADMIN_URL . '/index.php?deljob=' . $A['id'],
+                'delete_url' => Config::get('admin_url') . '/index.php?deljob=' . $A['id'],
             ) );
             /*
             $retval = COM_createLink(
                 $icon_arr['delete'],
-                LGLIB_ADMIN_URL . '/index.php?deljob=' . $A['id']
+                Config::get('admin_url') . '/index.php?deljob=' . $A['id']
             );*/
             break;
         default:

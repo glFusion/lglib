@@ -35,7 +35,7 @@ class Menu
         $retval = '';
         $menu_arr = array(
             array(
-                'url' => LGLIB_ADMIN_URL . '/index.php?jobqueue',
+                'url' => Config::get('admin_url') . '/index.php?jobqueue',
                 'text' => $LANG_LGLIB['manage_queue'],
                 'active' => $view == 'jobqueue' ? true : false,
             ),
