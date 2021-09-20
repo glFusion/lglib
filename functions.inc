@@ -17,97 +17,6 @@ if (!defined('GVERSION')) {
     die('This file can not be used on its own.');
 }
 
-/** Import configuration-handling class */
-require_once $_CONF['path_system'] . 'classes/config.class.php';
-$lgu_config = config::get_instance();
-$_LGLIB_CONF = $lgu_config->get_config('lglib');
-
-/** Additional config items and table definitions are added here */
-require_once __DIR__ . '/lglib.php';
-define('LGLIB_PI_PATH', __DIR__);
-define('LGLIB_URL', $_CONF['site_url'] . '/' . $_LGLIB_CONF['pi_name']);
-define('LGLIB_ADMIN_URL', $_CONF['site_admin_url'] . '/plugins/' . $_LGLIB_CONF['pi_name']);
-
-// Define the global flags here, before any functions are called.
-// This will force any older plugins that don't require this plugin to NOT load
-// their versions of the CSS and JS.
-define('HAVE_CALENDAR_CSS', $_LGLIB_CONF['pi_name']);
-define('HAVE_SLIMBOX_CSS', $_LGLIB_CONF['pi_name']);
-define('HAVE_CALENDAR_JS', $_LGLIB_CONF['pi_name']);
-define('HAVE_SLIMBOX_JS', $_LGLIB_CONF['pi_name']);
-
-// Use SESSION or DB for message storage.  DB requires the creation of the
-// lglib tables.
-//define('LGLIB_MSG_STORE', 'session');
-define('LGLIB_MSG_STORE', 'db');        // Required for inter-user messages
-define('LGLIB_MSG_VAR', 'lgmessages');  // session variable name
-
-// Define the beginning of week for the Date_Calc class.
-// The default is "1" for "Monday"
-if (!defined('DATE_CALC_BEGIN_WEEKDAY')) {
-    global $_CONF;
-    switch ($_CONF['week_start']) {
-    case 'Mon':
-        // week begins on Monday
-        define('DATE_CALC_BEGIN_WEEKDAY', 1);
-        break;
-    case 'Sun':
-    default:
-        // week begins on Sunday
-        define('DATE_CALC_BEGIN_WEEKDAY', 0);
-        break;
-    }
-}
-if (!defined('DATE_CALC_FORMAT')) {
-    define('DATE_CALC_FORMAT', '%Y-%m-%d');
-}
-
-// Pseudo-global variables accessible through LGLIB_setGlobal()
-// and LGLIB_getGlobal()
-$_LGLIB_GLOBALS = array();
-
-// Session variables are used to pass path info to the TimThumb image resizer.
-// Since img.php doesn't load lib-common.php (it would take forever to load
-// images), these values have to get to it somehow.
-// Yes, these can also be overridden via config.php
-// The calling plugin needs to set $_SESSION['<pi_name>_origpath']
-SESS_setVar('lglib', array(
-    'origpath'      => $_CONF['path_html'] . 'images',
-    'cache_dir'     => $_CONF['path'] . 'data/' . $_LGLIB_CONF['pi_name'],
-    'image_lib'     => $_CONF['image_lib'],
-    'path_to_mogrify' => $_CONF['path_to_mogrify'],
-));
-
-// Set default message location to top center unless otherwise set
-if (!isset($_SYSTEM['alert_position'])) {
-    $_SYSTEM['alert_position'] = 'top-center';
-}
-
-$_LGLIB_CONF['_is_uikit'] = $_SYSTEM['framework'] == 'uikit' ? true : false;
-
-/**
- * Include the plugin-specific language file.
- * Looks for the site language first, then defaults to english if nothing else found.
- */
-$langpath = __DIR__ . '/language';
-if (is_file("$langpath/{$_CONF['language']}.php")) {
-    $langfile = "{$_CONF['language']}.php";
-} else {
-    $langfile = 'english_utf-8.php';
-}
-require_once "$langpath/$langfile";
-
-if (is_file("$langpath/custom/$langfile")) {
-    /** Include any custom language file, if found */
-    include_once "$langpath/custom/$langfile";
-}
-
-/** Include the user-supplied configuration file, if any */
-if (is_file(__DIR__ . '/config.php')) {
-    include_once __DIR__ . '/config.php';
-}
-require_once __DIR__ . '/vendor/autoload.php';
-
 spl_autoload_register(function($class)
 {
     $prefix = 'LGLib\\';
@@ -147,6 +56,93 @@ spl_autoload_register(function($class)
         include_once $path;
     }
 });
+use LGLib\Config;
+
+/** Additional config items and table definitions are added here */
+require_once __DIR__ . '/lglib.php';
+define('LGLIB_PI_PATH', __DIR__);
+define('LGLIB_URL', $_CONF['site_url'] . '/' . Config::PI_NAME);
+define('LGLIB_ADMIN_URL', $_CONF['site_admin_url'] . '/plugins/' . Config::PI_NAME);
+
+// Define the global flags here, before any functions are called.
+// This will force any older plugins that don't require this plugin to NOT load
+// their versions of the CSS and JS.
+define('HAVE_CALENDAR_CSS', Config::PI_NAME);
+define('HAVE_SLIMBOX_CSS', Config::PI_NAME);
+define('HAVE_CALENDAR_JS', Config::PI_NAME);
+define('HAVE_SLIMBOX_JS', Config::PI_NAME);
+
+// Use SESSION or DB for message storage.  DB requires the creation of the
+// lglib tables.
+//define('LGLIB_MSG_STORE', 'session');
+define('LGLIB_MSG_STORE', 'db');        // Required for inter-user messages
+define('LGLIB_MSG_VAR', 'lgmessages');  // session variable name
+
+// Define the beginning of week for the Date_Calc class.
+// The default is "1" for "Monday"
+if (!defined('DATE_CALC_BEGIN_WEEKDAY')) {
+    global $_CONF;
+    switch ($_CONF['week_start']) {
+    case 'Mon':
+        // week begins on Monday
+        define('DATE_CALC_BEGIN_WEEKDAY', 1);
+        break;
+    case 'Sun':
+    default:
+        // week begins on Sunday
+        define('DATE_CALC_BEGIN_WEEKDAY', 0);
+        break;
+    }
+}
+if (!defined('DATE_CALC_FORMAT')) {
+    define('DATE_CALC_FORMAT', '%Y-%m-%d');
+}
+
+// Pseudo-global variables accessible through LGLIB_setGlobal()
+// and LGLIB_getGlobal()
+$_LGLIB_GLOBALS = array();
+
+// Session variables are used to pass path info to the TimThumb image resizer.
+// Since img.php doesn't load lib-common.php (it would take forever to load
+// images), these values have to get to it somehow.
+// Yes, these can also be overridden via config.php
+// The calling plugin needs to set $_SESSION['<pi_name>_origpath']
+SESS_setVar('lglib', array(
+    'origpath'      => $_CONF['path_html'] . 'images',
+    'cache_dir'     => $_CONF['path'] . 'data/' . Config::get('pi_name'),
+    'image_lib'     => $_CONF['image_lib'],
+    'path_to_mogrify' => $_CONF['path_to_mogrify'],
+));
+
+// Set default message location to top center unless otherwise set
+if (!isset($_SYSTEM['alert_position'])) {
+    $_SYSTEM['alert_position'] = 'top-center';
+}
+
+
+/**
+ * Include the plugin-specific language file.
+ * Looks for the site language first, then defaults to english if nothing else found.
+ */
+$langpath = __DIR__ . '/language';
+if (is_file("$langpath/{$_CONF['language']}.php")) {
+    $langfile = "{$_CONF['language']}.php";
+} else {
+    $langfile = 'english_utf-8.php';
+}
+require_once "$langpath/$langfile";
+
+if (is_file("$langpath/custom/$langfile")) {
+    /** Include any custom language file, if found */
+    include_once "$langpath/custom/$langfile";
+}
+
+/** Include the user-supplied configuration file, if any */
+if (is_file(__DIR__ . '/config.php')) {
+    include_once __DIR__ . '/config.php';
+}
+require_once __DIR__ . '/vendor/autoload.php';
+
 
 
 /**
@@ -241,8 +237,7 @@ function USES_lglib_class_html2pdf()
  */
 function plugin_chkVersion_lglib()
 {
-    global $_LGLIB_CONF;
-    return $_LGLIB_CONF['pi_version'];
+    return Config::get('pi_version');
 }
 
 
@@ -255,12 +250,10 @@ function plugin_chkVersion_lglib()
  */
 function plugin_cclabel_lglib()
 {
-    global $LANG_LGLIB, $_CONF;
-
     if (SEC_inGroup('Root')) {
         return array(
-            $LANG_LGLIB['menu_label'],
-            LGLIB_ADMIN_URL . '/index.php',
+            Config::get('pi_display_name'),
+            Config::get('admin_url') . '/index.php',
             plugin_geticon_lglib(),
         );
     } else {
@@ -289,12 +282,10 @@ function plugin_enablestatechange_lglib($enable)
  */
  function plugin_getadminoption_lglib()
 {
-    global $_CONF, $LANG_LGLIB;
-
     if (SEC_inGroup('Root')) {
         $retval = array(
-            $LANG_LGLIB['menu_label'],
-            LGLIB_ADMIN_URL . '/index.php',
+            Config::get('pi_display_name'),
+            Config::get('admin_url') . '/index.php',
             0,
         );
     } else {
@@ -311,7 +302,7 @@ function plugin_enablestatechange_lglib($enable)
  */
 function plugin_geticon_lglib()
 {
-    return LGLIB_URL . '/images/lglib.png';
+    return Config::get('url') . '/images/lglib.png';
 }
 
 
@@ -323,7 +314,7 @@ function plugin_geticon_lglib()
  */
 function plugin_getheadercss_lglib()
 {
-    global $_CONF, $_LGLIB_CONF, $_SYSTEM;
+    global $_CONF, $_SYSTEM;
 
     // glFusion 1.4 uses different paths to css cache than 1.5.0, so need
     // different versions of css files.
@@ -334,7 +325,7 @@ function plugin_getheadercss_lglib()
     $files = array(
         'style.css',
         // Include the popup calendar CSS.
-        "{$prefix}calendar-{$_LGLIB_CONF['cal_style']}.css",
+        "{$prefix}calendar-" . Config::get('cal_style') . ".css",
         'datetime1/jquery-ui-timepicker-addon.css',
     );
 
@@ -352,7 +343,7 @@ function plugin_getheadercss_lglib()
     //  3. plugin/custom
     //  4. plugin (default distribution version)
     $pi_css = __DIR__ . '/css/';
-    $layout_css = "{$_CONF['path_layout']}plugins/{$_LGLIB_CONF['pi_name']}/";
+    $layout_css = "{$_CONF['path_layout']}plugins/" . Config::get('pi_name') . "/";
     foreach ($files as $file) {
         if (@file_exists($layout_css . 'custom/' . $file)) {
             $styles[] = $layout_css . 'custom/' . $file;
@@ -375,7 +366,7 @@ function plugin_getheadercss_lglib()
  */
 function plugin_getheaderjs_lglib()
 {
-    global $_CONF, $_SYSTEM, $_LGLIB_CONF;
+    global $_CONF, $_SYSTEM;
 
     $js_dir = __DIR__ . '/js';
 
@@ -401,7 +392,7 @@ function plugin_getheaderjs_lglib()
     }
 
     if (!isset($_SYSTEM['disable_jquery_slimbox']) || $_SYSTEM['disable_jquery_slimbox'] == false) {
-        if ($_LGLIB_CONF['slimbox_autoactivation']) {
+        if (Config::get('slimbox_autoactivation')) {
             // no 'rel="slimbox"' tags needed
             $files[] = "$js_dir/autoactivation.js";
         } else {
@@ -426,7 +417,7 @@ function plugin_getheaderjs_lglib()
  */
 function LGLIB_getDocURL($file='', $pi_name='lglib', $doclang='english')
 {
-    global $_CONF, $_LGLIB_CONF;
+    global $_CONF;
 
     $doc_path = "{$_CONF['path_html']}$pi_name/docs/$doclang/";
     $doc_url = '';
@@ -457,9 +448,7 @@ function LGLIB_getDocURL($file='', $pi_name='lglib', $doclang='english')
  */
 function plugin_getconfigelementhelp_lglib($option, $doclang='english')
 {
-    global $_LGLIB_CONF;
-
-    $doc_url = LGLIB_getDocURL('config.html', $_LGLIB_CONF['pi_name'], $doclang);
+    $doc_url = LGLIB_getDocURL('config.html', Config::get('pi_name'), $doclang);
     if (empty($doc_url))
         return false;
 
@@ -494,8 +483,6 @@ function plugin_upgrade_lglib()
  */
 function plugin_templateSetVars_lglib($templatename, &$template)
 {
-    global $_LGLIB_CONF;
-
     static $messages = NULL;
 
     // Get messages to display to the user and put them in the template
@@ -505,7 +492,7 @@ function plugin_templateSetVars_lglib($templatename, &$template)
         $messages = LGLib\Message::showAll();
     }
     if ($messages != '') {
-        if ($_LGLIB_CONF['use_lglib_messages']) {
+        if (Config::get('use_lglib_messages')) {
             $template->set_var('lglib_messages', $messages);
         } elseif ($templatename == 'footer') {
             // Have to do this during the 'footer' template to make sure it's
@@ -516,7 +503,7 @@ function plugin_templateSetVars_lglib($templatename, &$template)
     }
 
     // Resize images referenced in the templates if so configured.
-    /*if ($_LGLIB_CONF['enable_smartresizer']) {
+    /*if (Config::get('enable_smartresizer')) {
         $varnames = LGLib\SmartResizer::getTemplateVars($templatename);
         foreach ($varnames as $varname) {
             LGLib\SmartResizer::Template($template, $varname);
@@ -547,10 +534,8 @@ function plugin_registerSmartResizer_lglib($tpl_name, $varnames)
  */
 function plugin_outputfilter_lglib($output, $plugin='')
 {
-    global $_LGLIB_CONF;
-
     // Resize images referenced in the templates if so configured
-    if ($_LGLIB_CONF['enable_smartresizer']) {
+    if (Config::get('enable_smartresizer')) {
        LGLib\SmartResizer::Text($output);
     }
     return $output;
@@ -618,7 +603,7 @@ function LGLIB_invokeService($type, $action, $args, &$output, &$svc_msg)
 function LGLIB_storeMessage($args, $title='', $persist=false, $expires = '',
     $pi_code = '', $uid = 0, $use_sess_id = true)
 {
-    global $LANG_LGLIB, $_CONF, $_LGLIB_CONF, $_USER;
+    global $LANG_LGLIB, $_CONF, $_USER;
 
     // Convert to a single "args" array argument, but maintain backward
     // compatibility for some time.
@@ -944,7 +929,7 @@ function LGLIB_pushJob($pi_name, $job_name, $params='')
  */
 function service_imageurl_lglib($args, &$output, &$svc_msg)
 {
-    global $_LGLIB_CONF, $_CONF;
+    global $_CONF;
 
     // Initialize return value to empty URL.
     // Maybe change to a stock "missing" image in the future.
@@ -969,7 +954,7 @@ function service_imageurl_lglib($args, &$output, &$svc_msg)
             $path_parts['extension'];
 
     // Image path portion of url
-    $img_path = $_LGLIB_CONF['pi_name'] . '/' . $_LGLIB_CONF['img_disp_relpath'] .
+    $img_path = Config::get('pi_name') . '/' . Config::get('img_disp_relpath') .
             '/' . $disp_fname[0];
 
     // Image url relative to display base url
@@ -978,8 +963,8 @@ function service_imageurl_lglib($args, &$output, &$svc_msg)
     // Display image full path, for checking file_exists and storing resized
     $disp_fullpath = $_CONF['path_html'] . $disp_relurl;
 
-    $maxage = (int)$_LGLIB_CONF['img_cache_maxage'];
-    $interval = (int)$_LGLIB_CONF['img_cache_interval'];
+    $maxage = (int)Config::get('img_cache_maxage');
+    $interval = (int)Config::get('img_cache_interval');
     if ($maxage > 0 && $interval > 0) {
         // Clean up old files
         // Get absolute path for flag file and finding old cache files
@@ -1052,12 +1037,10 @@ function service_imageurl_lglib($args, &$output, &$svc_msg)
  */
 function LGLIB_getIcon($name, $style='info')
 {
-    global $_LGLIB_CONF;
-
     if ($style != '')
         $style = ' lglib-icon-' . $style;
 
-    if ($_LGLIB_CONF['_is_uikit']) {
+    if (Config::get('_is_uikit')) {
         return ' uk-icon-' . $name . $style;
     } else {
         return 'fa fa-' . $name . $style;
@@ -1241,9 +1224,7 @@ function plugin_pushjob_lglib($pi_name, $job_name, $params='')
  */
 function plugin_runScheduledTask_lglib()
 {
-    global $_LGLIB_CONF;
-
-    if (isset($_LGLIB_CONF['queue_purge_completed']) && $_LGLIB_CONF['queue_purge_completed'] > -1) {
-        LGLib\JobQueue::purgeCompleted((int)$_LGLIB_CONF['queue_purge_completed']);
+    if (Config::get('queue_purge_completed') > -1) {
+        LGLib\JobQueue::purgeCompleted((int)Config::get('queue_purge_completed'));
     }
 }

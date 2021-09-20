@@ -10,14 +10,12 @@
  *              GNU Public License v2 or later
  * @filesource
  */
+use LGLib\Config;
 
 // Static configuration items
-global $_LGLIB_CONF;
-$_LGLIB_CONF['pi_version'] = '1.1.0';
-$_LGLIB_CONF['pi_name'] = 'lglib';
-$_LGLIB_CONF['gl_version'] = '1.7.8';
-$_LGLIB_CONF['pi_url'] = 'http://www.leegarner.com';
-$_LGLIB_CONF['pi_display_name'] = 'lgLib';
+Config::set('pi_version', '1.1.0');
+Config::set('gl_version', '1.7.9');
+Config::set('pi_url', 'https://www.leegarner.com');
 
 global $_TABLES, $_DB_table_prefix;
 $_DB_prefix = $_DB_table_prefix . 'lglib_';

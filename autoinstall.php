@@ -1,17 +1,17 @@
 <?php
 /**
-*   Provides automatic installation of the lgLib plugin.
-*   There is nothing to do except create the plugin record
-*   since there are no tables or user interfaces.
-*
-*   @author     Lee Garner <lee@leegarner.com>
-*   @copyright  Copyright (c) 2012-2017 Lee Garner <lee@leegarner.com>
-*   @package    lglib
-*   @version    1.0.5
-*   @license    http://opensource.org/licenses/gpl-2.0.php 
-*               GNU Public License v2 or later
-*   @filesource
-*/
+ * Provides automatic installation of the lgLib plugin.
+ * There is nothing to do except create the plugin record
+ * since there are no tables or user interfaces.
+ *
+ * @author      Lee Garner <lee@leegarner.com>
+ * @copyright   Copyright (c) 2012-2021 Lee Garner <lee@leegarner.com>
+ * @package     lglib
+ * @version     1.1.0
+ * @license     http://opensource.org/licenses/gpl-2.0.php 
+ *              GNU Public License v2 or later
+ * @filesource
+ */
 
 if (!defined ('GVERSION')) {
     die ('This file can not be used on its own.');
@@ -23,43 +23,50 @@ global $_DB_dbms;
 require_once __DIR__ . '/functions.inc';
 require_once __DIR__ . '/lglib.php';
 require_once __DIR__ . "/sql/{$_DB_dbms}_install.php";
+use LGLib\Config;
 
 //  Plugin installation options
-$INSTALL_plugin[$_LGLIB_CONF['pi_name']] = array(
-    'installer' => array('type' => 'installer', 
-            'version' => '1', 
-            'mode' => 'install'),
-
-    'plugin' => array('type' => 'plugin', 
-            'name'      => $_LGLIB_CONF['pi_name'],
-            'ver'       => $_LGLIB_CONF['pi_version'], 
-            'gl_ver'    => $_LGLIB_CONF['gl_version'],
-            'url'       => $_LGLIB_CONF['pi_url'], 
-            'display'   => $_LGLIB_CONF['pi_display_name']
+$INSTALL_plugin[Config::PI_NAME] = array(
+    'installer' => array(
+        'type'      => 'installer',
+        'version'   => '1',
+        'mode'      => 'install',
     ),
-       
-    array('type' => 'table', 
-            'table'     => $_TABLES['lglib_messages'], 
-            'sql'       => $_SQL['lglib_messages']),
+    'plugin' => array(
+        'type'      => 'plugin',
+        'name'      => Config::PI_NAME,
+        'ver'       => Config::get('pi_version'),
+        'gl_ver'    => Config::get('gl_version'),
+        'url'       => Config::get('pi_url',
+        'display'   => Cofnig::get('pi_display_name'),
+    ),
 
-    array('type' => 'table', 
-            'table'     => $_TABLES['lglib_jobqueue'], 
-            'sql'       => $_SQL['lglib_jobqueue']),
+    array(
+        'type'      => 'table',
+        'table'     => $_TABLES['lglib_messages'],
+        'sql'       => $_SQL['lglib_messages'],
+    ),
+
+    array(
+        'type'      => 'table',
+        'table'     => $_TABLES['lglib_jobqueue'], 
+        'sql'       => $_SQL['lglib_jobqueue'],
+    ),
 );
     
  
 /**
-*   Puts the datastructures for this plugin into the glFusion database
-*   Note: Corresponding uninstall routine is in functions.inc
-*
-*   @return boolean     True if successful False otherwise
-*/
+ * Puts the datastructures for this plugin into the glFusion database.
+ * Note: Corresponding uninstall routine is in functions.inc.
+ *
+ * @return  boolean     True if successful False otherwise
+ */
 function plugin_install_lglib()
 {
-    global $INSTALL_plugin, $_LGLIB_CONF;
+    global $INSTALL_plugin;
 
-    COM_errorLog("Attempting to install the {$_LGLIB_CONF['pi_name']} plugin", 1);
-    $ret = INSTALLER_install($INSTALL_plugin[$_LGLIB_CONF['pi_name']]);
+    COM_errorLog("Attempting to install the " . Config::PI_NAME . " plugin", 1);
+    $ret = INSTALLER_install($INSTALL_plugin[Config::PI_NAME]);
     if ($ret > 0) {
         return false;
     } else {
@@ -69,38 +76,36 @@ function plugin_install_lglib()
 
 
 /**
-*   Automatic removal function.
-*
-*   @return array       Array of items to be removed.
-*/
+ * Automatic removal function.
+ *
+ * @return  array       Array of items to be removed.
+ */
 function plugin_autouninstall_lglib()
 {
-    global $_LGLIB_CONF;
-
     $out = array (
         'tables'    => array('lglib_messages', 'lglib_jobqueue'),
         'groups'    => array(),
         'features'  => array(),
         'php_blocks' => array(),
         'vars'      => array(
-            $_LGLIB_CONF['pi_name'] . '_dbback_exclude',
-            $_LGLIB_CONF['pi_name'] . '_dbback_sendto',
-            $_LGLIB_CONF['pi_name'] . '_dbback_files',
-            $_LGLIB_CONF['pi_name'] . '_dbback_cron',
-            $_LGLIB_CONF['pi_name'] . '_dbback_gzip',
-            $_LGLIB_CONF['pi_name'] . '_dbback_lastrun',
+            Config::PI_NAME . '_dbback_exclude',
+            Config::PI_NAME . '_dbback_sendto',
+            Config::PI_NAME . '_dbback_files',
+            Config::PI_NAME . '_dbback_cron',
+            Config::PI_NAME . '_dbback_gzip',
+            Config::PI_NAME . '_dbback_lastrun',
         ),
     );
-    PLG_itemDeleted('*', 'lglib');
+    PLG_itemDeleted('*', Config::PI_NAME);
     return $out;
 }
 
 
 /**
-*   Loads the configuration records for the Online Config Manager.
-*
-*   @return boolean     True = proceed, False = an error occured
-*/
+ * Loads the configuration records for the Online Config Manager.
+ *
+ * @return  boolean     True = proceed, False = an error occured
+ */
 function plugin_load_configuration_lglib()
 {
     require_once dirname(__FILE__) . '/install_defaults.php';
@@ -109,15 +114,15 @@ function plugin_load_configuration_lglib()
 
 
 /**
-*   Post-installation tasks
-*   1. Create cache dirs
-*/
+ * Post-installation tasks.
+ * 1. Create cache dirs
+ */
 function plugin_postinstall_lglib()
 {
-    global $_CONF, $_LGLIB_CONF;
+    global $_CONF;
 
     // Make sure default cache directory is set up
-    $datadir = $_CONF['path'] . 'data/' . $_LGLIB_CONF['pi_name'];
+    $datadir = $_CONF['path'] . 'data/' . Config::PI_NAME;
     $dirs = array($datadir,
         $datadir . '/0', $datadir . '/1', $datadir . '/2', $datadir . '/3',
         $datadir . '/4', $datadir . '/5', $datadir . '/6', $datadir . '/7',
@@ -133,5 +138,3 @@ function plugin_postinstall_lglib()
         }
     }
 }
-
-?>

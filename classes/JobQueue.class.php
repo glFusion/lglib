@@ -179,7 +179,7 @@ class JobQueue
      */
     public static function adminList()
     {
-        global $_CONF, $_LGLIB_CONF, $_TABLES, $LANG_LGLIB, $_USER, $LANG_ADMIN, $LANG_LGLIB_HELP;
+        global $_CONF, $_TABLES, $LANG_LGLIB, $_USER, $LANG_ADMIN, $LANG_LGLIB_HELP;
 
         USES_lib_admin();
 

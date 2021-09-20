@@ -77,8 +77,6 @@ class Image
      */
     public static function reSize($src, $dst, $newWidth=0, $newHeight=0, $expand=false)
     {
-        global $_LGLIB_CONF;
-
         // Calculate the new dimensions
         $A = self::reDim($src, $newWidth, $newHeight, $expand);
         if ($A === false) {

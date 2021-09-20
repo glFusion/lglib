@@ -12,7 +12,8 @@
  */
 
 // Required to get the config values
-global $_CONF, $_LGLIB_CONF, $_DB_dbms;
+global $_CONF, $_DB_dbms;
+use LGLib\Config;
 
 /** Include the default configuration values */
 require_once __DIR__ . '/install_defaults.php';
@@ -28,15 +29,15 @@ require_once __DIR__ . "/sql/mysql_install.php";
  */
 function LGLIB_do_upgrade($dvlp=false)
 {
-    global $_LGLIB_DEFAULTS, $_LGLIB_CONF, $_PLUGIN_INFO, $_CONF;
+    global $_LGLIB_DEFAULTS, $_PLUGIN_INFO, $_CONF;
 
-    if (isset($_PLUGIN_INFO[$_LGLIB_CONF['pi_name']])) {
-        if (is_array($_PLUGIN_INFO[$_LGLIB_CONF['pi_name']])) {
+    if (isset($_PLUGIN_INFO[Config::PI_NAME])) {
+        if (is_array($_PLUGIN_INFO[Config::PI_NAME)) {
             // glFusion > 1.6.5
-            $current_ver = $_PLUGIN_INFO[$_LGLIB_CONF['pi_name']]['pi_version'];
+            $current_ver = $_PLUGIN_INFO[Config::PI_NAME]['pi_version'];
         } else {
             // legacy
-            $current_ver = $_PLUGIN_INFO[$_LGLIB_CONF['pi_name']];
+            $current_ver = $_PLUGIN_INFO[Config::PI_NAME];
         }
     } else {
         return false;
@@ -59,7 +60,7 @@ function LGLIB_do_upgrade($dvlp=false)
         $current_ver = '0.0.4';
         COM_errorLog("Updating Plugin to $current_ver");
         $c->add('img_disp_relpath', $_LGLIB_DEFAULTS['img_disp_relpath'],
-                'text', 0, 0, 15, 20, true, $_LGLIB_CONF['pi_name']);
+                'text', 0, 0, 15, 20, true, Config::PI_NAME);
         if (!LGLIB_do_set_version($current_ver)) return false;
     }
 
@@ -69,9 +70,9 @@ function LGLIB_do_upgrade($dvlp=false)
         COM_errorLog("Updating Plugin to $current_ver");
         $c = config::get_instance();
         $c->add('cron_schedule_interval', $_LGLIB_DEFAULTS['cron_schedule_interval'],
-                'text', 0, 0, 15, 30, true, $_LGLIB_CONF['pi_name']);
+                'text', 0, 0, 15, 30, true, Config::PI_NAME);
         $c->add('cron_key', $_LGLIB_DEFAULTS['cron_key'],
-                'text', 0, 0, 15, 40, true, $_LGLIB_CONF['pi_name']);
+                'text', 0, 0, 15, 40, true, Config::PI_NAME);
         if (!LGLIB_do_set_version($current_ver)) return false;
     }
 
@@ -81,9 +82,9 @@ function LGLIB_do_upgrade($dvlp=false)
         COM_errorLog("Updating Plugin to $current_ver");
         $c = config::get_instance();
         $c->add('img_cache_interval', $_LGLIB_DEFAULTS['img_cache_interval'],
-                'text', 0, 0, 15, 50, true, $_LGLIB_CONF['pi_name']);
+                'text', 0, 0, 15, 50, true, Config::PI_NAME);
         $c->add('img_cache_maxage', $_LGLIB_DEFAULTS['img_cache_maxage'],
-                'text', 0, 0, 15, 60, true, $_LGLIB_CONF['pi_name']);
+                'text', 0, 0, 15, 60, true, Config::PI_NAME);
         if (!LGLIB_do_set_version($current_ver)) return false;
     }
 
@@ -92,7 +93,7 @@ function LGLIB_do_upgrade($dvlp=false)
         $current_ver = '0.0.7';
         COM_errorLog("Updating Plugin to $current_ver");
         $c->add('slimbox_autoactivation', $_LGLIB_DEFAULTS['slimbox_autoactivation'],
-                'select', 0, 0, 3, 70, true, $_LGLIB_CONF['pi_name']);
+                'select', 0, 0, 3, 70, true, Config::PI_NAME);
         if (!LGLIB_do_upgrade_sql($current_ver)) return false;
         if (!LGLIB_do_set_version($current_ver)) return false;
     }
@@ -102,7 +103,7 @@ function LGLIB_do_upgrade($dvlp=false)
         $current_ver = '1.0.1';
         COM_errorLog("Updating Plugin to $current_ver");
         $c->add('use_lglib_messages', $_LGLIB_DEFAULTS['use_lglib_messages'],
-                'select', 0, 0, 3, 80, true, $_LGLIB_CONF['pi_name']);
+                'select', 0, 0, 3, 80, true, Config::PI_NAME);
         if (!LGLIB_do_set_version($current_ver)) return false;
     }
 
@@ -111,10 +112,10 @@ function LGLIB_do_upgrade($dvlp=false)
         $current_ver = '1.0.5';
         COM_errorLog("Updating Plugin to $current_ver");
         $c->add('enable_smartresizer', $_LGLIB_DEFAULTS['enable_smartresizer'],
-                'select', 0, 0, 3, 90, true, $_LGLIB_CONF['pi_name']);
+                'select', 0, 0, 3, 90, true, Config::PI_NAME);
 
         // Make sure default cache directory is set up
-        $datadir = $_CONF['path'] . 'data/' . $_LGLIB_CONF['pi_name'];
+        $datadir = $_CONF['path'] . 'data/' . Config::PI_NAME;
         $dirs = array($datadir,
             $datadir . '/0', $datadir . '/1', $datadir . '/2', $datadir . '/3',
             $datadir . '/4', $datadir . '/5', $datadir . '/6', $datadir . '/7',
@@ -191,7 +192,7 @@ function LGLIB_do_upgrade($dvlp=false)
  */
 function LGLIB_do_upgrade_sql($version, $dvlp=false)
 {
-    global $_TABLES, $_LGLIB_CONF, $_UPGRADE_SQL;
+    global $_TABLES, $_UPGRADE_SQL;
 
     // If no sql statements passed in, return success
     if (
@@ -227,18 +228,18 @@ function LGLIB_do_upgrade_sql($version, $dvlp=false)
  */
 function LGLIB_do_set_version($ver)
 {
-    global $_TABLES, $_LGLIB_CONF;
+    global $_TABLES;
 
     // now update the current version number.
     $sql = "UPDATE {$_TABLES['plugins']} SET
-            pi_version = '{$_LGLIB_CONF['pi_version']}',
-            pi_gl_version = '{$_LGLIB_CONF['gl_version']}',
-            pi_homepage = '{$_LGLIB_CONF['pi_url']}'
-        WHERE pi_name = '{$_LGLIB_CONF['pi_name']}'";
+            pi_version = '" . Config::get('pi_version') . "',
+            pi_gl_version = '" . Config::get('gl_version' . "',
+            pi_homepage = '" . Config::get('url'} . "'
+        WHERE pi_name = '" . Config::PI_NAME . "'";
 
     $res = DB_query($sql, 1);
     if (DB_error()) {
-        COM_errorLog("Error updating the {$_LGLIB_CONF['pi_display_name']} Plugin version",1);
+        COM_errorLog("Error updating the " . Config::get('pi_display_name'} . " Plugin version",1);
         return false;
     } else {
         return true;

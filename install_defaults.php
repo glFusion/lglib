@@ -1,29 +1,20 @@
 <?php
 /**
-*   Configuration Defaults for the lgLib plugin for glFusion.
-*
-*   @author     Lee Garner <lee@leegarner.com>
-*   @copyright  Copyright (c) 2012 Lee Garner
-*   @package    lglib
-*   @version    0.0.1
-*   @license    http://opensource.org/licenses/gpl-2.0.php 
-*               GNU Public License v2 or later
-*   @filesource
-*/
+ * Configuration Defaults for the lgLib plugin for glFusion.
+ *
+ * @author      Lee Garner <lee@leegarner.com>
+ * @copyright   Copyright (c) 2012 Lee Garner
+ * @package     lglib
+ * @version     v1.1.0
+ * @license     http://opensource.org/licenses/gpl-2.0.php 
+ *              GNU Public License v2 or later
+ * @filesource
+ */
 
 // This file can't be used on its own
 if (!defined ('GVERSION')) {
     die ('This file can not be used on its own.');
 }
-
-/** Utility plugin configuration data
-*   @global array */
-global $_LGLIB_CONF;
-if (!isset($_LGLIB_CONF) || empty($_LGLIB_CONF)) {
-    $_LGLIB_CONF = array();
-    require_once dirname(__FILE__) . '/lglib.php';
-}
-
 
 /** @var global config data */
 global $lglibConfigData;
@@ -163,10 +154,10 @@ $lglibConfigData = array(
 );
 
 /**
-*   Initialize lgLib plugin configuration
-*
-*   @return boolean             true: success; false: an error occurred
-*/
+ * Initialize lgLib plugin configuration.
+ *
+ * @return  boolean     true: success; false: an error occurred
+ */
 function plugin_initconfig_lglib()
 {
     global $lglibConfigData;

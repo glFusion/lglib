@@ -17,8 +17,8 @@
  *              GNU Public License v2 or later
  * @filesource
  */
-
 require_once(dirname(__FILE__) . '/../lib-common.php');
+use LGLib\Config;
 
 if (php_sapi_name() == 'cli') {
     $args = getopt('fp:k:');
@@ -32,8 +32,8 @@ $force = isset($args['f']) ? true : false;
 $pi = isset($args['p']) ? $args['p'] : NULL;
 
 // Check that the correct key value is supplied with the url or command line.
-if (!empty($_LGLIB_CONF['cron_key'])) {
-    if (!isset($args['k']) || $args['k'] !== $_LGLIB_CONF['cron_key']) {
+if (!empty(Config::get('cron_key'))) {
+    if (!isset($args['k']) || $args['k'] !== Config::get('cron_key')) {
         if (php_sapi_name() != 'cli') {
             // add forbidden header if accessed via web
             header('HTTP 1.0 Forbidden');
@@ -46,8 +46,8 @@ if (!empty($_LGLIB_CONF['cron_key'])) {
 if (!isset($_VARS['last_scheduled_run'])) {
     $_VARS['last_scheduled_run'] = 0;
 }
-if ($force || $_LGLIB_CONF['cron_schedule_interval'] > 0) {
-    if ($force || ($_VARS['last_scheduled_run'] + $_LGLIB_CONF['cron_schedule_interval']) <= time()) {
+if ($force || Config::get('cron_schedule_interval') > 0) {
+    if ($force || ($_VARS['last_scheduled_run'] + Config::get('cron_schedule_interval')) <= time()) {
         DB_query("UPDATE {$_TABLES['vars']} SET value=UNIX_TIMESTAMP() WHERE name='last_scheduled_run'" );
         if ($pi === NULL) {
             if ($_CONF['cron_schedule_interval'] == 0) {

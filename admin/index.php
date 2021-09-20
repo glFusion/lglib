@@ -12,10 +12,11 @@
  */
 require_once '../../../lib-common.php';
 require_once '../../auth.inc.php';
+use LGLib\Config;
 
 $display = '';
-$pi_title = $_LGLIB_CONF['pi_display_name'] . ' ' .
-            $LANG32[36] . ' ' . $_LGLIB_CONF['pi_version'];
+$pi_title = Config::get('pi_display_name') . ' ' .
+            $LANG32[36] . ' ' . Config::get('pi_version');
 LGLIB_setGlobal('pi_title', $pi_title);
 
 // If user isn't a root user or if the backup feature is disabled, bail.
