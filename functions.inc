@@ -1241,9 +1241,9 @@ function plugin_pushjob_lglib($pi_name, $job_name, $params='')
  */
 function plugin_runScheduledTask_lglib()
 {
-    global $_SHOP_CONF;
+    global $_LGLIB_CONF;
 
-    if ($_SHOP_CONF['queue_purge_completed'] > -1) {
-        LGLib\JobQueue::purgCompleted((int)$_SHOP_CONF['queue_purge_completed']);
+    if (isset($_LGLIB_CONF['queue_purge_completed']) && $_LGLIB_CONF['queue_purge_completed'] > -1) {
+        LGLib\JobQueue::purgeCompleted((int)$_LGLIB_CONF['queue_purge_completed']);
     }
 }
