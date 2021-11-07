@@ -31,6 +31,7 @@ $_SQL['lglib_messages'] = "CREATE TABLE {$_TABLES['lglib_messages']} (
 $_SQL['lglib_jobqueue'] = "CREATE TABLE `{$_TABLES['lglib_jobqueue']}` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `submitted` int(11) unsigned,
+  `started` int(11) unsigned,
   `completed` int(11) unsigned,
   `pi_name` varchar(20) DEFAULT NULL,
   `jobname` varchar(40) DEFAULT NULL,
@@ -81,5 +82,7 @@ $_UPGRADE_SQL = array(
 ),
 '1.1.0' => array(
     "ALTER TABLE {$_TABLES['lglib_jobqueue']} ADD started int(11) unsigned AFTER submitted",
+    // May have been missed
+    "ALTER TABLE {$_TABLES['lglib_jobqueue']} ADD completed int(11) unsigned AFTER started",
 ),
 );
