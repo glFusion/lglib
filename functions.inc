@@ -523,7 +523,6 @@ function plugin_registerSmartResizer_lglib($tpl_name, $varnames)
 
 /**
  * Perform filtering and updating on final output before display.
- * Disabled because PHP DomDocument doesn't work with HTML5 tags.
  *
  * @param   string  $output     HTML output to process
  * @param   string  $plugin     Invoking plugin
