@@ -57,6 +57,7 @@ spl_autoload_register(function($class)
     }
 });
 use LGLib\Config;
+use LGLib\MO;
 
 /** Additional config items and table definitions are added here */
 require_once __DIR__ . '/lglib.php';
