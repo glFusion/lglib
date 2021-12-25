@@ -14,6 +14,7 @@
 /** @global array $_TABLES */
 global $_TABLES, $_SQL, $_UPGRADE_SQL;
 
+$_SQL = array();
 $_SQL['lglib_messages'] = "CREATE TABLE {$_TABLES['lglib_messages']} (
   `uid` int(11) NOT NULL DEFAULT '1',
   `sess_id` varchar(80) NOT NULL DEFAULT '',
