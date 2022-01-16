@@ -148,7 +148,8 @@ class SmartResizer
                 $p = $p->parentNode;
             }
 
-            // Split up the src, check if it's a relative or remote URL
+            // Split up the src, check if it's a relative path, local URL
+            // or remote URL
             $src = $img->getAttribute('src');
             $url_parts = parse_url($src);
             if (isset($url_parts['host'])) {
@@ -158,6 +159,8 @@ class SmartResizer
                 ) {
                     continue;  // don't handle remote images
                 } else {
+                    // This is a local URL, strip the scheme and host to
+                    // get the path under public_html.
                     $src = str_replace($_CONF['site_url'], '', $src);
                 }
             }
