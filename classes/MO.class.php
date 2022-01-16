@@ -1,6 +1,7 @@
 <?php
 /**
  * Class to manage locale settings.
+ * Plugins may elect to extend this class, or may recreate it as needed.
  *
  * @author      Lee Garner <lee@leegarner.com>
  * @copyright   Copyright (c) 2021 Lee Garner <lee@leegarner.com>
@@ -22,16 +23,18 @@ use LGLib\phpGettext\phpGettext;
 class MO
 {
     /** Language domain, e.g. plugin name.
+     * Each plugin must define its own domain var.
      * @var string */
     private static $domain = NULL;
 
     /** Variable to save the original locale if changed by init().
+     * Each plugin must define this variable as a placeholder
      * @var string */
     private static $old_locale = NULL;
 
     /** Supported language name=>locale mapping.
      * @var array */
-    private static $lang2locale = array(
+    protected static $lang2locale = array(
         'dutch_utf-8' => 'nl_NL',
         'finnish_utf-8' => 'fi_FI',
         'german_utf-8' => 'de_DE',
