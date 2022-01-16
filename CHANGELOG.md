@@ -4,6 +4,7 @@
 Release TBD
   * Add admin interface for job queue.
   * Add started and completed timestamp fields to job queue table.
+  * Ensure image cache directory is an expected path.
 
 ## 1.0.13
 Release 2021-07-17

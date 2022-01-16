@@ -103,7 +103,7 @@ class TimThumb
     protected $JpegQuality = 85;
     protected $path_to_mogrify;
     protected $image_lib;
-
+    protected $cache_key = 'a';
 
     /**
     *   Entry point
@@ -257,12 +257,12 @@ class TimThumb
             // This creates filenames the same as LGLIB_ImageUrl()
             $tmp_filename = md5("$rnd-{$this->src}-$width-$height") . '.' .
                 $path_parts['extension'];
+            $this->cache_key = $tmp_filename[0];
             if (!is_dir($this->cacheDirectory . '/' . $tmp_filename[0])) {
                 @mkdir($this->cacheDirectory . '/' . $tmp_filename[0]);
             }
-            $this->cachefile = $this->cacheDirectory . '/' . $tmp_filename[0] . '/' .
+            $this->cachefile = $this->cacheDirectory . '/' . $this->cache_key . '/' .
                 $tmp_filename;
-
             //We include the mtime of the local file in case in changes on disk.
             /*$this->cachefile = $this->cacheDirectory . '/' .
                 $_IMG_CONF['cache_prefix'].
@@ -545,12 +545,12 @@ class TimThumb
     {
         global $_IMG_CONF;
 
-        if ($_IMG_CONF['cache_clean_interval'] < 0 || empty($this->basename)) {
+        if ($_IMG_CONF['cache_clean_interval'] < 0 || empty($this->cache_key)) {
             // No cache cleaning required
             return false;
         }
 
-        $cachedir = $this->cacheDirectory . '/' . $this->basename[0];
+        $cachedir = $this->cacheDirectory . '/' . $this->cache_key;
         $this->debug(3, "cleanCache() called for $cachedir");
         $lastCleanFile = $cachedir . '/lastclean.touch';
 
