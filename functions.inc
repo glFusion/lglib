@@ -756,56 +756,6 @@ function LGLIB_getGlobal($name, $remove=false)
 
 
 /**
- * Log activity to a plugin-specific log file.
- * Logs will be written to /private/logs/<pi_name>.log
- *
- * @param  string  $pi_name    Plugin name
- * @param  string  $logentry   Text to log
- */
-function LGLIB_auditLog($pi_name, $logentry = '')
-{
-    global $_CONF, $_USER, $LANG01;
-
-    if ($logentry == '')
-        return '';
-
-    // A little sanitizing
-    $logentry = str_replace(
-            array('<?', '?>'),
-            array('(@', '@)'),
-            $logentry);
-
-    $timestamp = strftime( '%c' );
-    $logfile = $_CONF['path_log'] . $pi_name . '.log';
-
-    // Can't open the log file?  Return an error
-    if (!$file = fopen($logfile, 'a')) {
-        COM_errorLog("Cannot open {$pi_name}.log. Msg: $logentry");
-        return;
-    }
-
-    // Get the user name if it's not anonymous
-    if (isset($_USER['uid'])) {
-        $byuser = $_USER['uid'] . '-'.
-                COM_getDisplayName($_USER['uid'],
-                    $_USER['username'], $_USER['fullname']);
-    } else {
-        $byuser = 'anon';
-    }
-    $byuser .= '@' . $_SERVER['REMOTE_ADDR'];
-
-    // Write the log entry to the file
-    // Can't open the log file?  Fall back to COM_errorLog
-    if ($file = fopen($logfile, 'a')) {
-        fputs($file, "$timestamp ($byuser) - $logentry\n");
-    } else {
-        COM_errorLog("$timestamp ($plugin / $byuser) - $logentry\n");
-    }
-    fclose($file);
-}
-
-
-/**
  * Convert a string to title case, ignoring small words.
  * e.g. "a test of a title function" becomes "A Test of a Title Function".
  *
@@ -937,6 +887,7 @@ function service_imageurl_lglib($args, &$output, &$svc_msg)
     $rnd = isset($args['rnd']) ? (int)$args['rnd'] : 0;
     $orig_path = isset($args['filepath']) ? $args['filepath'] : '';
     $expand = isset($args['expand']) ? (int)$args['expand'] : 0;
+    $force = isset($args['force']) && $args['force'] ? 1 : 0;
 
     // If original image doesn't exist, return empty url,
     // don't bother continuing.
@@ -984,7 +935,7 @@ function service_imageurl_lglib($args, &$output, &$svc_msg)
     }
 
     // If the file isn't found, try to create it.
-    if (!is_file($disp_fullpath)) {
+    if (!is_file($disp_fullpath) || $args['force']) {
         $A = LGLib\Image::reSize($orig_path, $disp_fullpath, $width, $height, $expand);
         if ($A) {
             $width = $A['d_width'];
@@ -1224,3 +1175,4 @@ function plugin_runScheduledTask_lglib()
         LGLib\JobQueue::purgeCompleted((int)Config::get('queue_purge_completed'));
     }
 }
+
