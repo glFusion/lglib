@@ -5,6 +5,8 @@ Release TBD
   * Add admin interface for job queue.
   * Add started and completed timestamp fields to job queue table.
   * Ensure image cache directory is an expected path.
+  * Use GD to resize transparent PNG images.
+  * Add an option to force regeneration of resized images.
 
 ## 1.0.13
 Release 2021-07-17
