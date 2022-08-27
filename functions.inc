@@ -99,24 +99,6 @@ if (!defined('DATE_CALC_FORMAT')) {
 // and LGLIB_getGlobal()
 $_LGLIB_GLOBALS = array();
 
-// Session variables are used to pass path info to the TimThumb image resizer.
-// Since img.php doesn't load lib-common.php (it would take forever to load
-// images), these values have to get to it somehow.
-// Yes, these can also be overridden via config.php
-// The calling plugin needs to set $_SESSION['<pi_name>_origpath']
-SESS_setVar('lglib', array(
-    'origpath'      => $_CONF['path_html'] . 'images',
-    'cache_dir'     => $_CONF['path'] . 'data/' . Config::get('pi_name'),
-    'image_lib'     => $_CONF['image_lib'],
-    'path_to_mogrify' => $_CONF['path_to_mogrify'],
-));
-
-// Set default message location to top center unless otherwise set
-if (!isset($_SYSTEM['alert_position'])) {
-    $_SYSTEM['alert_position'] = 'top-center';
-}
-
-
 /**
  * Include the plugin-specific language file.
  * Looks for the site language first, then defaults to english if nothing else found.
@@ -300,6 +282,38 @@ function plugin_enablestatechange_lglib($enable)
 function plugin_geticon_lglib()
 {
     return Config::get('url') . '/images/lglib.png';
+}
+
+
+/**
+ * Execute additional functions when COM_siteHeader() is called.
+ * - Set up the session var for the smart resizer
+ * - Set the default position for popup messages
+ *
+ * @return  string      Empty string, no actual header code is used.
+ */
+function plugin_getheadercode_lglib() : string
+{
+    global $_CONF, $_SYSTEM;
+
+    // Session variables are used to pass path info to the TimThumb image resizer.
+    // Since img.php doesn't load lib-common.php (it would take forever to load
+    // images), these values have to get to it somehow.
+    // Yes, these can also be overridden via config.php
+    // The calling plugin needs to set $_SESSION['<pi_name>_origpath']
+    SESS_setVar('lglib', array(
+        'origpath'      => $_CONF['path_html'] . 'images',
+        'cache_dir'     => $_CONF['path'] . 'data/' . Config::get('pi_name'),
+        'image_lib'     => $_CONF['image_lib'],
+        'path_to_mogrify' => $_CONF['path_to_mogrify'],
+    ));
+
+    // Set default message location to top center unless otherwise set
+    if (!isset($_SYSTEM['alert_position'])) {
+        $_SYSTEM['alert_position'] = 'top-center';
+    }
+
+    return '';
 }
 
 
@@ -935,7 +949,7 @@ function service_imageurl_lglib($args, &$output, &$svc_msg)
     }
 
     // If the file isn't found, try to create it.
-    if (!is_file($disp_fullpath) || $args['force']) {
+    if (!is_file($disp_fullpath) || $force) {
         $A = LGLib\Image::reSize($orig_path, $disp_fullpath, $width, $height, $expand);
         if ($A) {
             $width = $A['d_width'];
