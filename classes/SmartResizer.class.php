@@ -61,7 +61,7 @@ class SmartResizer
      * @param   string  $valname    Template value to update
      * @return  void
      */
-    public static function Template(&$template, $valname)
+    public static function Template(object &$template, string $valname) : void
     {
         $var = $template->get_var($valname);
         if (!empty($var)) {
@@ -80,7 +80,7 @@ class SmartResizer
      * @param   string  &$origtxt   Text string to update
      * @return  void
      */
-    public static function Text(&$origtxt)
+    public static function Text(string &$origtxt) : void
     {
         self::create()->convert($origtxt);
     }
@@ -94,7 +94,7 @@ class SmartResizer
      * @param   string  &$origtxt   Text string to update
      * @return  void
      */
-    public function convert(&$origtxt)
+    public function convert(string &$origtxt) : void
     {
         global $_CONF;
 
@@ -301,7 +301,7 @@ class SmartResizer
      * @param   boolean $flag   True to link to lightbox, False otherwise
      * @return  object  $this
      */
-    public function withLightbox($flag)
+    public function withLightbox(bool $flag=true) : self
     {
         $this->add_lightbox = $flag ? 1 : 0;
         return $this;
@@ -314,7 +314,7 @@ class SmartResizer
      * @param   boolean $flag   True to use full URL, False to not
      * @return  object  $this
      */
-    public function withFullUrl($flag)
+    public function withFullUrl(bool $flag=true) : self
     {
         global $_CONF;
 
@@ -328,7 +328,7 @@ class SmartResizer
      *
      * @return  object  $this
      */
-    public static function create()
+    public static function create() : self
     {
         return new self;
     }
@@ -340,7 +340,7 @@ class SmartResizer
      * @param   string  $tpl_name   Template name
      * @param   string|array    $varnames   One or an array of variable names
      */
-    public static function registerTemplate($tpl_name, $varnames)
+    public static function registerTemplate(string $tpl_name, $varnames) : void
     {
         if (!is_array($varnames)) {
             $varnames = array($varnames);
@@ -356,7 +356,6 @@ class SmartResizer
         } else {
             self::$_templates[$tpl_name] = $varnames;
         }
-        return true;
     }
 
 
@@ -366,7 +365,7 @@ class SmartResizer
      * @param   string  $tpl_name   Registered template name
      * @return  array       Array of template variable names
      */
-    public static function getTemplateVars($tpl_name)
+    public static function getTemplateVars(string $tpl_name) : array
     {
         if (
             isset(self::$_templates[$tpl_name]) &&
