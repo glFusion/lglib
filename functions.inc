@@ -434,7 +434,6 @@ function LGLIB_getDocURL($file='', $pi_name='lglib', $doclang='english')
     $doc_url = '';
 
     if ($file != '') {
-        $file .= '.html';
         if (!is_file($doc_path . $file)) {
             $doclang = 'english';
         }
@@ -850,28 +849,9 @@ function LGLIB_obfuscate($str)
  * @param  mixed   $params     String or Array of parameters
  * @return bookean     True on success, False on failure.
  */
-function LGLIB_pushJob($pi_name, $job_name, $params='')
+function LGLIB_pushJob(string $pi_name, string $job_name, ?array $params=NULL)
 {
     return LGLib\JobQueue::push($pi_name, $job_name, $params);
-
-    if (is_array($params)) {
-        $json_params = json_encode($params);
-        if ($json_params === false) return false;
-    } else {
-        $json_params = $params;
-    }
-
-    $pi_name = DB_escapeString($pi_name);
-    $job_name = DB_escapeString($job_name);
-    $params = DB_escapeString($json_params);
-    $sql = "INSERT INTO gl_lglib_jobqueue (pi_name, submitted, jobname, params)
-            VALUES ('$pi_name', UNIX_TIMESTAMP(), '$job_name', '$params')";
-    DB_query($sql, false);
-    if (DB_error()) {
-        return false;
-    } else {
-        return true;
-    }
 }
 
 
@@ -1185,8 +1165,14 @@ function plugin_pushjob_lglib($pi_name, $job_name, $params='')
  */
 function plugin_runScheduledTask_lglib()
 {
+    // Purge completed jobs from the queue if a number of days is set.
     if (Config::get('queue_purge_completed') > -1) {
         LGLib\JobQueue::purgeCompleted((int)Config::get('queue_purge_completed'));
+    }
+
+    // Run the job queue if configured to run with scheduled tasks.
+    if (Config::get('queue_cron')) {
+        LGLib\JobQueue::run();
     }
 }
 

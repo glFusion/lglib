@@ -68,6 +68,7 @@ $LANG_confignames['lglib'] = array(
     'use_lglib_messages' => 'Use lglib_messages template var?',
     'enable_smartresizer' => 'Enable Smart Image Resizer?',
     'queue_purge_completed' => 'Days to keep completed jobs in queue',
+    'queue_cron' => 'Run Queue with scheduled tasks',
 );
 
 $LANG_configsubgroups['lglib'] = array(

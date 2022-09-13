@@ -7,6 +7,8 @@ Release TBD
   * Ensure image cache directory is an expected path.
   * Use GD to resize transparent PNG images.
   * Add an option to force regeneration of resized images.
+  * Add FPDF2File class to reduce memory usage
+  * Optionally run job queue with scheduled tasks.
 
 ## 1.0.13
 Release 2021-07-17

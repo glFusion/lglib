@@ -85,6 +85,16 @@
         <dd>Select &quot;Yes&quot; to enable the smart image resizer output filter. This is based on the smartresizer plugin for Joomla and automatically scales images to the specified width and height in the HTML, before sending to the browser. Additionally, a link is created to the slimbox-type popup of the full-sized image. To avoid resizing an image, add &quot;nosmartresize&quot; to the image tag somewhere, such as an extra class name. This feature is experimental.</dd>
       </dl>
 
+	  <dl id="desc_queue_purge_completed">
+		  <dt>Days to purge completed jobs</dt>
+		  <dd>Enter a number of days after which completed queue jobs will be deleted. Enter &quot;-1&quot; to disable.</dd>
+	  </dl>
+
+	  <dl id="desc_queue_cron">
+		  <dt>Run queue jobs with scheduled tasks</dt>
+		  <dd>Select whether to run the queue jobs with the normal task scheduler. The system cron.php should be run outside of page views for best performance. If &quot;No&quot; then public_html/lglib/cron.php should be called periodically.</dd>
+	  </dl>
+
     </div>
   </div>
 </body>
