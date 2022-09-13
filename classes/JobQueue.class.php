@@ -12,6 +12,8 @@
  * @filesource
  */
 namespace LGLib;
+use glFusion\Database\Database;
+use glFusion\Log\Log;
 
 
 /**
@@ -33,26 +35,36 @@ class JobQueue
      * @param  mixed   $params     String or Array of parameters
      * @return bookean     True on success, False on failure.
      */
-    public static function push($pi_name, $job_name, $params='')
+    public static function push(string $pi_name, string $job_name, ?array $params=NULL) : bool
     {
+        global $_TABLES;
+
         if (is_array($params)) {
             $json_params = json_encode($params);
             if ($json_params === false) return false;
-        } else {
-            $json_params = $params;
         }
 
-        $pi_name = DB_escapeString($pi_name);
-        $job_name = DB_escapeString($job_name);
-        $params = DB_escapeString($json_params);
-        $sql = "INSERT INTO gl_lglib_jobqueue (pi_name, submitted, jobname, params)
-            VALUES ('$pi_name', UNIX_TIMESTAMP(), '$job_name', '$params')";
-        DB_query($sql, false);
-        if (DB_error()) {
+        try {
+            Database::getInstance()->conn->insert(
+                $_TABLES['lglib_jobqueue'],
+                array(
+                    'pi_name' => $pi_name,
+                    'submitted' => time(),
+                    'jobname' => $job_name,
+                    'params' => $json_params,
+                ),
+                array(
+                    Database::STRING,
+                    Database::INTEGER,
+                    Database::STRING,
+                    Database::STRING,
+                )
+            );
+        } catch (\Throwable $e) {
+            Log::write('system', Log::ERROR, __METHOD__ . ': ' . $e->getMessage());
             return false;
-        } else {
-            return true;
         }
+        return true;
     }
 
 
@@ -63,20 +75,32 @@ class JobQueue
      * @param   string  $pi     Plugin name, empty for all plugins
      * @return  integer     Number of jobs encountering an error
      */
-    public static function run($pi = '')
+    public static function run(?string $pi = NULL) : int
     {
         global $_TABLES;
 
         $errors = 0;
-        $sql = "SELECT * FROM {$_TABLES['lglib_jobqueue']} WHERE status = 'ready'";
+        $values = array('ready');
+        $types = array(Database::STRING);
+        $sql = "SELECT * FROM {$_TABLES['lglib_jobqueue']} WHERE status = ?";
         if (!empty($pi)) {
-            $sql .= " AND pi_name = '" . DB_escapeString($pi) . "'";
+            $values[] = $pi;
+            $types[] = Databse::STRING;
+            $sql .= " AND pi_name = ?";
         }
-        $res = DB_query($sql);
-        while ($A = DB_fetchArray($res, false)) {
-            $status = self::_runJob($A);
-            if ($status != PLG_RET_OK) {
-                $errors++;
+        try {
+            $rows = Database::getInstance()->conn->executeQuery($sql, $values, $types)
+                ->fetchAllAssociative();
+        } catch (\Throwable $e) {
+            Log::write('system', Log::ERROR, __METHOD__ . ': ' . $e->getMessage());
+            $rows = false;
+        }
+        if (is_array($rows)) {
+            foreach ($rows as $A) {
+                $status = self::_runJob($A);
+                if ($status != PLG_RET_OK) {
+                    $errors++;
+                }
             }
         }
         return $errors;
@@ -89,7 +113,7 @@ class JobQueue
      * @param   array|integer   One or more job IDs
      * @return  integer     Number of plugin errors encounterd
      */
-    public static function runById($ids)
+    public static function runById($ids) : int
     {
         global $_TABLES;
 
@@ -97,14 +121,24 @@ class JobQueue
         if (!is_array($ids)) {
             $ids = array($ids);
         }
-        $ids = implode(',', $ids);
-        $sql = "SELECT * FROM {$_TABLES['lglib_jobqueue']} WHERE status = 'ready'
-            AND id IN ($ids)";
-        $res = DB_query($sql);
-        while ($A = DB_fetchArray($res, false)) {
-            $status = self::_runJob($A);
-            if ($status != PLG_RET_OK) {
-                $errors++;
+        try {
+            $stmt = Database::getInstance()->conn->executeQuery(
+                "SELECT * FROM {$_TABLES['lglib_jobqueue']} WHERE status = 'ready'
+                AND id IN (?)",
+                array($ids),
+                array(Database::PARAM_INT_ARRAY)
+            );
+        } catch (\Throwable $e) {
+            Log::write('system', Log::ERROR, __METHOD__ . ': ' . $e->getMessage());
+            $stmt = false;
+            $errors = 1000;
+        }
+        if ($stmt) {
+            while ($A = $stmt->fetchAssociative()) {
+                $status = self::_runJob($A);
+                if ($status != PLG_RET_OK) {
+                    $errors++;
+                }
             }
         }
         return $errors;
@@ -117,7 +151,7 @@ class JobQueue
      * @param   array   $A      Single database record.
      * @return  integer     Plugin result code
      */
-    private static function _runJob($A)
+    private static function _runJob(array $A) : int
     {
         // Flag the job as running so it's not picked up by another invocation
         // of cron.php
@@ -142,7 +176,7 @@ class JobQueue
      * @param   integer $jobid      ID of job to update
      * @param   mixed   $status     Job completion status
      */
-    public static function updateJobStatus($jobid, $status)
+    public static function updateJobStatus(int $jobid, int $status) : void
     {
         global $_TABLES;
 
@@ -168,7 +202,11 @@ class JobQueue
         $sql = "UPDATE {$_TABLES['lglib_jobqueue']}
             SET status = '{$status}' $sql
             WHERE id = $jobid";
-        DB_query($sql);
+        try {
+            Database::getInstance()->conn->executeStatement($sql);
+        } catch (\Throwable $e) {
+            Log::write('system', Log::ERROR, __METHOD__ . ': ' . $e->getMessage());
+        }
     }
 
 
@@ -232,7 +270,7 @@ class JobQueue
 
         $defsort_arr = array(
             'field' => 'submitted',
-            'direction' => 'asc',
+            'direction' => 'desc',
         );
 
         $query_arr = array(
@@ -333,11 +371,6 @@ class JobQueue
             $retval = FieldList::delete(array(
                 'delete_url' => Config::get('admin_url') . '/index.php?deljob=' . $A['id'],
             ) );
-            /*
-            $retval = COM_createLink(
-                $icon_arr['delete'],
-                Config::get('admin_url') . '/index.php?deljob=' . $A['id']
-            );*/
             break;
         default:
             $retval = $fieldvalue;
@@ -347,17 +380,31 @@ class JobQueue
     }
 
 
-    public static function deleteJobs($ids=array())
+    /**
+     * Delete some or all jobs from the queue.
+     *
+     * @param   array   $ids    Array of jobs, empty array for all
+     */
+    public static function deleteJobs($ids=array()) : void
     {
         global $_TABLES;
 
         if (!is_array($ids)) {
             $ids = array($ids);
         }
-        $ids = implode(',', $ids);
-        $sql = "DELETE FROM {$_TABLES['lglib_jobqueue']}
-            WHERE id IN ($ids)";
-        DB_query($sql);
+        $values = array();
+        $types = array();
+        $sql = "DELETE FROM {$_TABLES['lglib_jobqueue']}";
+        if (!empty($ids)) {
+            $sql .= " WHERE id IN (?)";
+            $values[] = $ids;
+            $types[] = Database::PARAM_INT_ARRAY;
+        }
+        try {
+            Database::getInstance()->conn->executeStatment($sql, $values, $types);
+        } catch (\Throwable $e) {
+            Log::write('system', Log::ERROR, __METHOD__ . ': ' . $e->getMessage());
+        }
     }
 
 
@@ -366,16 +413,29 @@ class JobQueue
      *
      * @param   integer $days   Number of days to keep completed jobs
      */
-    public static function purgeCompleted($days=0)
+    public static function purgeCompleted(int $days=0) : void
     {
         global $_TABLES;
+
+        if ($days < 0) {
+            // Disabled or invalid
+            return;
+        }
 
         $ts = time() + ($days * 86400);
         $sql = "DELETE FROM {$_TABLES['lglib_jobqueue']}
             WHERE status = 'completed'
             AND completed IS NOT NULL
-            AND completed < $ts";
-        DB_query($sql);
+            AND completed < ?";
+        try {
+            Database::getInstance()->conn->executeStatement(
+                $sql,
+                array($ts),
+                array(Database::INTEGER)
+            );
+        } catch (\Throwable $e) {
+            Log::write('system', Log::ERROR, __METHOD__ . ': ' . $e->getMessage());
+        }
     }
 
 
@@ -386,17 +446,22 @@ class JobQueue
      * @param   string  $newstatus  New status to set
      * @return  boolean     True on success, False on error.
      */
-    public static function setStatus($q_id, $newstatus)
+    public static function setStatus(int $q_id, string $newstatus) : bool
     {
         global $_TABLES;
 
-        $q_id = (int)$q_id;
-        $newstatus = DB_escapeString($newstatus);
-        $sql = "UPDATE {$_TABLES['lglib_jobqueue']}
-            SET status = '$newstatus'
-            WHERE id = $q_id";
-        DB_query($sql);
-        return DB_error() ? false : true;
+        try {
+            Database::getInstance()->conn->update(
+                $_TABLES['lglib_jobqueue'],
+                array('status' => $newstatus),
+                array('id' => $q_id),
+                array(Database::STRING, Database::INTEGER)
+            );
+        } catch (\Throwable $e) {
+            Log::write('system', Log::ERROR, __METHOD__ . ': ' . $e->getMessage());
+            return false;
+        }
+        return true;
     }
 
 }
