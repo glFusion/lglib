@@ -21,7 +21,7 @@ if (!SEC_inGroup('Root')) {
     COM_accessLog("User {$_USER['username']} tried to illegally access the lglib admin ajax function.");
     $retval = array(
         'status' => false,
-        'statusMessage' => $LANG_LGLIB['access_denied'],
+        'statusMessage' => $LANG_ACCESS['accessdenied'],
     );
     header('Content-Type: application/json');
     header("Cache-Control: no-cache, must-revalidate");
