@@ -1,7 +1,7 @@
 # lgLib utility plugin for glFusion
 
 ## 1.1.0
-Release TBD
+Release 2022-09-23
   * Add admin interface for job queue.
   * Add started and completed timestamp fields to job queue table.
   * Ensure image cache directory is an expected path.
