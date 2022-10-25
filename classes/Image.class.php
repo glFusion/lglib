@@ -3,14 +3,16 @@
  * Class to handle images.
  *
  * @author     Lee Garner <lee@leegarner.com>
- * @copyright  Copyright (c) 2012-2018 Lee Garner <lee@leegarner.com>
+ * @copyright  Copyright (c) 2012-2022 Lee Garner <lee@leegarner.com>
  * @package    lglib
- * @version    1.0.9
+ * @version    1.1.1
  * @license    http://opensource.org/licenses/gpl-2.0.php
  *              GNU Public License v2 or later
  * @filesource
  */
 namespace LGLib;
+use glFusion\Log\Log;
+
 
 /**
  *  Image-handling class
@@ -76,7 +78,7 @@ class Image
      * @param   boolean $expand     True to allow expanding the image
      * @return  mixed   Array of new width,height if successful, NULL if failed
      */
-    public static function reSize($src, $dst, $newWidth=0, $newHeight=0, $expand=false) : ?array
+    public static function reSize(string $src, string $dst, int $newWidth=0, int $newHeight=0, bool $expand=false) : ?array
     {
         // Calculate the new dimensions
         $A = self::reDim($src, $newWidth, $newHeight, $expand);
@@ -112,7 +114,7 @@ class Image
         }
         if ($result[0] === false) {
             Log::write('system', Log::ERROR, __METHOD__ . ": Failed to convert $src ({$A['s_height']} x {$A['s_width']}) to $dst ($newHeight x $newWidth)");
-            return false;
+            return NULL;
         } else {
             return $A;
         }
