@@ -18,7 +18,7 @@ if (!defined ('GVERSION')) {
 }
 
 /** @global string $_DB_dbms */
-global $_DB_dbms;
+global $_DB_dbms, $_TABLES, $_SQL;
 
 require_once __DIR__ . '/functions.inc';
 require_once __DIR__ . '/lglib.php';
@@ -37,8 +37,8 @@ $INSTALL_plugin[Config::PI_NAME] = array(
         'name'      => Config::PI_NAME,
         'ver'       => Config::get('pi_version'),
         'gl_ver'    => Config::get('gl_version'),
-        'url'       => Config::get('pi_url',
-        'display'   => Cofnig::get('pi_display_name'),
+        'url'       => Config::get('pi_url'),
+        'display'   => Config::get('pi_display_name'),
     ),
 
     array(
@@ -117,24 +117,24 @@ function plugin_load_configuration_lglib()
  * Post-installation tasks.
  * 1. Create cache dirs
  */
-function plugin_postinstall_lglib()
+function LGLIB_createPaths()
 {
     global $_CONF;
 
     // Make sure default cache directory is set up
-    $datadir = $_CONF['path'] . 'data/' . Config::PI_NAME;
+    $datadir = Config::get('path_imgcache');
     $dirs = array($datadir,
         $datadir . '/0', $datadir . '/1', $datadir . '/2', $datadir . '/3',
         $datadir . '/4', $datadir . '/5', $datadir . '/6', $datadir . '/7',
         $datadir . '/8', $datadir . '/9', $datadir . '/a', $datadir . '/b',
         $datadir . '/c', $datadir . '/d', $datadir . '/e', $datadir . '/f',
-        $datadir . '/cache',
     );
     foreach ($dirs as $dir) {
         if (is_dir($dir)) {
             chmod($dir, 0755);
         } else {
             mkdir($dir, 0755);
+            touch($dir . '/index.html');
         }
     }
 }

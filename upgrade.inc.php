@@ -163,6 +163,16 @@ function LGLIB_do_upgrade($dvlp=false)
         if (!LGLIB_do_set_version($current_ver)) return false;
     }
 
+    if (!COM_checkVersion($current_ver, '1.1.1')) {
+        // upgrade to 1.1.1
+        $current_ver = '1.1.1';
+        COM_errorLog("Updating Plugin to $current_ver");
+        include_once lgConfig::get('path') . 'autoinstall.php';
+        LGLIB_createPaths();
+        if (!LGLIB_do_upgrade_sql($current_ver, $dvlp)) return false;
+        if (!LGLIB_do_set_version($current_ver)) return false;
+    }
+
     // Final version update to catch updates that don't go through
     // any of the update functions, e.g. code-only updates
     if (!COM_checkVersion($current_ver, $installed_ver)) {
