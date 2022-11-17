@@ -61,6 +61,8 @@ final class Config
         $this->properties['url'] = $_CONF['site_url'] . '/' . self::PI_NAME;
         $this->properties['admin_url'] = $_CONF['site_admin_url'] . '/plugins/' . self::PI_NAME;
         $this->properties['path'] = $_CONF['path'] . 'plugins/' . self::PI_NAME . '/';
+        $this->properties['path_imgcache'] = $_CONF['path_html'] . '/data/' . self::PI_NAME . '/cache/';
+        $this->properties['url_imgcache'] = $_CONF['site_url'] . '/data/' . self::PI_NAME . '/cache';
         $this->properties['_is_uikit'] = $_SYSTEM['framework'] == 'uikit' ? true : false;
     }
 

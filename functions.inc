@@ -895,23 +895,23 @@ function service_imageurl_lglib($args, &$output, &$svc_msg)
             $path_parts['extension'];
 
     // Image path portion of url
-    $img_path = Config::get('pi_name') . '/' . Config::get('img_disp_relpath') .
-            '/' . $disp_fname[0];
+    $img_relpath = $disp_fname[0] . '/';
+    LGLib\Image::cleanCache($disp_fname[0]);
 
     // Image url relative to display base url
-    $disp_relurl = $img_path . '/' . $disp_fname;
+    $img_relurl = $img_relpath . $disp_fname;
 
     // Display image full path, for checking file_exists and storing resized
-    $disp_fullpath = $_CONF['path_html'] . $disp_relurl;
-
-    $maxage = (int)Config::get('img_cache_maxage');
+    $disp_fullpath = Config::get('path_imgcache') . $img_relurl;
+    $disp_fullurl = Config::get('url_imgcache') . '/' . $img_relurl;
+    /*$maxage = (int)Config::get('img_cache_maxage');
     $interval = (int)Config::get('img_cache_interval');
     if ($maxage > 0 && $interval > 0) {
         // Clean up old files
         // Get absolute path for flag file and finding old cache files
-        $img_path = $_CONF['path_html'] . $img_path;
+        $img_path = Config::get('path_imgcache') . $img_relpath;
 
-        $lastCleanFile = $img_path . '/.lastclean.touch';
+        $lastCleanFile = $img_path . '.lastclean.touch';
         if (!is_file($lastCleanFile)) {
             @touch($lastCleanFile);
         }
@@ -926,7 +926,7 @@ function service_imageurl_lglib($args, &$output, &$svc_msg)
                 }
             }
         }
-    }
+    }*/
 
     // If the file isn't found, try to create it.
     if (!is_file($disp_fullpath) || $force) {
@@ -937,7 +937,7 @@ function service_imageurl_lglib($args, &$output, &$svc_msg)
             $mime_type = $A['mime'];
         }
     } else {
-        // Have an existing file, need to get the dimensions
+        // Have an existing file, need to get the dimensions for the URL.
         $A = getimagesize($disp_fullpath);
         $width = $A[0];
         $height = $A[1];
@@ -949,7 +949,7 @@ function service_imageurl_lglib($args, &$output, &$svc_msg)
     // If not, there's a problem and the empty url will be returned.
     if (is_file($disp_fullpath)) {
         $output = array(
-            'url'   => $_CONF['site_url'] . '/' . $disp_relurl,
+            'url'   => $disp_fullurl,
             'path'  => $disp_fullpath,
             'width' => $width,
             'height' => $height,

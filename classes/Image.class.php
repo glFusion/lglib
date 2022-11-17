@@ -217,4 +217,39 @@ class Image
         return $retval;
     }
 
+
+    /**
+     * Clean up a single image cache directory.
+     *
+     * @param   string  $path   Cache path, single character '0' - 'F'
+     */
+    public static function cleanCache(string $path) : void
+    {
+        $maxage = (int)Config::get('img_cache_maxage');
+        $interval = (int)Config::get('img_cache_interval');
+        if ($maxage > 0 && $interval > 0) {
+            // Get absolute path for flag file and finding old cache files
+            $img_path = Config::get('path_imgcache') . $path . '/';
+
+            $lastCleanFile = $img_path . '.lastclean.touch';
+            if (!is_file($lastCleanFile)) {
+                @touch($lastCleanFile);
+            }
+
+            // Act only if the last clean time is over $interval minutes ago.
+            if (@filemtime($lastCleanFile) < ((time() - $interval) * 60)) {
+                $files = glob($img_path . $path . '*');
+                if ($files) {
+                    $timeAgo = time() - ($maxage * 86400);
+                    foreach ($files as $file) {
+                        if (@filemtime($file) < $timeAgo) {
+                            @unlink($file);
+                        }
+                    }
+                }
+                touch($lastCleanFile);
+            }
+        }
+    }
+
 }

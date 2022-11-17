@@ -203,7 +203,7 @@ class SmartResizer
                     $d_width = $val;
                 }
             }
-            if ($d_height== 0) {
+            if ($d_height == 0) {
                 $val = $img->getAttribute('height');
                 if (!empty($val)) {
                     $d_height = (int)$val;
