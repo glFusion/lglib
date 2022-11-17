@@ -150,7 +150,7 @@ class Image
         $JpegQuality = 85;
         if ($_CONF['debug_image_upload']) {
             Log::write('system', Log::ERROR,
-                __METHOD__ . '(): ' .
+                __METHOD__ . ': ' .
                 ": Resizing using GD2: Src = " . $src . " mimetype = " . $mime
             );
         }
@@ -161,6 +161,8 @@ class Image
             break;
         case 'image/png' :
             $image = @imagecreatefrompng($src);
+            imageAlphaBlending($image, true);
+            imageSaveAlpha($image, true);
             break;
         case 'image/bmp' :
             $image = @imagecreatefromwbmp($src);
