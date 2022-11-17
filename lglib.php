@@ -13,7 +13,7 @@
 use LGLib\Config;
 
 // Static configuration items
-Config::set('pi_version', '1.1.0');
+Config::set('pi_version', '1.1.0.1');
 Config::set('gl_version', '1.7.9');
 Config::set('pi_url', 'https://www.leegarner.com');
 
