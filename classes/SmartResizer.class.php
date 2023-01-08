@@ -200,7 +200,7 @@ class SmartResizer
             if ($d_width == 0) {
                 $val = $img->getAttribute('width');
                 if (!empty($val)) {
-                    $d_width = $val;
+                    $d_width = (int)$val;
                 }
             }
             if ($d_height == 0) {
