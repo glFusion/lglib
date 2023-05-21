@@ -1,5 +1,11 @@
 # lgLib utility plugin for glFusion
 
+## 1.1.1
+Release 2023-05-20
+  * Fix typo in autoinstall array.
+  * Ensure cache paths are created correctly.
+  * Add alpha channel handling for image resizer.
+
 ## 1.1.0
 Release 2022-09-23
   * Add admin interface for job queue.
