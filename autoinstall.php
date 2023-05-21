@@ -5,9 +5,9 @@
  * since there are no tables or user interfaces.
  *
  * @author      Lee Garner <lee@leegarner.com>
- * @copyright   Copyright (c) 2012-2021 Lee Garner <lee@leegarner.com>
+ * @copyright   Copyright (c) 2012-2023 Lee Garner <lee@leegarner.com>
  * @package     lglib
- * @version     1.1.0
+ * @version     1.1.1
  * @license     http://opensource.org/licenses/gpl-2.0.php 
  *              GNU Public License v2 or later
  * @filesource
@@ -115,7 +115,7 @@ function plugin_load_configuration_lglib()
 
 /**
  * Post-installation tasks.
- * 1. Create cache dirs
+ * 1. Create cache dirs. Fixes permissions if dire exists.
  */
 function LGLIB_createPaths()
 {
@@ -129,6 +129,9 @@ function LGLIB_createPaths()
         $datadir . '/8', $datadir . '/9', $datadir . '/a', $datadir . '/b',
         $datadir . '/c', $datadir . '/d', $datadir . '/e', $datadir . '/f',
     );
+    if (!is_dir($datadir)) {
+        mkdir($datadir, 0755, true);
+    }
     foreach ($dirs as $dir) {
         if (is_dir($dir)) {
             chmod($dir, 0755);
