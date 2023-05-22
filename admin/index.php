@@ -72,7 +72,7 @@ case 'runjobs':
     break;
 
 case 'deljob':
-    LGLib\JobQueue::deleteJobs($actionval);
+    LGLib\JobQueue::deleteJobs(array($actionval));
     COM_refresh(Config::get('admin_url') . '/index.php?jobqueue');
     break;
 

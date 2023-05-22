@@ -385,23 +385,20 @@ class JobQueue
      *
      * @param   array   $ids    Array of jobs, empty array for all
      */
-    public static function deleteJobs($ids=array()) : void
+    public static function deleteJobs(?array $ids=NULL) : void
     {
         global $_TABLES;
 
-        if (!is_array($ids)) {
-            $ids = array($ids);
-        }
         $values = array();
         $types = array();
         $sql = "DELETE FROM {$_TABLES['lglib_jobqueue']}";
-        if (!empty($ids)) {
+        if (is_array($ids)) {
             $sql .= " WHERE id IN (?)";
             $values[] = $ids;
             $types[] = Database::PARAM_INT_ARRAY;
         }
         try {
-            Database::getInstance()->conn->executeStatment($sql, $values, $types);
+            Database::getInstance()->conn->executeStatement($sql, $values, $types);
         } catch (\Throwable $e) {
             Log::write('system', Log::ERROR, __METHOD__ . ': ' . $e->getMessage());
         }
