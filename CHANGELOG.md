@@ -1,5 +1,9 @@
 # lgLib utility plugin for glFusion
 
+## 1.1.2
+Release 2023-05-23
+  * Fix typo in deleteJobs() database call.
+
 ## 1.1.1
 Release 2023-05-20
   * Fix typo in autoinstall array.

@@ -13,7 +13,7 @@
 use LGLib\Config;
 
 // Static configuration items
-Config::set('pi_version', '1.1.1');
+Config::set('pi_version', '1.1.2');
 Config::set('gl_version', '2.0.0');
 Config::set('pi_url', 'https://glfusion.org');
 
