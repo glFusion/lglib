@@ -1,5 +1,9 @@
 # lgLib utility plugin for glFusion
 
+## 1.1.3
+Release TBD
+  * Conditionally set `path_to_mogrify` in case it's not set in glFusion.
+
 ## 1.1.2
 Release 2023-05-23
   * Fix typo in deleteJobs() database call.

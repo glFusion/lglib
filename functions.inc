@@ -12,7 +12,6 @@
  *              GNU Public License v2 or later
  * @filesource
  */
-
 if (!defined('GVERSION')) {
     die('This file can not be used on its own.');
 }
@@ -303,9 +302,9 @@ function plugin_getheadercode_lglib() : string
     // The calling plugin needs to set $_SESSION['<pi_name>_origpath']
     SESS_setVar('lglib', array(
         'origpath'      => $_CONF['path_html'] . 'images',
-        'cache_dir'     => $_CONF['path'] . 'data/' . Config::get('pi_name'),
+        'cache_dir'     => $_CONF['path'] . 'data/' . Config::PI_NAME,
         'image_lib'     => $_CONF['image_lib'],
-        'path_to_mogrify' => $_CONF['path_to_mogrify'],
+        'path_to_mogrify' => isset($_CONF['path_to_mogrify']) ? $_CONF['path_to_mogrify'] : '',
     ));
 
     // Set default message location to top center unless otherwise set
@@ -354,7 +353,7 @@ function plugin_getheadercss_lglib()
     //  3. plugin/custom
     //  4. plugin (default distribution version)
     $pi_css = __DIR__ . '/css/';
-    $layout_css = "{$_CONF['path_layout']}plugins/" . Config::get('pi_name') . "/";
+    $layout_css = "{$_CONF['path_layout']}plugins/" . Config::PI_NAME . "/";
     foreach ($files as $file) {
         if (@file_exists($layout_css . 'custom/' . $file)) {
             $styles[] = $layout_css . 'custom/' . $file;
@@ -458,7 +457,7 @@ function LGLIB_getDocURL($file='', $pi_name='lglib', $doclang='english')
  */
 function plugin_getconfigelementhelp_lglib($option, $doclang='english')
 {
-    $doc_url = LGLIB_getDocURL('config.html', Config::get('pi_name'), $doclang);
+    $doc_url = LGLIB_getDocURL('config.html', Config::PI_NAME, $doclang);
     if (empty($doc_url))
         return false;
 
